@@ -1,0 +1,28 @@
+// === Base ===
+Revenue     = SUM(fact_Revenue_Live[Amount])
+Total Costs = SUM(fact_Cost_Live[Amount])
+Staff Costs = CALCULATE([Total Costs], fact_Cost_Live[Category] = "Staff")
+
+// === Revenue: Act vs For × In vs Oo ===
+Revenue Act In-Contract = CALCULATE([Revenue], fact_Revenue_Live[Type]="Actual",   fact_Revenue_Live[Contract Type]="In Contract")
+Revenue Act Oo-Contract = CALCULATE([Revenue], fact_Revenue_Live[Type]="Actual",   fact_Revenue_Live[Contract Type]="Out of Contract")
+Revenue For In-Contract = CALCULATE([Revenue], fact_Revenue_Live[Type]="Forecast", fact_Revenue_Live[Contract Type]="In Contract")
+Revenue For Oo-Contract = CALCULATE([Revenue], fact_Revenue_Live[Type]="Forecast", fact_Revenue_Live[Contract Type]="Out of Contract")
+
+// === Staff costs split by Act vs For ===
+Staff Costs Actual   = CALCULATE([Staff Costs], fact_Cost_Live[Type]="Actual")
+Staff Costs Forecast = CALCULATE([Staff Costs], fact_Cost_Live[Type]="Forecast")
+
+// === YTD versions (Image 1) ===
+Revenue Act In-Contract YTD = CALCULATE([Revenue Act In-Contract], DATESYTD(dim_Date_Live[Date]))
+Revenue Act Oo-Contract YTD = CALCULATE([Revenue Act Oo-Contract], DATESYTD(dim_Date_Live[Date]))
+Total Revenue YTD           = [Revenue Act In-Contract YTD] + [Revenue Act Oo-Contract YTD]
+Staff Costs YTD             = CALCULATE([Staff Costs Actual], DATESYTD(dim_Date_Live[Date]))
+Profit YTD                  = [Total Revenue YTD] - [Staff Costs YTD]
+Margin YTD %                = DIVIDE([Profit YTD], [Total Revenue YTD])
+
+// === Full-year (Image 2) ===
+Total Revenue FY = [Revenue Act In-Contract] + [Revenue Act Oo-Contract] + [Revenue For In-Contract] + [Revenue For Oo-Contract]
+Total Costs FY   = [Staff Costs Actual] + [Staff Costs Forecast]
+Profit FY        = [Total Revenue FY] - [Total Costs FY]
+Margin FY %      = DIVIDE([Profit FY], [Total Revenue FY])
