@@ -70,8 +70,8 @@ fact_Revenue_Live    fact_Cost_Live    fact_Timesheet_Live
 
 | Table to build | Grain | Source | Status |
 |---|---|---|---|
-| `fact_Revenue_Live` | One row per (Date, Project, Account, Type, Snapshot) | actuals from `stg_FinanceOutput FY26_FY2026`; in-contract forecast from `stg_EMS Fixed Fee Forecast_*`; OOC forecast from Grant's file | Build new |
-| `fact_Cost_Live` | One row per (Date, Project, Employee, Account, Category, Type, Snapshot) | actuals from `stg_FinanceOutput FY26_FY2026`; staff actuals aggregated from `fact_Timesheet_Live`; staff forecast from `crbb5_jedoxallocation × dim_StaffCosts_Live`; subcontractor forecast (pending file from Chris) | Build new |
+| `fact_Revenue_Live` | One row per (Date, Project, Account, Type, Snapshot) | actuals from `stg_FinanceOutput FY26_FY2026`; in-contract forecast from `stg_EMS Fixed Fee Forecast_*`; OOC forecast from the Additional Services Forecast file (`stg_AdditionalServicesForecast`) | Build new |
+| `fact_Cost_Live` | One row per (Date, Project, Employee, Account, Category, Type, Snapshot) | actuals from `stg_FinanceOutput FY26_FY2026`; staff actuals aggregated from `fact_Timesheet_Live`; staff forecast from `crbb5_jedoxallocation × dim_StaffCosts_Live`; subcontractor forecast from the Subcontractor Forecast file (`stg_SubcontractorForecast`) | Build new |
 | `fact_Timesheet_Live` | One row per (Date, Employee, Project, Hours, Cost) | `dogma_timesheet` joined to `dim_Employee_Live` and `dim_StaffCosts_Live`, with country-aware hourly rate applied | Build new |
 
 ### Tables to retire after restructure
@@ -112,12 +112,14 @@ The SharePoint side is **three workbooks**, not seven independent files. Knowing
 | `dogma_timesheetheader` | filter scope for `fact_Timesheet` (period boundaries) |
 | `dogma_timesheetperiod` | filter scope for `fact_Timesheet` (approval state) |
 
-### Pending SharePoint files (confirmed sources, not yet delivered)
+### SharePoint forecast files (delivered)
 
-| Source | Feeds | Status |
-|---|---|---|
-| **Grant's OOC revenue forecast** (new SharePoint Excel file) | `fact_Revenue[Type=Forecast, Contract Type=Out of Contract]` | **Pending delivery from Chris.** Confirmed location: SharePoint. Structure TBC — likely whole-year totals per sector that need YTD-actual subtraction to derive the remaining-forecast figure. |
-| **Subcontractor cost forecast** (new SharePoint Excel file) | `fact_Cost[Type=Forecast, Category=Subcontractor]` | **Pending delivery from Chris.** Confirmed location: SharePoint. Chris will check whether the data is already broken down by project; if not, his team will reshape it before sending. |
+Both forecast files have now been delivered to the shared SharePoint **Data** folder (confirmed by email). Both are broken down **by month and project code**, so each joins straight to `dim_Project[Project Code]` and rolls up by month — no whole-year-minus-YTD subtraction is required.
+
+| Source | Staging query | Feeds | Status |
+|---|---|---|---|
+| **Additional Services Forecast** (SharePoint Excel file) | `stg_AdditionalServicesForecast` | `fact_Revenue[Type=Forecast, Contract Type=Out of Contract]` (Account Code 40014) | **Delivered.** By month + project code. |
+| **Subcontractor Forecast** (SharePoint Excel file) | `stg_SubcontractorForecast` | `fact_Cost[Type=Forecast, Category=Subcontractor]` | **Delivered.** By month + project code. |
 
 ## Phase 0 — Branch and back up
 
@@ -225,14 +227,15 @@ let
         {"Last Name, First Name",   "EmployeeName"}
     }),
 
-    // Step B — unpivot the 2025 / 2026 columns so each row is (TWR, Year, AnnualRate)
+    // Step B — unpivot the 2025 / 2026 columns. The value IS the DAY RATE
+    //          (£/day) directly — confirmed from the data, not an annual figure.
     Unpivoted = Table.UnpivotOtherColumns(
         Renamed,
         {"EmployeeID", "TimeWorkReference", "EmployeeName"},
         "Year",
-        "AnnualRate"
+        "DayRate"
     ),
-    YearAsInt = Table.TransformColumnTypes(Unpivoted, {{"Year", Int64.Type}, {"AnnualRate", Currency.Type}}),
+    YearAsInt = Table.TransformColumnTypes(Unpivoted, {{"Year", Int64.Type}, {"DayRate", Currency.Type}}),
 
     // Step C — group by TWR + Year; keep the EMPEM (permanent) ID if both exist
     Grouped = Table.Group(YearAsInt,
@@ -240,7 +243,7 @@ let
         {
             {"EmployeeID",   each List.First(List.Select([EmployeeID], (id) => not Text.StartsWith(id, "EMPEMCON")), List.First([EmployeeID])), type text},
             {"EmployeeName", each List.First([EmployeeName]), type text},
-            {"AnnualRate",   each List.Max([AnnualRate]), Currency.Type}
+            {"DayRate",      each List.Max([DayRate]), Currency.Type}
         }
     )
 in
@@ -272,11 +275,11 @@ in
    - Top table: `dim_StaffCosts_Live` (auto-selected).
    - Click the `TimeWorkReference` column to highlight it.
    - Bottom table dropdown: select **`crbb5_bamboohr`**.
-   - In the `crbb5_bamboohr` preview, click the `Time@work Reference` column (it may be named slightly differently — find the column that holds the TWR).
+   - In the `crbb5_bamboohr` preview, click **`crbb5_timeworkreference`** (the table is exposed by logical name — confirmed against its column list).
    - Join Kind: **Left Outer (all from first, matching from second)**.
    - Click **OK**.
 4. A new column called `crbb5_bamboohr` appears at the right with table-icon cells.
-5. Click the expand icon (◄►) on that column header → uncheck **all** boxes → tick only **`Country`** → uncheck "Use original column name as prefix" → **OK**.
+5. Click the expand icon (◄►) on that column header → uncheck **all** boxes → tick only **`crbb5_country`** → uncheck "Use original column name as prefix" → **OK**. Rename the resulting column to `Country`.
 6. A new `Country` column appears.
 7. Apply a default for blank country values: click **Add Column** → **Conditional Column**:
    - New column name: `Country` (this will overwrite — actually call it `CountryFilled` for safety)
@@ -293,14 +296,14 @@ in
 
 ### Task 1.4: Add country-aware Day Rate and Hourly Rate to `dim_StaffCosts_Live`
 
-**What this does**: applies the confirmed staff-cost formula from Chris's post-Wednesday meeting:
+**What this does**: applies the confirmed staff-cost formula (confirmed by client email):
 ```
-Day rate    = Annual rate / 261
 Hourly rate = Day rate / Hours-per-day
 Hours-per-day = 7.5 (UK + Ireland), 8 (Italy)
+Project Cost = timesheet hours booked × Hourly rate
 ```
 
-No floor, no ceiling, no monthly cap. The cost is simply `timesheet hours × hourly rate`. This calc is final per the latest client call.
+The client supplies **day rates** directly. No floor, no ceiling, no monthly cap, and **no adjustment for time booked over or below the standard hours per day** — the hourly charge is applied straight to the hours booked by project. This calc is final per the client email.
 
 **Where to do it**: continue editing `dim_StaffCosts_Live` in Power Query Editor.
 
@@ -311,11 +314,7 @@ No floor, no ceiling, no monthly cap. The cost is simply `timesheet hours × hou
    - Else → Output: `7.5`
    - **OK**.
 2. Change the type of `HoursPerDay` to **Decimal Number** (click the column header type icon `123` → Decimal Number).
-3. Click **Add Column** → **Custom Column** to add `DayRate`:
-   - New column name: `DayRate`
-   - Custom column formula: `[AnnualRate] / 261`
-   - **OK**.
-   - Change type to **Currency** (`£`).
+3. `DayRate` already exists — it is the unpivoted `2025` / `2026` value from Task 1.2, which the data confirms is the **day rate** (£/day) directly. **Do not** divide by 261 or apply any annual-to-day conversion.
 4. Click **Add Column** → **Custom Column** to add `StaffCostPerHour`:
    - New column name: `StaffCostPerHour`
    - Custom column formula: `[DayRate] / [HoursPerDay]`
@@ -324,11 +323,11 @@ No floor, no ceiling, no monthly cap. The cost is simply `timesheet hours × hou
 5. Click **Home** → **Close & Apply**.
 
 **How to check it worked**:
-- Pick any Italian staff row. If their `AnnualRate` is £80,000, you should see `DayRate ≈ £306.51` and `StaffCostPerHour ≈ £38.31` (£306.51 / 8).
-- Pick any UK or Ireland staff row with the same £80,000 annual rate — `StaffCostPerHour ≈ £40.87` (£306.51 / 7.5).
-- The same employee at the same annual rate should show a **higher** hourly rate in the UK than in Italy (because of the shorter UK working day). If you see the opposite, the conditional column in step 1 has the country backwards.
+- Find `Agnew, Samantha` (TWR `SAG`): `DayRate` = £241.55 (her 2026 value) and `StaffCostPerHour` = £32.21 (241.55 / 7.5).
+- Pick any Italian staff row: `StaffCostPerHour` = `DayRate / 8`.
+- Pick any UK/Ireland row: `StaffCostPerHour` = `DayRate / 7.5`. The same day rate yields a **higher** hourly rate in the UK than Italy (shorter UK day). If reversed, the country conditional in step 1 is backwards.
 
-**Note on the source column**: the existing `stg_Staff Costs Summary` may provide the rate as a **Day rate** rather than an **Annual rate**. Open the workbook and check. If it's already a Day rate, skip the `/ 261` step — set `DayRate = [whatever the column is called]` directly. Confirm with Chris which it is and tell the team. (Audit doc Q1 covers this — recommend Annual rate so we own the conversion.)
+**Note on the source column**: rate type is **resolved by the data** — `stg_Staff Costs Summary` `2025` / `2026` columns hold day rates directly. There is no `/ 261` step.
 
 ---
 
@@ -391,51 +390,61 @@ No floor, no ceiling, no monthly cap. The cost is simply `timesheet hours × hou
 **Steps**:
 1. Right-click `crbb5_project` → **Reference**.
 2. Rename to **`dim_Project_Live`**.
-3. **Choose Columns** to keep only these from `crbb5_project`:
+3. **Choose Columns** to keep only these from `crbb5_project` (exposed by **logical** name — confirmed against the column list):
    - `crbb5_projectid` (GUID — keep as a backup key)
-   - `Project Code`
-   - `Project Name`
+   - `crbb5_projectcode`
+   - `crbb5_projectname`
+   - `crbb5_projecttypename` (the Project Type **text** name, e.g. Operational/Construction — NOT the numeric `crbb5_projecttype`. Project Type is a **project-level** attribute, not on `crbb5_contractregister`)
    - `crbb5_contract` (this is the lookup to contract — needed for the merge step below)
    - `crbb5_subsidiaryname`
 4. **Merge Queries** (Home → Merge Queries → Merge Queries):
    - Top table: `dim_Project_Live` (auto).
    - Click `crbb5_contract` column.
    - Bottom dropdown: **`crbb5_contractregister`**.
-   - In the contract register preview, click the corresponding key column (usually `Contract Register` or a `crbb5_*` ID — pick the one that matches the GUID format of `crbb5_contract`).
+   - In the contract register preview, click **`crbb5_contractregisterid`** (the contract register primary-key GUID — confirmed to match `crbb5_contract`).
    - Join Kind: **Left Outer**.
    - **OK**.
-5. A new column `crbb5_contractregister` appears. Click its expand icon (◄►), untick "(Select All)", then tick only these columns:
-   - `crbb5_supersectorchoice` (the canonical sector field — confirmed by Chris)
+5. A new column `crbb5_contractregister` appears. Click its expand icon (◄►), untick "(Select All)", then tick only these columns (all **confirmed** present on `crbb5_contractregister`):
+   - `crbb5_supersectorchoicename` (the sector **name** — Social Infrastructure, Renewables, etc. Confirmed by Chris, 27 May: use the name, **not** the numeric `crbb5_supersectorchoice`, which is just a table ID)
    - `crbb5_portfolio`
-   - `crbb5_contractname` (or `MSA Reference` if present)
-   - `crbb5_projecttype`
-   - The Billing Method / Billing Start / Billing End / Concession Expiry fields if they exist in the contract register (column names may vary)
+   - `crbb5_msareference`
+   - `crbb5_concessionexpiry`
+   - Note: **Project Type, Billing Method, and Billing Start/End dates are NOT on `crbb5_contractregister`.** Project Type comes from `crbb5_project` (selected in step 3); billing fields live on `crbb5_billingschedule` (add that join later only if the report needs them).
    - Untick "Use original column name as prefix" → **OK**.
-6. Rename each new column to friendly names:
-   - `crbb5_supersectorchoice` → `Sector`
-   - `crbb5_portfolio` → `Portfolio`
-   - `crbb5_contractname` → `Contract Name`
-   - `crbb5_projecttype` → `Project Type`
+6. Rename each column to friendly names:
+   - `crbb5_projectcode` → `Project Code`
+   - `crbb5_projectname` → `Project Name`
+   - `crbb5_projecttypename` → `Project Type` (from `crbb5_project`)
    - `crbb5_subsidiaryname` → `Subsidiary`
-7. Add a default for blank `Portfolio`:
+   - `crbb5_supersectorchoicename` → `Sector`
+   - `crbb5_portfolio` → `Portfolio`
+   - `crbb5_msareference` → `MSA Reference`
+   - `crbb5_concessionexpiry` → `Concession Expiry`
+7. Add a merged **`Project Display`** column (Chris, 27 May — show project code and name together):
+   - **Add Column** → **Custom Column**: `Text.From([Project Code]) & " - " & Text.From([Project Name])`
+   - Name it `Project Display`. This is the label the PoC tables drill into under each sector.
+8. Add a default for blank `Portfolio`:
    - **Add Column** → **Conditional Column**:
    - New column: `Portfolio_Filled` — if `Portfolio` is `null` → `"Unportfolioed"`, else → `Portfolio`.
    - Remove the original `Portfolio` column. Rename `Portfolio_Filled` → `Portfolio`.
-8. Add a `Contract Phase` column derived from MSA prefix:
+9. Add a `Contract Phase` column derived from MSA prefix:
    - **Add Column** → **Custom Column**:
      ```m
      if Text.StartsWith([MSA Reference], "EMS-MSA") then "Live"
+     else if Text.StartsWith([MSA Reference], "EMSI-IT") then "Live"   // live Italian / ESS — note the extra "I"; distinct from legacy EMS-IT
      else if Text.StartsWith([MSA Reference], "EMS-PR") then "Pipeline"
      else if Text.StartsWith([MSA Reference], "EMS-IT") then "Legacy"
      else "Other"
      ```
    - Name it `Contract Phase`.
    - **OK**. Change column type to text.
-9. **Close & Apply**.
+10. **Close & Apply**.
 
 **How to check it worked**:
 - `dim_Project_Live` should have one row per project.
-- Every row should have `Sector`, `Portfolio`, `MSA Reference`, `Contract Phase`.
+- Every row should have `Sector`, `Portfolio`, `MSA Reference`, `Contract Phase`, `Project Display`.
+- `Sector` shows readable **names** (Social Infrastructure, Renewables, …), not numbers. If you see "1, 2, 3" you mapped the numeric `crbb5_supersectorchoice` instead of `crbb5_supersectorchoicename` — fix the expand step.
+- `Project Display` reads like `"ASH-01 - Ashfield HoldCo"` (code then name).
 - Spot-check a project with MSA Reference `EMS-MSA289` — `Contract Phase` should be `Live`.
 - Spot-check a project with MSA Reference starting `EMS-PR` — `Contract Phase` should be `Pipeline`.
 - No column should start with `crbb5_` (except the GUID `crbb5_projectid` if you kept it).
@@ -728,21 +737,26 @@ in
 
 #### Sub-query C — `_Revenue_Forecast_OOC`
 
-This is Grant's standalone OOC file. **Not yet delivered as of writing**. Build the query stub now so the append in the next step has a placeholder; populate it when the file arrives.
+This is the **Additional Services Forecast** file (delivered to the SharePoint Data folder). It is a **wide monthly** layout: metadata columns (`Supersector`, `Sector`, `Upstream Reports`, `Project Code`, `Department`, `Location`) then one value column per month-end (`1/31/2026` … `12/31/2026`). **The header row is row 5** — the `stg_AdditionalServicesForecast` staging query must skip the title/note rows and promote row 5 before this runs. Additional services = Account Code 40014 = Out of Contract; per-month, so **no YTD-actual subtraction**. See `powerquery/helpers/_Revenue_Forecast_OOC.pq` for the full script.
 
 ```m
 let
-    // Placeholder until Grant's file is delivered.
-    // When delivered, replace this with: Excel.Workbook(File.Contents("...path to Grant's file..."))
-    Source = #table(
-        type table [
-            Date = date, #"Project Code" = text, #"Account Code" = Int64.Type, Subsidiary = text,
-            Type = text, #"Contract Type" = text, #"Snapshot Date" = date, Amount = Currency.Type, TransactionLineKey = text
-        ],
-        {}
-    )
+    Source = #"stg_AdditionalServicesForecast",
+    NonDateColumns = {"Supersector", "Sector", "Upstream Reports", "Project Code", "Department", "Location"},
+    Unpivoted = Table.UnpivotOtherColumns(Source, NonDateColumns, "Forecast Date Text", "Amount"),
+    ParsedDate = Table.AddColumn(Unpivoted, "Date", each Date.FromText([#"Forecast Date Text"], [Format="M/d/yyyy", Culture="en-US"]), type date),
+    Typed = Table.TransformColumnTypes(ParsedDate, {{"Amount", Currency.Type}}),
+    AddSubsidiary   = Table.AddColumn(Typed,           "Subsidiary",    each [Location],        type text),
+    AddAccountCode  = Table.AddColumn(AddSubsidiary,   "Account Code",  each 40014,             Int64.Type),
+    AddType         = Table.AddColumn(AddAccountCode,  "Type",          each "Forecast",        type text),
+    AddContractType = Table.AddColumn(AddType,         "Contract Type", each "Out of Contract", type text),
+    AddSnapshot     = Table.AddColumn(AddContractType, "Snapshot Date", each null,              type date),
+    AddTLK          = Table.AddColumn(AddSnapshot,     "TransactionLineKey", each null,         type text),
+    Final = Table.SelectColumns(AddTLK,
+        {"Date", "Project Code", "Account Code", "Subsidiary",
+         "Type", "Contract Type", "Snapshot Date", "Amount", "TransactionLineKey"})
 in
-    Source
+    Final
 ```
 
 #### Combine into `fact_Revenue_Live`
@@ -776,7 +790,7 @@ in
 
 ### Task 3.3: Build `fact_Cost_Live`
 
-**What this does**: unifies cost actuals and forecasts into a single fact table. Three actual sources (subcontractor from NetSuite, other expenses from NetSuite, staff cost aggregated from `fact_Timesheet_Live`) plus two forecast sources (staff from Jedox, subcontractor from a pending SharePoint file).
+**What this does**: unifies cost actuals and forecasts into a single fact table. Three actual sources (subcontractor from NetSuite, other expenses from NetSuite, staff cost aggregated from `fact_Timesheet_Live`) plus two forecast sources (staff from Jedox, subcontractor from the delivered Subcontractor Forecast file `stg_SubcontractorForecast`).
 
 **Schema**:
 | Column | Meaning |
@@ -828,37 +842,46 @@ This one aggregates `fact_Timesheet_Live` rows up to the cost-fact grain (one ro
 
 #### Sub-query D — `_Cost_Staff_Forecast`
 
+`crbb5_jedoxallocation` is exposed by **logical** names (confirmed against its column list). See `powerquery/helpers/_Cost_Staff_Forecast.pq` for the full script.
+
 1. Right-click `crbb5_jedoxallocation` → **Reference**.
 2. Rename to **`_Cost_Staff_Forecast`**.
-3. Filter `Version` to `"Forecast"` only.
-4. Surface `TimeWorkReference` from the related lookup (same approach as in `fact_Timesheet_Live` step 5).
-5. Rename `Project Reference` → `Project Code`, `Allocation Date` → `Date`, `Value` → `Allocation` (this is a percentage or fraction — confirm with Chris).
-6. Merge with `dim_StaffCosts_Live` on `TimeWorkReference` + `Year` to fetch `StaffCostPerDay` (or `StaffCostPerHour`).
-7. Compute the forecast cost. **Exact formula needs confirmation** — likely `Allocation × StaffCostPerDay × Working Days In Period`. For now, use:
+3. Filter **`crbb5_version`** to `"Forecast"` only.
+4. Rename: `crbb5_hrreference` → `TimeWorkReference` (the TWR join key — confirm vs `crbb5_hrcode`), `crbb5_projectreference` → `Project Code`, `crbb5_yeardate` → `Date`, `crbb5_value` → `Allocation`, `crbb5_year` → `Year`. **Note: Jedox is ANNUAL — there is no "Allocation Date"; the period is `crbb5_year`/`crbb5_yeardate`.**
+5. Merge with `dim_StaffCosts_Live` on `TimeWorkReference` + `Year` to fetch `DayRate`.
+6. Compute the forecast cost. **Formula depends on what `crbb5_value` is** (`crbb5_resourcemeasure` is its unit):
    ```
-   Amount = [Allocation] × [StaffCostPerDay] × 21      // 21 working days as a placeholder; refine after confirming with Chris
+   // if crbb5_value = allocated DAYS:
+   Amount = [Allocation] * [DayRate]
+   // if crbb5_value = % of the year:
+   // Amount = [Allocation] * 261 * [DayRate]
    ```
-8. Add constants: `Account Code = null`, `Category = "Staff"`, `Type = "Forecast"`, `Snapshot Date = (the relevant snapshot)`.
-9. Disable load.
+   The helper currently assumes **days**. Confirm with Chris before go-live.
+7. Add constants: `Account Code = null`, `Category = "Staff"`, `Type = "Forecast"`, `Snapshot Date` from the year-end.
+8. Disable load.
 
 #### Sub-query E — `_Cost_Subcontractor_Forecast`
 
-This is **the new SharePoint file from Chris** — confirmed source, not yet delivered. Build a stub.
+This is the **Subcontractor Fees Forecast** file (delivered to the SharePoint Data folder). **Wide monthly** layout: metadata columns (`Netsuite N/C`, `Project Code`, `Department`, `Location`) then one value column per month-end. **The header row is row 3** — the `stg_SubcontractorForecast` staging query must skip the title rows and promote row 3. `Netsuite N/C` holds the account code (60201) → mapped to `Account Code`. See `powerquery/helpers/_Cost_Subcontractor_Forecast.pq` for the full script.
 
 ```m
 let
-    Source = #table(
-        type table [
-            Date = date, #"Project Code" = text, TimeWorkReference = text, #"Account Code" = Int64.Type,
-            Category = text, Type = text, #"Snapshot Date" = date, Amount = Currency.Type
-        ],
-        {}
-    )
+    Source = #"stg_SubcontractorForecast",
+    NonDateColumns = {"Netsuite N/C", "Project Code", "Department", "Location"},
+    Unpivoted = Table.UnpivotOtherColumns(Source, NonDateColumns, "Forecast Date Text", "Amount"),
+    ParsedDate = Table.AddColumn(Unpivoted, "Date", each Date.FromText([#"Forecast Date Text"], [Format="M/d/yyyy", Culture="en-US"]), type date),
+    Typed = Table.TransformColumnTypes(ParsedDate, {{"Amount", Currency.Type}}),
+    Renamed        = Table.RenameColumns(Typed, {{"Netsuite N/C", "Account Code"}}),
+    AddTWR         = Table.AddColumn(Renamed,        "TimeWorkReference", each null,            type text),
+    AddCategory    = Table.AddColumn(AddTWR,         "Category",          each "Subcontractor", type text),
+    AddType        = Table.AddColumn(AddCategory,    "Type",              each "Forecast",      type text),
+    AddSnapshot    = Table.AddColumn(AddType,        "Snapshot Date",     each null,            type date),
+    Final = Table.SelectColumns(AddSnapshot,
+        {"Date", "Project Code", "TimeWorkReference", "Account Code",
+         "Category", "Type", "Snapshot Date", "Amount"})
 in
-    Source
+    Final
 ```
-
-When the file arrives, replace the stub.
 
 #### Combine into `fact_Cost_Live`
 
@@ -916,26 +939,112 @@ in
 2. Arrange the new `_Live` tables in a star pattern: facts in the middle, dims around the edges.
 3. For each relationship below, drag from the **fact** column to the **dim** column. The relationship should be Many-to-One (`*` → `1`), single direction.
 
-| From (Many side — fact) | To (One side — dim) | Notes |
-|---|---|---|
-| `fact_Revenue_Live[Date]` | `dim_Date_Live[Date]` | active |
-| `fact_Revenue_Live[Project Code]` | `dim_Project_Live[Project Code]` | active |
-| `fact_Revenue_Live[Account Code]` | `dim_Accounts_Live[Account Code]` | active |
-| `fact_Revenue_Live[Snapshot Date]` | `dim_ForecastSnapshot_Live[SnapshotDate]` | active |
-| `fact_Cost_Live[Date]` | `dim_Date_Live[Date]` | active |
-| `fact_Cost_Live[Project Code]` | `dim_Project_Live[Project Code]` | active |
-| `fact_Cost_Live[Account Code]` | `dim_Accounts_Live[Account Code]` | active — note: staff rows will have null Account Code, so this only filters non-staff rows |
-| `fact_Cost_Live[TimeWorkReference]` | `dim_Employee_Live[TimeWorkReference]` | active |
-| `fact_Cost_Live[Snapshot Date]` | `dim_ForecastSnapshot_Live[SnapshotDate]` | active |
-| `fact_Timesheet_Live[Date]` | `dim_Date_Live[Date]` | active |
-| `fact_Timesheet_Live[Project Code]` | `dim_Project_Live[Project Code]` | active |
-| `fact_Timesheet_Live[TimeWorkReference]` | `dim_Employee_Live[TimeWorkReference]` | active |
-| `dim_StaffCosts_Live[TimeWorkReference]` | `dim_Employee_Live[TimeWorkReference]` | active — links the rate dim to the employee dim |
+All relationships are **Many-to-One** (fact = many `*`, dim = one `1`) with **single** cross-filter direction (dim filters fact), and **active**, unless noted.
+
+| From Table | From Column | To Table | To Column | Relationship | Status |
+|---|---|---|---|---|---|
+| fact_Revenue_Live | Date | dim_Date_Live | Date | Many-to-One | Active |
+| fact_Revenue_Live | Project Code | dim_Project_Live | Project Code | Many-to-One | Active |
+| fact_Revenue_Live | Account Code | dim_Accounts_Live | Account Code | Many-to-One | Active |
+| fact_Revenue_Live | Snapshot Date | dim_ForecastSnapshot_Live | SnapshotDate | Many-to-One | Active |
+| fact_Revenue_Live | TransactionLineKey | dim_Transaction_Live | TransactionLineKey | Many-to-One | Active |
+| fact_Cost_Live | Date | dim_Date_Live | Date | Many-to-One | Active |
+| fact_Cost_Live | Project Code | dim_Project_Live | Project Code | Many-to-One | Active |
+| fact_Cost_Live | Account Code | dim_Accounts_Live | Account Code | Many-to-One | Active |
+| fact_Cost_Live | TimeWorkReference | dim_Employee_Live | TimeWorkReference | Many-to-One | Active |
+| fact_Cost_Live | Snapshot Date | dim_ForecastSnapshot_Live | SnapshotDate | Many-to-One | Active |
+| fact_Timesheet_Live | Date | dim_Date_Live | Date | Many-to-One | Active |
+| fact_Timesheet_Live | Project Code | dim_Project_Live | Project Code | Many-to-One | Active |
+| fact_Timesheet_Live | TimeWorkReference | dim_Employee_Live | TimeWorkReference | Many-to-One | Active |
+
+The same relationships with implementation notes:
+
+| # | From (Many side — fact) | To (One side — dim) | Notes |
+|---|---|---|---|
+| 1 | `fact_Revenue_Live[Date]` | `dim_Date_Live[Date]` | |
+| 2 | `fact_Revenue_Live[Project Code]` | `dim_Project_Live[Project Code]` | |
+| 3 | `fact_Revenue_Live[Account Code]` | `dim_Accounts_Live[Account Code]` | |
+| 4 | `fact_Revenue_Live[Snapshot Date]` | `dim_ForecastSnapshot_Live[SnapshotDate]` | actual rows have null Snapshot → unrelated (expected) |
+| 5 | `fact_Revenue_Live[TransactionLineKey]` | `dim_Transaction_Live[TransactionLineKey]` | for drill-through; only **actual** rows have a key (forecast = null, unrelated) |
+| 6 | `fact_Cost_Live[Date]` | `dim_Date_Live[Date]` | |
+| 7 | `fact_Cost_Live[Project Code]` | `dim_Project_Live[Project Code]` | |
+| 8 | `fact_Cost_Live[Account Code]` | `dim_Accounts_Live[Account Code]` | staff rows have null Account Code → only filters subcontractor/other rows |
+| 9 | `fact_Cost_Live[TimeWorkReference]` | `dim_Employee_Live[TimeWorkReference]` | only staff rows carry a TWR |
+| 10 | `fact_Cost_Live[Snapshot Date]` | `dim_ForecastSnapshot_Live[SnapshotDate]` | |
+| 11 | `fact_Timesheet_Live[Date]` | `dim_Date_Live[Date]` | |
+| 12 | `fact_Timesheet_Live[Project Code]` | `dim_Project_Live[Project Code]` | |
+| 13 | `fact_Timesheet_Live[TimeWorkReference]` | `dim_Employee_Live[TimeWorkReference]` | |
+
+**Notes / non-relationships:**
+- **`dim_StaffCosts_Live`** keys on (`TimeWorkReference`, `Year`) — a **composite** key, which Power BI relationships can't express, and it carries multiple rows per employee. It is a **Power Query helper** (its rate is already baked into `fact_Timesheet_Live[Cost]` and the staff forecast), so leave it **hidden with no relationship**. (Do *not* relate it to `dim_Employee` on `TimeWorkReference` alone — that's a valid many-to-one but it serves no reporting purpose and clutters the model.)
+- **`dim_ForecastVersion_Live`** is currently **disconnected** — no fact carries a `Version` column (we filter Jedox to `Forecast` during ingest). To make it a usable slicer, add a `Version` column to `fact_Cost_Live` forecast rows, then relate `fact_Cost_Live[Version]` → `dim_ForecastVersion_Live[Version]`. Until then, hide it or drop it.
+- **`Subsidiary`** is a plain text column on the facts (no `dim_Subsidiary`); slice on it directly, or build a small dim later if a hierarchy is needed.
+
+**Key uniqueness pre-checks** (a relationship fails if the "one" side isn't unique):
+- `dim_Date_Live[Date]`, `dim_Project_Live[Project Code]`, `dim_Accounts_Live[Account Code]`, `dim_Employee_Live[TimeWorkReference]`, `dim_ForecastSnapshot_Live[SnapshotDate]`, `dim_Transaction_Live[TransactionLineKey]` must each be **unique, no blanks**. If `dim_Employee_Live[TimeWorkReference]` has duplicates (contractor→permanent), dedupe it the same way `dim_StaffCosts_Live` does.
 
 **How to check it worked**:
 - In Model view all relationship lines should be solid (active), not dotted (inactive).
 - No relationship has a yellow exclamation icon (cardinality mismatch).
 - Build a quick test visual: a table with `dim_Project_Live[Sector]` and a measure `SUM(fact_Revenue_Live[Amount])`. Rows should appear, grouped by sector, with totals.
+
+#### TMDL — paste-in for a `.pbip` Semantic Model
+
+If you're on the Power BI Project (`.pbip`) format, add these to `…\<model>.SemanticModel\definition\relationships.tmdl` (Power BI assigns GUID names normally; readable names are fine in TMDL). Defaults are many-to-one + single-direction + active, so only inactive/extra options need spelling out — none here.
+
+```tmdl
+relationship rel_Revenue_Date
+	fromColumn: fact_Revenue_Live.Date
+	toColumn: dim_Date_Live.Date
+
+relationship rel_Revenue_Project
+	fromColumn: fact_Revenue_Live.'Project Code'
+	toColumn: dim_Project_Live.'Project Code'
+
+relationship rel_Revenue_Account
+	fromColumn: fact_Revenue_Live.'Account Code'
+	toColumn: dim_Accounts_Live.'Account Code'
+
+relationship rel_Revenue_Snapshot
+	fromColumn: fact_Revenue_Live.'Snapshot Date'
+	toColumn: dim_ForecastSnapshot_Live.SnapshotDate
+
+relationship rel_Revenue_Transaction
+	fromColumn: fact_Revenue_Live.TransactionLineKey
+	toColumn: dim_Transaction_Live.TransactionLineKey
+
+relationship rel_Cost_Date
+	fromColumn: fact_Cost_Live.Date
+	toColumn: dim_Date_Live.Date
+
+relationship rel_Cost_Project
+	fromColumn: fact_Cost_Live.'Project Code'
+	toColumn: dim_Project_Live.'Project Code'
+
+relationship rel_Cost_Account
+	fromColumn: fact_Cost_Live.'Account Code'
+	toColumn: dim_Accounts_Live.'Account Code'
+
+relationship rel_Cost_Employee
+	fromColumn: fact_Cost_Live.TimeWorkReference
+	toColumn: dim_Employee_Live.TimeWorkReference
+
+relationship rel_Cost_Snapshot
+	fromColumn: fact_Cost_Live.'Snapshot Date'
+	toColumn: dim_ForecastSnapshot_Live.SnapshotDate
+
+relationship rel_Timesheet_Date
+	fromColumn: fact_Timesheet_Live.Date
+	toColumn: dim_Date_Live.Date
+
+relationship rel_Timesheet_Project
+	fromColumn: fact_Timesheet_Live.'Project Code'
+	toColumn: dim_Project_Live.'Project Code'
+
+relationship rel_Timesheet_Employee
+	fromColumn: fact_Timesheet_Live.TimeWorkReference
+	toColumn: dim_Employee_Live.TimeWorkReference
+```
 
 ---
 
@@ -951,7 +1060,7 @@ Schema:
 | Column | Source |
 |---|---|
 | `Date` | actuals: `Period End Date`; forecasts: `Forecast Date` from unpivoted columns |
-| `Project Code` | NetSuite Project Code (actuals) or staging Project Code (forecasts) |
+| `Project Code` | actuals: `Class: Class External ID` from the GL (there is no literal Project Code column — the project is the NetSuite Class); forecasts: staging Project Code |
 | `Account Code` | NetSuite Account Code; for OOC forecast, default to `40014` |
 | `Subsidiary` | from `dim_Transaction` (actuals) or contract subsidiary (forecasts) |
 | `Type` | `Actual` or `Forecast` |
@@ -961,12 +1070,12 @@ Schema:
 | `TransactionLineKey` | for actuals: `Transaction ID & "-" & Transaction Line ID`. Null for forecasts. |
 
 Sources to union:
-1. **Actuals**: from `FinanceOutput FY26.xlsx` → `FY2026` sheet, filter to revenue rows (`Account No.` in `{40010, 40011, 40012, 40014}`). Materialise the unique line key as `Transaction Line ID & "-" & Transaction Ref.` (or whichever columns NetSuite uses for the unique pair — confirm).
+1. **Actuals**: from `FinanceOutput FY26.xlsx` → `FY2026` sheet, filter to revenue rows (`Account No.` in `{40010, 40011, 40012, 40014}`). Materialise the unique line key as `Transaction: Transaction ID & "-" & Transaction Line ID` (e.g. `770163-0`). **Note**: this sheet has **no `Project Code` column** — the project is the NetSuite Class, with the code in `Class: Class External ID` (e.g. `ASH-01`). Rename that to `Project Code`.
 2. **In-contract forecast**: from `EMS Fixed Fee Forecast.xlsx`:
     - `31.12.2025` sheet — unpivot the wide date columns. Tag `Snapshot Date = 2025-12-31`, `Type=Forecast`.
-    - `HARP_DATA` sheet — same unpivot, tag `Snapshot Date` based on the file modified date or a column inside. Project Code is the HARP project code (confirm).
-    - Both should land into `fact_Revenue` with `Type=Forecast`. Default `Account Code` to `40010` (Operational revenue) unless the source sheet specifies otherwise — confirm at next client meeting.
-3. **OOC forecast**: ingest Grant's file once delivered. Tag `Type=Forecast, Account Code = 40014, Contract Type = Out of Contract`.
+    - `HARP_DATA` sheet — same unpivot, monthly columns 31/01/2025→31/12/2035. The code column is literally `Project Code` (`HAP-03`) here, NOT `Project` (which is the name). Drop the junk trailing columns `Column154`/`Column155`/`BLANK` before unpivot. HARP is **Construction** (Project Type), so default its `Account Code` to **40011** (Construction revenue), not 40010 — confirm.
+    - Both should land into `fact_Revenue` with `Type=Forecast`. For the `31.12.2025` sheet default `Account Code` to `40010` (Operational revenue) unless the sheet specifies otherwise — confirm at next client meeting.
+3. **OOC forecast**: ingest the **Additional Services Forecast** file (`stg_AdditionalServicesForecast`, delivered, by month + project code). Tag `Type=Forecast, Account Code = 40014, Contract Type = Out of Contract`. No YTD subtraction needed — it is already per-month.
 
 Power Query for the unpivot step on `stg_EMS Fixed Fee Forecast_31Dec2025`:
 ```m
@@ -997,7 +1106,7 @@ Schema:
 | Column | Source |
 |---|---|
 | `Date` | actuals: `Period End Date` or `Transaction Date`; staff actuals: aggregated from `fact_Timesheet`; forecasts: `Forecast Date` |
-| `Project Code` | NetSuite Project Code (or null for `EMS 90`) |
+| `Project Code` | NetSuite actuals: `Class: Class External ID` (no literal Project Code column in the GL); timesheet staff: `dogma_project` (or `EMS 90`); forecasts: staging Project Code |
 | `Employee TWR` | for staff cost only; null otherwise |
 | `Account Code` | NetSuite Account Code; staff cost has no account code → use a placeholder like `STAFF` |
 | `Category` | `Staff` / `Subcontractor` / `Other Cost` — looked up via `dim_Accounts[Cost Category]` |
@@ -1009,10 +1118,10 @@ Sources to union:
 1. **Subcontractor actuals**: from `FinanceOutput FY26.xlsx` → `FY2026` sheet, filter to `Account No. IN {60201, 60203}`. Tag `Category=Subcontractor, Type=Actual`.
 2. **Other actuals**: from same sheet, filter to expense accounts that are **not** `60201`, **not** `60203`, **not** the temp-staff account (confirm exact code with client). Tag `Category=Other Cost, Type=Actual`.
 3. **Staff actuals**: aggregate `fact_Timesheet` grouped by `Date`, `Project Code`, `TimeWorkReference`, summing `Cost`. Tag `Category=Staff, Type=Actual`.
-4. **Staff forecast**: from Dataverse `crbb5_jedoxallocation`, filter `Version = "Forecast"`. Compute `Cost = Value × (StaffCostPerDay × Working Days In Period)` joined via `HR Reference` → `TimeWorkReference` and `Project Reference` → `Project Code`. Tag `Category=Staff, Type=Forecast`.
-5. **Subcontractor forecast**: source TBD (pending client). Leave as an empty union branch until file arrives.
+4. **Staff forecast**: from Dataverse `crbb5_jedoxallocation`, filter `crbb5_version = "Forecast"`. Join via `crbb5_hrreference` → `TimeWorkReference` and `crbb5_projectreference` → `Project Code`, period from `crbb5_year`/`crbb5_yeardate` (annual). Compute `Amount = crbb5_value × DayRate` (assuming `crbb5_value` = days — confirm via `crbb5_resourcemeasure`). Tag `Category=Staff, Type=Forecast`.
+5. **Subcontractor forecast**: ingest the **Subcontractor Forecast** file (`stg_SubcontractorForecast`, delivered, by month + project code). Tag `Category=Subcontractor, Type=Forecast`.
 
-**Done when**: `fact_Cost` has rows for all four sources, `Sum(Amount)` filtered to `Category=Subcontractor, Type=Actual` matches NetSuite's 60201+60203 total, and `Category=Staff, Type=Actual` matches the timesheet × rate total.
+**Done when**: `fact_Cost` has rows for all five sources, `Sum(Amount)` filtered to `Category=Subcontractor, Type=Actual` matches NetSuite's 60201+60203 total, and `Category=Staff, Type=Actual` matches the timesheet × rate total.
 
 ### Task 3.4: Verify retire-list tables are unused, then delete
 
@@ -1061,6 +1170,12 @@ In-Contract Revenue = CALCULATE([Revenue], fact_Revenue_Live[Contract Type] = "I
 Out-of-Contract Revenue = CALCULATE([Revenue], fact_Revenue_Live[Contract Type] = "Out of Contract")
 
 Revenue YTD = CALCULATE([Revenue Actual], DATESYTD(dim_Date_Live[Date]))
+
+-- Four-way split for the PoC tables (Act/For × In/Oo)
+Rev Act In = CALCULATE([Revenue], fact_Revenue_Live[Type]="Actual",   fact_Revenue_Live[Contract Type]="In Contract")
+Rev Act Oo = CALCULATE([Revenue], fact_Revenue_Live[Type]="Actual",   fact_Revenue_Live[Contract Type]="Out of Contract")
+Rev For In = CALCULATE([Revenue], fact_Revenue_Live[Type]="Forecast", fact_Revenue_Live[Contract Type]="In Contract")
+Rev For Oo = CALCULATE([Revenue], fact_Revenue_Live[Type]="Forecast", fact_Revenue_Live[Contract Type]="Out of Contract")
 ```
 
 ### Cost measures
@@ -1075,6 +1190,12 @@ Costs Actual = CALCULATE([Total Costs], fact_Cost_Live[Type] = "Actual")
 Costs Forecast = CALCULATE([Total Costs], fact_Cost_Live[Type] = "Forecast")
 
 Costs YTD = CALCULATE([Costs Actual], DATESYTD(dim_Date_Live[Date]))
+
+-- Category × Type split for the PoC tables (Staff/Subcontractor × Act/For)
+Staff Cost Act  = CALCULATE([Staff Costs], fact_Cost_Live[Type]="Actual")
+Staff Cost For  = CALCULATE([Staff Costs], fact_Cost_Live[Type]="Forecast")
+Subcon Cost Act = CALCULATE([Subcontractor Costs], fact_Cost_Live[Type]="Actual")
+Subcon Cost For = CALCULATE([Subcontractor Costs], fact_Cost_Live[Type]="Forecast")
 ```
 
 Note: `Category` filters in the cost measures sit directly on `fact_Cost_Live`, not via `dim_Accounts_Live`, because staff cost rows have a null `Account Code` (timesheet-derived) and would be lost if we filtered via the dim.
@@ -1092,6 +1213,38 @@ Margin Forecast % = DIVIDE([Profit Forecast], [Revenue Forecast])
 
 Profit Variance = [Profit Forecast] - [Profit Actual]
 ```
+
+### PoC table roll-ups
+
+These compose the named columns of the two PoC tables (YTD and YTF + Forecast). Both tables now carry **Staff Cost** and **Subcontractor Costs** columns per the v2 layout.
+
+```dax
+-- YTD Profitability table (Account-code actuals only)
+Rev Act In YTD  = CALCULATE([Rev Act In], DATESYTD(dim_Date_Live[Date]))
+Rev Act Oo YTD  = CALCULATE([Rev Act Oo], DATESYTD(dim_Date_Live[Date]))
+Total Rev YTD   = [Rev Act In YTD] + [Rev Act Oo YTD]
+Staff Cost YTD  = CALCULATE([Staff Cost Act], DATESYTD(dim_Date_Live[Date]))
+Subcon Cost YTD = CALCULATE([Subcon Cost Act], DATESYTD(dim_Date_Live[Date]))
+Total Cost YTD  = [Staff Cost YTD] + [Subcon Cost YTD]
+Profit YTD      = [Total Rev YTD] - [Total Cost YTD]
+Margin YTD %    = DIVIDE([Profit YTD], [Total Rev YTD])
+
+-- YTF + Forecast table (full-year = actual + forecast)
+Total Rev FY    = [Rev Act In] + [Rev Act Oo] + [Rev For In] + [Rev For Oo]
+Total Cost FY   = [Staff Cost Act] + [Staff Cost For] + [Subcon Cost Act] + [Subcon Cost For]
+Profit FY       = [Total Rev FY] - [Total Cost FY]
+Margin FY %     = DIVIDE([Profit FY], [Total Rev FY])
+```
+
+**Row hierarchy (both tables)** — confirmed by Chris, 27 May check-in:
+- **Top level = `dim_Project_Live[Sector]`** — the sector **name** (Social Infrastructure, Renewables, …), not the numeric "Sector 1/2/3" placeholders shown in the PoC mock-up (those were just row IDs).
+- **Drill level = `dim_Project_Live[Project Display]`** — the merged `"<Project Code> - <Project Name>"` label, so each project shows its code and full description together.
+
+**Matrix layout — YTD table** (rows = `Sector` → `Project Display`): `Rev Act In YTD` (In Contract), `Rev Act Oo YTD` (Oo Contract), `Total Rev YTD`, `Staff Cost YTD`, `Subcon Cost YTD` (Subcontractor Costs), `Total Cost YTD`, `Profit YTD`, `Margin YTD %`.
+
+**Matrix layout — YTF + Forecast table** (rows = `Sector` → `Project Display`): `Rev Act In`, `Rev Act Oo`, `Rev For In`, `Rev For Oo`, `Total Rev FY`, `Staff Cost Act`, `Staff Cost For`, `Subcon Cost Act`, `Subcon Cost For`, `Total Cost FY`, `Profit FY`, `Margin FY %`. Power BI's Matrix cannot reproduce the banded `Revenue Act / Revenue For / Cost Act / Cost For` super-headers from a flat value list — accept flat headers, or use a calculation group crossing a `Scenario` (Actual/Forecast) item with Contract Type on columns.
+
+**Sanity check (Chris, 27 May):** with staff cost = booked hours × hourly rate, he expects sector **margins around 50–55%** — a lot of time is booked to these projects, so staff cost is high. If a sector reads a much higher margin (e.g. 80–90%), staff costs are probably under-counting (missing timesheet hours, unmatched rates, or `EMS 90` leakage) — investigate before sign-off.
 
 ### Data quality measures
 ```dax
@@ -1221,12 +1374,12 @@ Open both `.pbix` files side-by-side: the `_pre-refactor` backup and the working
 
 Most original blockers were resolved in the post-Wednesday meeting. Remaining:
 
-1. ~~Staff-cost formula~~ — ✅ **resolved**. Final: `hours × (Annual rate / 261 / hours-per-day)`, no cap. Booked hours allocate to projects; un-booked goes to overhead.
-2. **OOC revenue forecast file (Grant)** — confirmed coming from SharePoint, **not yet delivered**. Without it, `fact_Revenue[Type=Forecast, Contract Type=Out of Contract]` will be empty.
-3. **Subcontractor cost forecast file** — ✅ source confirmed (new SharePoint Excel file from Chris). **Not yet delivered**. Without it, `fact_Cost[Type=Forecast, Category=Subcontractor]` will be empty.
-4. **Annual rate vs Day rate vs Hourly rate** — ask the client which they'll send. Recommend Annual rate.
+1. ~~Staff-cost formula~~ — ✅ **resolved** (client email). Final: `booked hours × (Day rate / hours-per-day)`, hours-per-day 7.5 UK+IE / 8 Italy, no cap and no over/under-standard-hours adjustment. Booked hours allocate to projects; un-booked goes to overhead.
+2. ~~OOC revenue forecast file~~ — ✅ **delivered**. Now the **Additional Services Forecast** file in the SharePoint Data folder, by month + project code → `stg_AdditionalServicesForecast`.
+3. ~~Subcontractor cost forecast file~~ — ✅ **delivered**. **Subcontractor Forecast** file in the SharePoint Data folder, by month + project code → `stg_SubcontractorForecast`.
+4. ~~Annual rate vs Day rate vs Hourly rate~~ — ✅ **resolved**. Client supplies **day rates**; divide by 7.5 (UK/IE) or 8 (Italy) for the hourly charge.
 5. **Fabric workspace** — currently Power BI Pro only. Confirm whether Fabric is being enabled.
-6. **VM clipboard** — copy-paste block; slows development. Client to investigate.
+6. **VM clipboard** — copy-paste block; slows development. Client to investigate. (Email notes 3rd-party-user permissions adjusted so scripts can be copied across — verify this unblocks it.)
 7. **Timesheet data scope** — `dogma_timesheet` has rows from 2023; confirm we only ingest 2026 (Sanjana asked, not yet answered in transcript).
 
 - Emplyooee contractor => permanent relationshipc

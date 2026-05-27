@@ -25,20 +25,24 @@
 let
     Source = #"dogma_timesheet",
 
+    // dogma_timesheet is exposed by LOGICAL name (confirmed against its
+    // column list): use crbb5_isduplicate / crbb5_marktodelete / dogma_date /
+    // dogma_duration, NOT the display names.
+
     // Step 1 — filter out flagged-bad rows
-    NotDuplicate = Table.SelectRows(Source, each [#"is Duplicate?"] <> true),
-    NotMarkToDelete = Table.SelectRows(NotDuplicate, each [#"mark to delete"] <> true),
+    NotDuplicate = Table.SelectRows(Source, each [crbb5_isduplicate] <> true),
+    NotMarkToDelete = Table.SelectRows(NotDuplicate, each [crbb5_marktodelete] <> true),
 
     // Step 2 — filter to 2026 only
-    Year2026Only = Table.SelectRows(NotMarkToDelete, each Date.Year([Date]) = 2026),
+    Year2026Only = Table.SelectRows(NotMarkToDelete, each Date.Year([dogma_date]) = 2026),
 
-    // Step 3 — surface TWR from the (doubled-prefix) lookup column
-    // TODO: confirm the exact source column name; this assumes
-    //       crbb5_crbb5_timeworkreferencename is already exposed as a column.
-    //       If it sits inside a lookup table, expand it first.
+    // Step 3 — surface TWR from the (doubled-prefix) lookup column, plus
+    //          friendly names for date / duration / project.
     Renamed = Table.RenameColumns(Year2026Only, {
         {"crbb5_crbb5_timeworkreferencename", "TimeWorkReference"},
-        {"dogma_project",                     "Project Code"}
+        {"dogma_project",                     "Project Code"},
+        {"dogma_date",                        "Date"},
+        {"dogma_duration",                    "Duration"}
     }),
 
     // Step 4 — keep only columns we need

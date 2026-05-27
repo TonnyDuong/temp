@@ -16,7 +16,12 @@
 //   Subsidiary ends in "ESS"             →  "Italy"
 //   Subsidiary ends in EMS/BWG/BWS or other → "UK"
 //
-// Unique transaction-line key: Transaction Line ID & "-" & Transaction Ref.
+// Unique transaction-line key (corrected): [Transaction: Transaction ID]
+//   & "-" & [Transaction Line ID]  →  e.g. "770163-0", "770163-1".
+//
+// Project Code source (corrected): the FY2026 GL has NO literal Project
+//   Code column. The project is the NetSuite Class; the code lives in
+//   [Class: Class External ID] (e.g. "ASH-01"). Renamed below.
 // =====================================================================
 let
     Source = #"stg_FinanceOutput FY26_FY2026",
@@ -46,9 +51,9 @@ let
         each if [#"Account No."] = 40014 then "Out of Contract" else "In Contract",
         type text),
 
-    // Step 4 — unique line key
+    // Step 4 — unique line key (Transaction ID + Transaction Line ID)
     AddTLK = Table.AddColumn(AddContractType, "TransactionLineKey",
-        each Text.From([#"Transaction Line ID"]) & "-" & Text.From([#"Transaction Ref."]),
+        each Text.From([#"Transaction: Transaction ID"]) & "-" & Text.From([#"Transaction Line ID"]),
         type text),
 
     // Step 5 — constants for the fact schema
@@ -57,11 +62,11 @@ let
 
     // Step 6 — final shape (matches fact_Revenue_Live schema)
     Renamed = Table.RenameColumns(AddSnapshot, {
-        {"Period End Date",        "Date"},
-        {"Account No.",            "Account Code"},
-        {"Sum of Amount",          "Amount"},
-        {"Subsidiary: Full Name",  "Subsidiary"}
-        // TODO: confirm "Project Code" is the literal column name in source
+        {"Period End Date",          "Date"},
+        {"Account No.",              "Account Code"},
+        {"Sum of Amount",            "Amount"},
+        {"Subsidiary: Full Name",    "Subsidiary"},
+        {"Class: Class External ID", "Project Code"}   // GL has no literal Project Code; Class External ID holds it
     }),
 
     Final = Table.SelectColumns(Renamed,

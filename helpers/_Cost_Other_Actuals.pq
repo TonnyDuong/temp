@@ -54,9 +54,10 @@ let
     AddTWR      = Table.AddColumn(AddSnapshot,    "TimeWorkReference", each null, type text),
 
     Renamed = Table.RenameColumns(AddTWR, {
-        {"Period End Date", "Date"},
-        {"Account No.",     "Account Code"},
-        {"Sum of Amount",   "Amount"}
+        {"Period End Date",          "Date"},
+        {"Account No.",              "Account Code"},
+        {"Sum of Amount",            "Amount"},
+        {"Class: Class External ID", "Project Code"}   // GL has no literal Project Code; Class External ID holds it
     }),
 
     Final = Table.SelectColumns(Renamed,

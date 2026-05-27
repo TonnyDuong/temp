@@ -69,8 +69,8 @@ Queries depend on each other. If you're pasting them in for the first time, crea
    - `dimensions/dim_ForecastSnapshot_Live.pq` (standalone)
    - `dimensions/dim_ForecastVersion_Live.pq` (depends on `crbb5_jedoxallocation`)
 3. **Helpers** (load-disabled — these are sub-queries that get appended into the facts)
-   - `helpers/_Revenue_*.pq`
-   - `helpers/_Cost_*.pq`
+   - `helpers/_Revenue_*.pq` — note `_Revenue_Forecast_OOC` depends on `stg_AdditionalServicesForecast` (delivered SharePoint file, by month + project code)
+   - `helpers/_Cost_*.pq` — note `_Cost_Subcontractor_Forecast` depends on `stg_SubcontractorForecast` (delivered SharePoint file, by month + project code)
 4. **Facts**
    - `facts/fact_Timesheet_Live.pq` (depends on `dogma_timesheet`, `dim_StaffCosts_Live`)
    - `facts/fact_Revenue_Live.pq` (depends on the `_Revenue_*` helpers)
