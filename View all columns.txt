@@ -1,0 +1,34 @@
+let
+    Source = #"Changed Type",
+
+    ColumnNames =
+        Table.FromList(
+            Table.ColumnNames(Source),
+            Splitter.SplitByNothing(),
+            {"Column Name"}
+        ),
+
+    AddIndex =
+        Table.AddIndexColumn(ColumnNames, "Index", 0, 1, Int64.Type),
+
+    AddRowNumber =
+        Table.AddColumn(AddIndex, "Row", each Number.Mod([Index], 50) + 1, Int64.Type),
+
+    AddGroupNumber =
+        Table.AddColumn(AddRowNumber, "Group", each "Column Set " & Text.From(Number.IntegerDivide([Index], 50) + 1), type text),
+
+    RemoveIndex =
+        Table.RemoveColumns(AddGroupNumber, {"Index"}),
+
+    Pivoted =
+        Table.Pivot(
+            RemoveIndex,
+            List.Distinct(RemoveIndex[Group]),
+            "Group",
+            "Column Name"
+        ),
+
+    Sorted =
+        Table.Sort(Pivoted, {{"Row", Order.Ascending}})
+in
+    Sorted
