@@ -63,9 +63,12 @@ let
     ExpandRate = Table.ExpandTableColumn(MergedRate, "Rate_Lookup",
         {"StaffCostPerHour"}, {"StaffCostPerHour"}),
 
-    // Step 7 — compute cost
+    // Step 7 — compute cost. If the employee has no rate in dim_StaffCosts
+    //          for that year (joiner, leaver, missing rate row), default the
+    //          cost to 0 — mirrors the client's IFERROR(..., 0) pattern in
+    //          the YUN-01 reference workbook.
     AddCost = Table.AddColumn(ExpandRate, "Cost",
-        each [Duration] * [StaffCostPerHour],
+        each [Duration] * (if [StaffCostPerHour] = null then 0 else [StaffCostPerHour]),
         Currency.Type),
 
     // Step 8 — flag EMS 90 rows

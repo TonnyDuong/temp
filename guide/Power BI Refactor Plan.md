@@ -320,7 +320,12 @@ The client supplies **day rates** directly. No floor, no ceiling, no monthly cap
    - Custom column formula: `[DayRate] / [HoursPerDay]`
    - **OK**.
    - Change type to **Currency**.
-5. Click **Home** → **Close & Apply**.
+5. Add a composite `StaffKey` column (so a single-column relationship can join `dim_StaffCosts_Live` to a fact that carries the same key):
+   - **Add Column** → **Custom Column**.
+   - New column name: `StaffKey`
+   - Custom column formula: `[TimeWorkReference] & "-" & Text.From([Year])`
+   - **OK**. Change type to **Text**.
+6. Click **Home** → **Close & Apply**.
 
 **How to check it worked**:
 - Find `Agnew, Samantha` (TWR `SAG`): `DayRate` = £241.55 (her 2026 value) and `StaffCostPerHour` = £32.21 (241.55 / 7.5).
@@ -344,30 +349,32 @@ The client supplies **day rates** directly. No floor, no ceiling, no monthly cap
 2. Right-click `crbb5_bamboohr` in the Queries panel → **Reference**.
 3. Rename the new query to **`dim_Employee_Live`**.
 4. With `dim_Employee_Live` selected, click **Home** → **Choose Columns** → **Choose Columns**.
-5. In the dialog that opens, **untick "(Select All Columns)"** to deselect everything, then tick **only** these columns:
-   - `BambooHR` (the key)
-   - `First Name Last Name`
-   - `Time@work Reference`
-   - `Country`
-   - `Department`
-   - `Employment Status`
-   - `Hire Date`
-   - `Termination Date`
-   - `Job Title`
-   - `Manager Backup`
-   - `Budget Holder`
+5. In the dialog that opens, **untick "(Select All Columns)"** to deselect everything, then tick **only** these columns (exposed by **logical** name — confirmed against the `crbb5_bamboohr` column list):
+   - `crbb5_bamboohrid` (the key — a GUID; see note below)
+   - `crbb5_firstnamelastname`
+   - `crbb5_timeworkreference`
+   - `crbb5_country`
+   - `crbb5_department`
+   - `crbb5_employmentstatus`
+   - `crbb5_hiredate`
+   - `crbb5_terminationdate`
+   - `crbb5_jobtitle`
+   - `crbb5_managerbackupname`
+   - `crbb5_budgetholder`
    - **OK**.
 6. Rename the columns to friendly names. Right-click each header → **Rename**:
-   - `BambooHR` → `EmployeeID`
-   - `First Name Last Name` → `EmployeeName`
-   - `Time@work Reference` → `TimeWorkReference`
-   - `Manager Backup` → `Manager`
+   - `crbb5_bamboohrid` → `EmployeeID`
+   - `crbb5_firstnamelastname` → `EmployeeName`
+   - `crbb5_timeworkreference` → `TimeWorkReference`
+   - `crbb5_managerbackupname` → `Manager`
 7. Add an `IsActive` flag. Click **Add Column** → **Conditional Column**:
    - New column name: `IsActive`
-   - If `Employment Status` equals `"Active"` → Output: `true`
+   - If `crbb5_employmentstatus` equals `"Active"` → Output: `true`
    - Else → Output: `false`
    - **OK**.
    - Change the type of `IsActive` to **True/False** (column header `ABC` icon → True/False).
+
+**Note on `EmployeeID`**: this is currently `crbb5_bamboohrid`, which is a GUID. If the report needs the `EMPEM*` employee-number style used by `dim_StaffCosts` / `stg_Staff Costs Summary`, source it from `crbb5_employee` (or whichever column holds the EMPEM* code) instead. Relationships use `TimeWorkReference` so this is cosmetic.
 8. **Close & Apply**.
 
 **How to check it worked**:
@@ -847,7 +854,7 @@ This one aggregates `fact_Timesheet_Live` rows up to the cost-fact grain (one ro
 1. Right-click `crbb5_jedoxallocation` → **Reference**.
 2. Rename to **`_Cost_Staff_Forecast`**.
 3. Filter **`crbb5_version`** to `"Forecast"` only.
-4. Rename: `crbb5_hrreference` → `TimeWorkReference` (the TWR join key — confirm vs `crbb5_hrcode`), `crbb5_projectreference` → `Project Code`, `crbb5_yeardate` → `Date`, `crbb5_value` → `Allocation`, `crbb5_year` → `Year`. **Note: Jedox is ANNUAL — there is no "Allocation Date"; the period is `crbb5_year`/`crbb5_yeardate`.**
+4. Rename: `crbb5_hrreferencename` → `TimeWorkReference` and `crbb5_projectreferencename` → `Project Code` (use the **`_name`** columns — they hold the human-readable codes; the `crbb5_hrreference`/`crbb5_projectreference` columns are lookup GUIDs). Then `crbb5_yeardate` → `Date`, `crbb5_value` → `Allocation`, `crbb5_year` → `Year`. **Note: Jedox is ANNUAL — there is no "Allocation Date"; the period is `crbb5_year`/`crbb5_yeardate`.**
 5. Merge with `dim_StaffCosts_Live` on `TimeWorkReference` + `Year` to fetch `DayRate`.
 6. Compute the forecast cost. **Formula depends on what `crbb5_value` is** (`crbb5_resourcemeasure` is its unit):
    ```
@@ -976,7 +983,7 @@ The same relationships with implementation notes:
 | 13 | `fact_Timesheet_Live[TimeWorkReference]` | `dim_Employee_Live[TimeWorkReference]` | |
 
 **Notes / non-relationships:**
-- **`dim_StaffCosts_Live`** keys on (`TimeWorkReference`, `Year`) — a **composite** key, which Power BI relationships can't express, and it carries multiple rows per employee. It is a **Power Query helper** (its rate is already baked into `fact_Timesheet_Live[Cost]` and the staff forecast), so leave it **hidden with no relationship**. (Do *not* relate it to `dim_Employee` on `TimeWorkReference` alone — that's a valid many-to-one but it serves no reporting purpose and clutters the model.)
+- **`dim_StaffCosts_Live`** keys on (`TimeWorkReference`, `Year`). Its rate is already baked into `fact_Timesheet_Live[Cost]` and the staff forecast, so it doesn't need to be active in the model. It now carries a **`StaffKey` = `<TWR>-<Year>`** column — if a future use case wants to expose `DayRate` / `StaffCostPerHour` to visuals, derive the same `StaffKey` on `fact_Timesheet_Live` (`= [TimeWorkReference] & "-" & Text.From([Year])`) and relate `fact_Timesheet_Live[StaffKey]` → `dim_StaffCosts_Live[StaffKey]` (Many-to-One, single-direction). Until then, hide `dim_StaffCosts_Live` with no relationship.
 - **`dim_ForecastVersion_Live`** is currently **disconnected** — no fact carries a `Version` column (we filter Jedox to `Forecast` during ingest). To make it a usable slicer, add a `Version` column to `fact_Cost_Live` forecast rows, then relate `fact_Cost_Live[Version]` → `dim_ForecastVersion_Live[Version]`. Until then, hide it or drop it.
 - **`Subsidiary`** is a plain text column on the facts (no `dim_Subsidiary`); slice on it directly, or build a small dim later if a hierarchy is needed.
 
@@ -1305,6 +1312,12 @@ Open both `.pbix` files side-by-side: the `_pre-refactor` backup and the working
 - [ ] `[Out-of-Contract Revenue]` matches.
 - [ ] `[Subcontractor Costs]` matches the NetSuite total of `60201 + 60203`.
 - [ ] `[Staff Costs]` (Actual) matches a manual spot-check: pick 5 employees, multiply their booked hours × hourly rate from `dim_StaffCosts_Live`, sum, compare.
+- [ ] **YUN-01 worked-example reconciliation (client-provided, in the Data folder).** Filter `[Staff Cost Act]` to `dim_Project_Live[Project Code] = "YUN-01"` and confirm the totals match the client's reference workbook:
+  - 2025: **£58,770.73**
+  - 2026: **£18,984.92**
+  - **Total: £77,755.65**
+  - Per-employee spot-checks (within rounding): ATE £6,721.41, DTH £8,917.51, RLU £11,499.82, TWH £44,495.80.
+  - All ten employees in the reference file are UK/IE (the example formula hard-codes `÷ 7.5`). If our model reads any of those TWRs as `Italy` and applies `÷ 8`, totals will differ — that's a `dim_Employee_Live[Country]` data issue, not a formula bug.
 - [ ] `[Profit YTD]` matches.
 - [ ] Contractor → permanent dedup test: filter to `EmployeeName = "Robbins Andrew"` in `dim_Employee_Live` — one row only. His historic cost in `fact_Cost_Live` should sum to the contractor + permanent total combined.
 
@@ -1372,20 +1385,28 @@ Open both `.pbix` files side-by-side: the `_pre-refactor` backup and the working
 
 ## Blockers to escalate
 
-Most original blockers were resolved in the post-Wednesday meeting. Remaining:
+### ✅ Resolved
+1. ~~Staff-cost formula~~ — client email. Final: `booked hours × (Day rate / hours-per-day)`, hours-per-day 7.5 UK+IE / 8 Italy, no cap, no over/under-standard-hours adjustment. Validated by the YUN-01 worked example (target £77,755.65, see Phase 5).
+2. ~~OOC revenue forecast file~~ — delivered. **Additional Services Forecast** → `stg_AdditionalServicesForecast`.
+3. ~~Subcontractor cost forecast file~~ — delivered. **Subcontractor Forecast** → `stg_SubcontractorForecast`.
+4. ~~Annual / Day / Hourly rate~~ — client supplies **day rates** directly (the `2025` / `2026` columns in `stg_Staff Costs Summary`).
 
-1. ~~Staff-cost formula~~ — ✅ **resolved** (client email). Final: `booked hours × (Day rate / hours-per-day)`, hours-per-day 7.5 UK+IE / 8 Italy, no cap and no over/under-standard-hours adjustment. Booked hours allocate to projects; un-booked goes to overhead.
-2. ~~OOC revenue forecast file~~ — ✅ **delivered**. Now the **Additional Services Forecast** file in the SharePoint Data folder, by month + project code → `stg_AdditionalServicesForecast`.
-3. ~~Subcontractor cost forecast file~~ — ✅ **delivered**. **Subcontractor Forecast** file in the SharePoint Data folder, by month + project code → `stg_SubcontractorForecast`.
-4. ~~Annual rate vs Day rate vs Hourly rate~~ — ✅ **resolved**. Client supplies **day rates**; divide by 7.5 (UK/IE) or 8 (Italy) for the hourly charge.
-5. **Fabric workspace** — currently Power BI Pro only. Confirm whether Fabric is being enabled.
-6. **VM clipboard** — copy-paste block; slows development. Client to investigate. (Email notes 3rd-party-user permissions adjusted so scripts can be copied across — verify this unblocks it.)
-7. **Timesheet data scope** — `dogma_timesheet` has rows from 2023; confirm we only ingest 2026 (Sanjana asked, not yet answered in transcript).
+### 🔴 Open — block correct numbers if not answered
+5. **HARP revenue account code** — defaulted to **`40011` (Construction)** because HARP Project Type is "Construction"; confirm vs `40010` (Operational).
+6. **Jedox `crbb5_value` meaning** — days, % of year, or FTE? (Driven by `crbb5_resourcemeasure`.) Determines whether `Amount = value × DayRate` or `value × 261 × DayRate`. Helper currently assumes **days**.
+7. **Jedox TWR join key** — script uses `crbb5_hrreferencename` (the lookup `_name` column). Confirm this carries the 3-letter TWR code (`SAG`, `CAL` …) and not the employee's full name. Fallback: `crbb5_hrcode`.
+8. **`EMSI-IT*` = Live Italian** — inferred from data (active billing 2024–2040 ESS contracts). Confirm explicitly; without it those contracts fall into `"Other"` phase and disappear from Live-filtered visuals.
+9. **Temp-staff account code** — `_Cost_Other_Actuals` needs to exclude this code so timesheet-booked workers aren't double-counted. Currently no exclusion code in place.
 
-- Emplyooee contractor => permanent relationshipc
-- Days in a year
-- Subsisry
-- 
+### 🟡 Open — important but not yet blocking
+10. **Mid-year rate changes / part-time pro-rating** — the model assumes one day rate per (employee, year). If anyone changed rate mid-year, or any rate is not already pro-rated for part-time, numbers will drift.
+11. **Forecast vs actual overlap** — `31.12.2025` in-contract forecast covers all 2026 months; NetSuite actuals also flow in by month. Confirm whether the YTF table's `Revenue For` / `Cost For` should be **remaining months only** (filtered by `Date >= today`) or full-year forecast regardless.
+12. **`EMS-PR*` (Pipeline) inclusion** — should pipeline contracts appear in the Live report views or be filtered out by default?
+13. **Timesheet data scope** — `dogma_timesheet` has rows from 2023; confirm we only ingest 2026.
+
+### 🟢 Logistics
+14. **Fabric workspace** — currently Power BI Pro only. Confirm whether Fabric is being enabled.
+15. **VM clipboard** — email notes 3rd-party-user permissions were adjusted so scripts can be copied across. Verify this unblocks Sanjana.
 
 ## Reference: where each business rule comes from
 

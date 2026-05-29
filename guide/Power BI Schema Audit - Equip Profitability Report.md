@@ -250,12 +250,20 @@ Both of these were already in the Sheet 1 design — confirmed as required, not 
 ### Outstanding items pending the next call
 | Item | Status |
 |---|---|
-| ~~Exact replacement formula for staff cost~~ | ✅ **Resolved** — see Final staff-cost formula section below |
+| ~~Exact replacement formula for staff cost~~ | ✅ **Resolved & validated** — see Final staff-cost formula section below. YUN-01 worked example provides a reconciliation target of £77,755.65. |
 | ~~Blank `Location: Full Name` values in `fact_FinanceFY2026`~~ | ✅ **Resolved** — set defaults by subsidiary; see Blank Location handling below |
-| ~~Subcontractor cost forecast source~~ | ✅ **Delivered** — Subcontractor Forecast spreadsheet in the SharePoint Data folder, by month + project code → `stg_SubcontractorForecast` |
-| ~~OOC revenue forecast source~~ | ✅ **Delivered** — Additional Services Forecast spreadsheet in the SharePoint Data folder, by month + project code → `stg_AdditionalServicesForecast` |
-| ~~Rate type the client will send (Annual / Day / Hourly)~~ | ✅ **Resolved** — client supplies **day rates**; hourly = day rate ÷ 7.5 (UK/IE) or ÷ 8 (Italy) |
-| VM clipboard / copy-paste block | Client to investigate |
+| ~~Subcontractor cost forecast source~~ | ✅ **Delivered** — Subcontractor Fees Forecast spreadsheet (wide monthly, header row 3) → `stg_SubcontractorForecast` |
+| ~~OOC revenue forecast source~~ | ✅ **Delivered** — Additional Services Forecast spreadsheet (wide monthly, header row 5) → `stg_AdditionalServicesForecast` |
+| ~~Rate type the client will send (Annual / Day / Hourly)~~ | ✅ **Resolved** — client supplies **day rates** directly in `stg_Staff Costs Summary[2025 / 2026]`; no `/261` step |
+| **HARP revenue account code** | 🔴 Open — helper defaults to `40011` (Construction); confirm vs `40010` (Operational) |
+| **Jedox `crbb5_value` measure** | 🔴 Open — days vs % of year vs FTE? Drives the £ formula |
+| **Jedox TWR join key** | 🔴 Open — helper uses `crbb5_hrreferencename` (the lookup `_name` column); confirm it carries the TWR code (vs `crbb5_hrcode`) |
+| **`EMSI-IT*` = Live Italian** | 🔴 Open — inferred from data (ESS, active to 2040); confirm explicitly |
+| **Temp-staff account code** | 🔴 Open — must exclude from `_Cost_Other_Actuals` to avoid double-counting workers who book timesheets |
+| **Mid-year rate changes / part-time pro-rating** | 🟡 Open — model assumes one rate per (employee, year); is the day rate already pro-rated for part-time? |
+| **Forecast vs actual overlap on YTF table** | 🟡 Open — should `Revenue For` / `Cost For` filter to remaining months only (`Date >= today`) or sum full-year forecast? |
+| **`EMS-PR*` Pipeline inclusion in Live views** | 🟡 Open — show or filter out? |
+| VM clipboard / copy-paste block | Email notes 3rd-party permissions adjusted; verify this unblocks copy-across |
 | Fabric workspace permissions (currently Power BI Pro only — Fabric not enabled) | Client to investigate; potential blocker |
 | Whether CSV delivery is feasible | Client prefers to keep Excel format; CSV conversion would need Power Automate, not manual |
 | Timesheet data scope — `dogma_timesheet` has rows from 2023 onwards; confirm we only ingest 2026 | Tonny asked Sanjana, not yet confirmed in transcript |
@@ -291,6 +299,20 @@ Behaviour:
 - If someone books less than full hours, the unbooked time goes to **holiday / non-chargeable / overhead** and is **not allocated to projects**: *"only the costs being booked to the projects will be the cost that sits in the profitability."*
 
 **Rate type — RESOLVED (confirmed by data):** `stg_Staff Costs Summary` holds **day rates** directly in its `2025` / `2026` columns (verified against the dim_StaffCosts sample — Agnew 241.55/day → 32.21/hr at ÷7.5). Take `DayRate` straight from the year column and apply the country divisor (7.5 UK/IE, 8 Italy). There is **no `/ 261`** step.
+
+**Worked example — project `YUN-01`** (client-provided reference workbook, in the Data folder). The formulas shown:
+
+```
+Total Cost  = [2025 Cost] + [2026 Cost]
+2025 Cost   = IFERROR(XLOOKUP([User Reference], $B:$B, $E:$E, 0) / 7.5 * [2025 Hours], 0)
+2026 Cost   = IFERROR(XLOOKUP([User Reference], $B:$B, $F:$F, 0) / 7.5 * [2026 Hours], 0)
+```
+
+Expected totals for `YUN-01`: **2025 £58,770.73 + 2026 £18,984.92 = £77,755.65**. Per-employee samples: ATE £6,721.41, DTH £8,917.51, RLU £11,499.82, TWH £44,495.80.
+
+This is mathematically equivalent to our model: `fact_Timesheet[Cost] = Duration × StaffCostPerHour`, then summed across the year per (employee, project). Use this as the **Phase 5 staff-cost reconciliation target**.
+
+Note: the example hard-codes `÷ 7.5` because every employee in the YUN-01 sample is UK/IE. The country-aware rule (`÷ 8` for Italy) still applies in the general model — confirmed by the earlier email and unchanged. The `IFERROR(..., 0)` defaults to zero when a rate is missing; `fact_Timesheet_Live[Cost]` now mirrors this with `if StaffCostPerHour = null then 0 else ...`.
 
 ### Future enhancement — proportional overhead allocation (Phase 2)
 
