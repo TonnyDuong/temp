@@ -22,14 +22,25 @@
 //                           There is NO "Allocation Date" — Jedox is yearly.
 //   crbb5_resourcemeasure → the unit of crbb5_value (days / % / FTE — TBC)
 // ---------------------------------------------------------------------
-// TODO (business rule — confirm with Chris before go-live):
-//   - What does crbb5_value represent (allocated DAYS, a % of the year, or
-//     an FTE fraction)? See crbb5_resourcemeasure. This drives the £ formula:
-//       * days  → Amount = value × DayRate
-//       * % year→ Amount = value × 261 × DayRate
-//     The line below assumes DAYS (Amount = value × DayRate). FIX once known.
-//   - Jedox is ANNUAL. The PoC "Cost For (staff)" full-year column is fine
-//     with an annual figure; if a monthly spread is needed, define it.
+// Business rule (29 May meeting — partial; full example pending from Chris):
+//   crbb5_value is most likely the **% of FTE time** allocated (e.g. 0.25
+//   = a quarter of the person's year). The naive formula
+//     Amount = value × 261 × DayRate
+//   would over-state cost because the 261 working days include public
+//   holidays + annual leave that are NOT charged to projects on the
+//   actuals side (only booked timesheet hours are). To reconcile with
+//   actuals we need to strip a standard holiday-day allowance from the
+//   261-day base, e.g.:
+//     Amount = value × (261 - holiday_days) × DayRate
+//   Chris is preparing a worked example and will confirm the exact
+//   holiday-day allowance + formula. UPDATE THIS HELPER WHEN RECEIVED.
+//
+// The line below currently uses the placeholder `value × DayRate`
+// (the "value is in days" assumption from the previous pass). LEAVE A
+// BIG VISIBLE GAP until the FTE-with-holiday formula is confirmed.
+// ---------------------------------------------------------------------
+// TODO:
+//   - Replace AddAmount formula with Chris's confirmed FTE+holiday calc.
 //   - Confirm crbb5_version value to filter on ("Forecast" vs a choice id).
 //   - Confirm the *_name lookup columns carry the human-readable TWR / project
 //     code values. If not, expand the underlying lookup or switch to crbb5_hrcode.

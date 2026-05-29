@@ -97,10 +97,11 @@ Only these four account codes feed the report's revenue measures.
 ### Cost classification — by NetSuite Account Code
 | Account Code | Account Name | Cost Category | Notes |
 |---|---|---|---|
-| `60201` | Subcontractor costs | **Subcontractor** | confirmed by Chris Rolls 13/05 |
+| `60201` | Subcontractor costs | **Subcontractor** | confirmed by Chris 13/05 |
+| `60202` | Subcontractor costs | **Subcontractor** | confirmed by Chris 29/05 — was missing from the earlier list |
 | `60203` | Subcontractor costs | **Subcontractor** | confirmed |
+| `607xxx` (any 607-prefixed account) | Temporary staff / consultancy fees | **EXCLUDED** | these workers ARE on timesheets, so their cost is already counted via `fact_Timesheet`. Including them as cost here would double-count. (Chris, 29/05 meeting.) |
 | (timesheet-derived) | — | **Staff costs** | calculated, not booked to a single account |
-| (excluded) | Temporary staff / contractor account | excluded | these workers book timesheets, so they are already captured in Staff costs — including them as Subcontractor would double-count |
 
 The dashboard's "Cost split" chart should expand to three columns: **Staff costs**, **Subcontractor costs**, **Total costs**.
 
@@ -207,10 +208,9 @@ These four subsidiaries are all in scope.
 |---|---|
 | `MSA` | **M**anagement **S**ervices **A**greement — the contract held with the project company (a.k.a. SPV — Special Purpose Vehicle) |
 | `EMS-MSA*` | EMS contract that is **live** |
-| `EMSI-IT*` | **Live Italian / ESS contracts** (corrected from data — e.g. `EMSI-IT001` SUM-01, active billing 2024→2040, EUR fees). **Distinct from the legacy `EMS-IT*`** below — note the extra `I`. Treat as **Live**. |
-| `EMS-IT*` | Italian contracts — **legacy numbering, no longer used** |
-| `EMS-PR*` | Projects in **Pipeline phase** — no signed MSA yet. May be a live bid, or work being delivered out of contract while paperwork is being signed |
-| `HARP` | **H**aweswater **A**queduct **R**esilience **P**roject — a single large project contract. Held under MSA `EMS-MSA289`, project code `HAP-03`, Project Type **Construction**, Supersector **Environmental Services** |
+| `EMS-IT*` and `EMSI-IT*` | **Legacy numbering** from when the contract register was first set up — briefly used, then dropped. **Do not** indicate Italian (Chris, 29 May meeting). Contracts with these prefixes can still be live or otherwise; the live/active determination comes from **Contract Status** (`crbb5_contractstatus`), and the country determination comes from **Subsidiary** (ESS = Italian; EMS/BWG/BWS = UK), NOT from the MSA prefix. |
+| `EMS-PR*` | Projects in **Pipeline phase** — no signed MSA yet. **Excluded** from the profitability report (Chris, 29 May meeting) — only Live / Mobilised / Live-Stage contracts are in scope. |
+| `HARP` | **H**aweswater **A**queduct **R**esilience **P**roject — a single large project contract. MSA `EMS-MSA289`, project code `HAP-03`, Project Type **Construction**, Supersector **Environmental Services**. Posts to **40011 Construction revenue** for its 9-year construction phase, then switches to 40010 Operational. |
 
 ### Project Code is the link to NetSuite — not MSA Reference — (updated)
 The earlier inferred relationship `dim_Contracts[MSA Reference] ↔ fact_FinanceFY2026` is **wrong**. Confirmed by client:
@@ -256,44 +256,46 @@ Both of these were already in the Sheet 1 design — confirmed as required, not 
 - **Subcontractor cost forecast source** — delivered: Subcontractor Fees Forecast (wide monthly, header row 3) → `stg_SubcontractorForecast`.
 - **Rate type** — client provides **day rates** directly in the `2025` / `2026` columns of `Staff Costs Summary`. No `/261` step.
 
-#### 🔴 Open — block correct numbers in the report
+#### ✅ Resolved at the 29 May meeting
+- **HARP revenue account** → **40011 Construction** (currently). Switches to 40010 Operational after HARP's 9-year construction phase ends.
+- **`EMS-IT*` / `EMSI-IT*`** → **both are legacy numbering** from when the contract register was first set up. They do **not** indicate Italian. Country is identified by **subsidiary**: `ESS` → Italian, `EMS / BWG / BWS` → UK.
+- **Subcontractor account codes** → **60201, 60202, 60203** (we were missing 60202). Helpers and `dim_Accounts` updated.
+- **Temp staff / agency invoice accounts** → **any code starting `607`** (607xxx). These workers are already on timesheets — excluded from `_Cost_Other_Actuals` to prevent double-counting.
+- **Pipeline contracts (`EMS-PR*`)** → **excluded** from profitability. Only **Live / Mobilised / Live-Stage** statuses in scope. `dim_Project_Live` now expands `crbb5_contractstatus` and derives `IsInScope`. Full status list to keep is pending from Chris.
+- **Mid-year rate changes** → **not expected.** Annual assumption stays. Nice-to-have for future flexibility (would need a monthly rate profile if introduced).
+- **Forecast on YTF table** → **remaining months only.** Actual + Forecast must sum to total. **Cutover day = 12th of the month** (before the 12th, current month is still forecast; from the 12th, prior month flips to actual).
+- **VM clipboard** → Sanjana's workspace access upgraded from Contributor to **Member**. To retest.
+- **Fabric** → Dashboard 1 has been published to the Fabric workspace; client team to review.
 
-**1. Which NetSuite account does HARP revenue post to?**
-40010 (Operational revenue) or 40011 (Construction revenue)? We've assumed 40011 because HARP is Construction Phase delivery. If wrong, HARP's forecast revenue (~£4.5m/yr) will sit on the wrong line in the report.
+#### 🟡 Still open — pending Chris's follow-up
 
-**2. What does the "value" in the Jedox forecast represent?**
-For each (employee, project, year) row, is the value a number of **days**, a **% of the year**, or an **FTE fraction**? We've assumed days. Get this wrong and the entire staff-cost forecast is off by a large factor (~261×).
+**Jedox forecast calculation.** `crbb5_value` is most likely **% of FTE time** (0.25, 0.15…). Naive `value × 261 × DayRate` over-states because the 261 base includes holidays / annual leave that aren't on the actuals side (only booked timesheet hours are). The formula needs **holiday-day stripping** with a standard allowance (Chris will pick one, not per-employee tenure-based). Chris is preparing a worked example mirroring the YUN-01 actuals one. Replace `_Cost_Staff_Forecast.AddAmount` on receipt; also confirm the right TWR / project-code columns (currently `crbb5_hrreferencename` / `crbb5_projectreferencename`).
 
-**3. Which Jedox column holds the employee's TWR code (SAG, CAL, TWH …)?**
-The candidates are `HR Reference`, `HR Reference (name)`, and `HR Code`. We've assumed `HR Reference (name)`. If that column actually holds the employee's full name instead, **every Jedox-driven forecast cost lands as £0 silently**.
+**Full list of in-scope contract statuses.** Chris confirmed Live / Mobilised / Live-Stage are in, Pipeline is out. Full status list with include/exclude per value to follow; update `dim_Project_Live[IsInScope]` then.
 
-**4. Are `EMSI-IT…` contracts your live Italian contracts?**
-We've spotted eight (e.g. `EMSI-IT001` → SUM-01, billing 2024→2040, ESS entity, fees populated). We've assumed yes — distinct from the legacy `EMS-IT*`. If wrong, these contracts disappear from "Live" report views.
+**2025 financials feed.** Sanjana asked for 2025 NetSuite data alongside FY26 for YoY comparisons. Chris will deliver as a **separate Excel file** in the Data folder. Ingest into a new staging table on arrival.
 
-**5. Which NetSuite account is used for temp staff / agency contractor invoices?**
-Anyone who *both* books timesheets *and* has invoices on this account will be **double-counted** in total cost. We need the code to exclude it from "Other Costs."
+**Timesheet data scope.** Dogma has 2023+ data; we currently ingest only 2026. When the 2025 financials arrive, we likely want 2025 timesheets too.
 
-#### 🟡 Open — important but not yet blocking
+## Decisions from the 29 May 2026 Dashboard + Data Clarifications meeting (most recent — supersede everything below)
 
-**6. Do day rates change mid-year, and are part-time rates pro-rated?**
-- If someone's day rate changes mid-year, does the rates file show the new rate for the whole year, the old rate for the whole year, or two rows (one per period)?
-- For part-time staff, is the day rate already pro-rated, or do we need to apply an FTE factor?
+Walked through Eve Dillon's staff-cost worked example for YUN-01 (UK project, ÷ 7.5 divisor) and ran the open questions list. Resolutions:
 
-We've assumed one rate per (employee, year), already FTE-adjusted.
+1. **Identifying Italian staff.** Eve confirmed Italian employees can be identified from BambooHR's `crbb5_country` AND from the timesheet's `owning business unit name`. Our model already uses `crbb5_country` — no change needed; the business-unit-name path is a fallback.
+2. **Italian contracts.** `EMS-IT*` and `EMSI-IT*` are both **legacy contract-register numbering** that was briefly used and dropped. Neither prefix indicates Italian. **Country comes from subsidiary** (ESS → Italian, EMS/BWG/BWS → UK). This corrects our earlier inference.
+3. **Contract scope for profitability.** Only **Live / Mobilised / Live-Stage** contracts are in scope. **Pipeline** contracts (`EMS-PR*` and others) are excluded by default. Chris will send the full list of contract statuses with the include/exclude decision per value.
+4. **HARP revenue account.** `40011 Construction` for the 9-year construction phase; switches to `40010 Operational` after. Our helper default (40011) is correct.
+5. **Subcontractor account codes.** `60201 / 60202 / 60203` — we were missing `60202`. Fixed.
+6. **Temp staff / agency invoices.** Any account starting `607*` is temp staff or consultancy fees — these workers ARE on timesheets, so the cost is already captured. **Excluded** from `_Cost_Other_Actuals` to avoid double-counting.
+7. **Mid-year rate changes.** Not expected. The annual-rate assumption is fine.
+8. **YTF forecast columns = remaining months only** (not full-year). Actual + Forecast must sum to total.
+9. **Report cutover day = 12th of the month.** Before the 12th, the current month is still treated as forecast; from the 12th onward, the prior month flips to actual. Chris noted books close ~working day 5 and they need a couple of days reporting time — the 12th covers that.
+10. **2025 financials.** Sanjana asked for 2025 NetSuite data alongside FY26 for YoY comparisons. Chris will deliver as a **separate Excel file** in the SharePoint Data folder.
+11. **Jedox forecast calculation.** `crbb5_value` is most likely a **% of FTE time** (0.25, 0.15 etc.) rather than days. Naive `value × 261 × DayRate` over-states because the 261 base includes holidays / annual leave that aren't on the actuals side (which only count booked timesheet hours). Chris is preparing a **worked example** mirroring the YUN-01 actuals one, with a standard holiday-day allowance stripped from the 261-day base (not per-employee tenure-based). Update `_Cost_Staff_Forecast` formula on receipt.
+12. **VM clipboard / scripts.** Chris upgraded Sanjana's workspace access from **Contributor to Member**, which should restore copy-paste from her local machine into the VM. To retest.
+13. **Fabric / Dashboard 1.** Sanjana has published Dashboard 1 to the Fabric workspace. Client team to review.
 
-**7. Forecast columns on the YTF table — full year, or remaining months only?**
-For a partial year (say it's June 2026), should `Revenue For` / `Cost For` show only Jul–Dec (so `Total Rev = YTD actual + remaining forecast`), or the full-year forecast as a benchmark (so the table shows YTD actual vs full-year plan)? We've assumed full-year.
-
-**8. Should "Pipeline" (`EMS-PR…`) contracts appear by default?**
-Pre-signature work (bids in flight, pre-MSA delivery) — show in the main views alongside live contracts, or hide by default and surface via a filter?
-
-#### 🟢 Logistics
-- **VM clipboard** — the latest email says 3rd-party-user permissions were adjusted so scripts can be copied across. Verify this has actually unblocked Sanjana.
-- **Fabric workspace permissions** — currently Power BI Pro only; confirm whether Fabric is being enabled (affects deployment options).
-- **CSV vs Excel delivery** — client prefers Excel; CSV conversion would need Power Automate, not manual.
-- **Timesheet data scope** — Dogma has data from 2023 onwards; confirm we ingest only 2026 (or also 2025 for YoY).
-
-## Decisions from the 27 May 2026 weekly check-in (most recent — supersede everything below)
+## Decisions from the 27 May 2026 weekly check-in (still in force, except where superseded above)
 
 Synetec demoed the first build of the two PoC tables (sectors split on the super-sector route; columns: revenue actual in/out of contract, total revenue, staff cost, profit, margin). Chris's feedback:
 

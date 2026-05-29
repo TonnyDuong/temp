@@ -7,14 +7,27 @@
 // Dependencies: crbb5_project, crbb5_contractregister
 // Load:         enabled.
 // ---------------------------------------------------------------------
-// Contract Phase rule (derived from MSA Reference prefix):
-//   EMS-MSA*  →  Live
-//   EMSI-IT*  →  Live   (live Italian / ESS contracts — confirmed by data:
-//                        active billing 2024→2040, current fees populated.
-//                        NOTE distinct from legacy EMS-IT*.)
-//   EMS-PR*   →  Pipeline
-//   EMS-IT*   →  Legacy (old Italian numbering, no longer used)
-//   else      →  Other
+// Contract Phase — REVISED (29 May meeting):
+//   The MSA-prefix rule below is INFORMATIONAL ONLY. Chris confirmed that
+//   `EMS-IT` AND `EMSI-IT` are both LEGACY numbering from when the
+//   contract register was first set up (briefly used, then dropped). They
+//   do NOT indicate Italian — country is determined by SUBSIDIARY:
+//     ESS         → Italian
+//     EMS / BWG / BWS → UK
+//
+//   The canonical source for whether to include a contract in the
+//   profitability report is the contract's STATUS — only Live / Mobilised /
+//   Live-Stage contracts are in scope. Pipeline contracts are excluded.
+//   `crbb5_contractstatus` is expanded below for this purpose; Chris will
+//   send the exact list of statuses to keep.
+//
+//   Legacy MSA-prefix derivation (kept for informational drill-through,
+//   not for filtering the report):
+//     EMS-MSA*  → "Live (MSA-prefix)"
+//     EMSI-IT*  → "Live (legacy IT prefix, still active)"
+//     EMS-PR*   → "Pipeline"
+//     EMS-IT*   → "Legacy"
+//     else      → "Other"
 // ---------------------------------------------------------------------
 // Display rules (confirmed by Chris, 27 May check-in):
 //   Sector          = the sector NAME (Social Infrastructure, Renewables,
@@ -72,13 +85,20 @@ let
         "ContractRegister_Lookup", JoinKind.LeftOuter
     ),
     Expanded = Table.ExpandTableColumn(Merged, "ContractRegister_Lookup",
-        {"crbb5_supersectorchoicename", "crbb5_portfolio", "crbb5_msareference", "crbb5_concessionexpiry"},
-        {"Sector", "Portfolio", "MSA Reference", "Concession Expiry"}
+        {"crbb5_supersectorchoicename", "crbb5_portfolio", "crbb5_msareference", "crbb5_concessionexpiry", "crbb5_contractstatus"},
+        {"Sector", "Portfolio", "MSA Reference", "Concession Expiry", "Contract Status"}
     ),
+    // Step 2b — IsInScope flag. TRUE if the contract status is one Chris
+    //           confirms as in-scope for the profitability report. List of
+    //           qualifying statuses TBC (29 May meeting); meanwhile match
+    //           known-good values and exclude Pipeline.
+    AddIsInScope = Table.AddColumn(Expanded, "IsInScope",
+        each List.Contains({"Live", "Mobilised", "Live Stage", "Mobilized"}, [Contract Status] ?? ""),
+        type logical),
 
     // Step 3 — default blank Portfolio
     FilledPortfolio = Table.ReplaceValue(
-        Expanded,
+        AddIsInScope,
         each [Portfolio],
         each (if [Portfolio] = null or [Portfolio] = "" then "Unportfolioed" else [Portfolio]),
         Replacer.ReplaceValue,

@@ -1178,11 +1178,33 @@ Out-of-Contract Revenue = CALCULATE([Revenue], fact_Revenue_Live[Contract Type] 
 
 Revenue YTD = CALCULATE([Revenue Actual], DATESYTD(dim_Date_Live[Date]))
 
--- Four-way split for the PoC tables (Act/For × In/Oo)
-Rev Act In = CALCULATE([Revenue], fact_Revenue_Live[Type]="Actual",   fact_Revenue_Live[Contract Type]="In Contract")
-Rev Act Oo = CALCULATE([Revenue], fact_Revenue_Live[Type]="Actual",   fact_Revenue_Live[Contract Type]="Out of Contract")
-Rev For In = CALCULATE([Revenue], fact_Revenue_Live[Type]="Forecast", fact_Revenue_Live[Contract Type]="In Contract")
-Rev For Oo = CALCULATE([Revenue], fact_Revenue_Live[Type]="Forecast", fact_Revenue_Live[Contract Type]="Out of Contract")
+-- Cutover-date logic (Chris, 29 May meeting): the report flips on the
+-- 12th of the month. Before the 12th, the current month is still treated
+-- as Forecast; from the 12th onward, the prior completed month flips to
+-- Actual. The "Forecast" side of the YTF table is therefore "remaining
+-- months only" (everything from the cutover month onward).
+Cutover Month Start =
+    VAR Today = TODAY()
+    RETURN
+    IF(DAY(Today) >= 12,
+        DATE(YEAR(Today), MONTH(Today), 1),                                  -- include current month as forecast
+        DATE(YEAR(Today), MONTH(Today)-1, 1) )                               -- before 12th: include prior month too as forecast
+
+-- Four-way split for the PoC tables (Act/For × In/Oo).
+-- Actuals are capped at "before cutover month"; Forecast is from cutover
+-- month onward, so Actual + Forecast sums cleanly to the full-year total.
+Rev Act In = CALCULATE([Revenue],
+    fact_Revenue_Live[Type]="Actual",   fact_Revenue_Live[Contract Type]="In Contract",
+    fact_Revenue_Live[Date] < [Cutover Month Start])
+Rev Act Oo = CALCULATE([Revenue],
+    fact_Revenue_Live[Type]="Actual",   fact_Revenue_Live[Contract Type]="Out of Contract",
+    fact_Revenue_Live[Date] < [Cutover Month Start])
+Rev For In = CALCULATE([Revenue],
+    fact_Revenue_Live[Type]="Forecast", fact_Revenue_Live[Contract Type]="In Contract",
+    fact_Revenue_Live[Date] >= [Cutover Month Start])
+Rev For Oo = CALCULATE([Revenue],
+    fact_Revenue_Live[Type]="Forecast", fact_Revenue_Live[Contract Type]="Out of Contract",
+    fact_Revenue_Live[Date] >= [Cutover Month Start])
 ```
 
 ### Cost measures
@@ -1198,11 +1220,16 @@ Costs Forecast = CALCULATE([Total Costs], fact_Cost_Live[Type] = "Forecast")
 
 Costs YTD = CALCULATE([Costs Actual], DATESYTD(dim_Date_Live[Date]))
 
--- Category × Type split for the PoC tables (Staff/Subcontractor × Act/For)
-Staff Cost Act  = CALCULATE([Staff Costs], fact_Cost_Live[Type]="Actual")
-Staff Cost For  = CALCULATE([Staff Costs], fact_Cost_Live[Type]="Forecast")
-Subcon Cost Act = CALCULATE([Subcontractor Costs], fact_Cost_Live[Type]="Actual")
-Subcon Cost For = CALCULATE([Subcontractor Costs], fact_Cost_Live[Type]="Forecast")
+-- Category × Type split for the PoC tables (Staff/Subcontractor × Act/For).
+-- Same cutover-date rule as revenue: Actual < cutover month, Forecast >= cutover month.
+Staff Cost Act  = CALCULATE([Staff Costs],
+    fact_Cost_Live[Type]="Actual",   fact_Cost_Live[Date] < [Cutover Month Start])
+Staff Cost For  = CALCULATE([Staff Costs],
+    fact_Cost_Live[Type]="Forecast", fact_Cost_Live[Date] >= [Cutover Month Start])
+Subcon Cost Act = CALCULATE([Subcontractor Costs],
+    fact_Cost_Live[Type]="Actual",   fact_Cost_Live[Date] < [Cutover Month Start])
+Subcon Cost For = CALCULATE([Subcontractor Costs],
+    fact_Cost_Live[Type]="Forecast", fact_Cost_Live[Date] >= [Cutover Month Start])
 ```
 
 Note: `Category` filters in the cost measures sit directly on `fact_Cost_Live`, not via `dim_Accounts_Live`, because staff cost rows have a null `Account Code` (timesheet-derived) and would be lost if we filtered via the dim.
@@ -1391,63 +1418,32 @@ Open both `.pbix` files side-by-side: the `_pre-refactor` backup and the working
 3. ~~Subcontractor cost forecast file~~ — delivered. **Subcontractor Forecast** → `stg_SubcontractorForecast`.
 4. ~~Annual / Day / Hourly rate~~ — client supplies **day rates** directly (the `2025` / `2026` columns in `stg_Staff Costs Summary`).
 
-### 🔴 Open — wrong/missing numbers in the report until answered
+### ✅ Resolved at the 29 May meeting
+5. ~~HARP revenue account code~~ → **40011 Construction** confirmed. Will switch to 40010 Operational after HARP's 9-year construction phase ends. Helper already defaults to 40011.
+6. ~~`EMSI-IT*` / `EMS-IT*` = Live Italian~~ → **No.** Both prefixes are **legacy numbering** from when the contract register was first set up (briefly used, then dropped). They do NOT indicate Italian. Country is determined by **subsidiary**: `ESS` → Italian; `EMS / BWG / BWS` → UK. `dim_Project_Live` header updated to remove the country-from-prefix inference.
+7. ~~Temp-staff / agency invoice account~~ → **Any account starting `607`** (607xxx) is temp staff / consultancy fees whose workers are also on timesheets. **Excluded** from `_Cost_Other_Actuals` to avoid double-counting. Subcontractor accounts confirmed as **60201, 60202, 60203** (60202 was missing — now added).
+8. ~~Pipeline contracts inclusion~~ → **Exclude.** Only **Live / Mobilised / Live-Stage** contracts in the profitability report. `dim_Project_Live` now expands `crbb5_contractstatus` and derives an `IsInScope` flag; exact status list to keep is pending from Chris.
+9. ~~Mid-year rate changes~~ → **Not expected.** Annual rate assumption is fine. Nice-to-have for future flexibility — would require a monthly profile if introduced later.
+10. ~~Forecast columns: full year or remaining months~~ → **Remaining months only.** Forecast is forward-looking; Actual + Forecast must sum to total (otherwise the rolled-up totals confuse readers). **Cutover day = 12th of the month** — before the 12th, current month is still forecast; from the 12th onward, the prior month flips to actual.
 
-#### 5. Which account does HARP revenue post to?
-**Question (for Chris):** When HARP project revenue is booked in NetSuite, which account is it posted to — **40010 Operational revenue** or **40011 Construction revenue**?
-**What we've assumed:** 40011 (Construction), because HARP is described as "Construction Phase delivery" and Project Type = Construction.
-**Why it matters:** if our guess is wrong, HARP's forecast revenue (~£4.5m/year, running 2025→2058) will appear on the wrong revenue line. The In-Contract vs Out-of-Contract split is unaffected — both 40010 and 40011 are In-Contract — but the line-item breakdown is.
+### 🟡 Still open — pending Chris's follow-up
 
-#### 6. What does the "value" number in the Jedox forecast actually mean?
-**Question:** In your Jedox staff-allocation forecast, each row has a value for an (employee, project, year). Is that number **a count of days** the person will spend on that project that year, **a percentage** of their year, or an **FTE fraction** (e.g. 0.25 = a quarter of their time)?
-**What we've assumed:** days. Cost = value × day rate.
-**Why it matters:** the answer changes the formula. If it's a % of the year we'd multiply by ~261 working days first; if FTE we'd multiply by 261 too. Get it wrong and the entire staff-cost forecast is off by a large factor.
+#### 11. Jedox forecast calculation (Chris is preparing a worked example)
+**What we know:** `crbb5_value` is most likely the **percentage of FTE time** (0.25 / 0.15 etc.). Naive `value × 261 × DayRate` would over-state because the 261 base days include public holidays + annual leave that are NOT charged to projects on the actuals side. The formula needs a **holiday-day stripping** adjustment using a standard allowance (Chris will pick one — not per-employee tenure-based).
+**Action:** Chris is putting together a worked example mirroring the YUN-01 actuals example. Replace `_Cost_Staff_Forecast.AddAmount` with the confirmed formula on receipt. Also confirm the right TWR / project-code columns (currently `crbb5_hrreferencename` / `crbb5_projectreferencename`).
 
-#### 7. Which column in the Jedox feed holds the employee's TWR code?
-**Question:** The Jedox export has three employee-related columns. Which one carries the 3-letter Time@work reference (`SAG`, `CAL`, `TWH` …) — `HR Reference`, `HR Reference (name)`, or `HR Code`?
-**What we've assumed:** the "(name)" version — because in Dataverse the "_name" suffix usually holds the human-readable code.
-**Why it matters:** if that column actually holds the *employee's full name* ("Whitehead, Tom") instead of the TWR code, our match against the day-rate file fails and **every Jedox-driven staff-cost forecast line lands as £0** — silently, with no error.
+#### 12. Exact list of in-scope contract statuses
+Chris confirmed Live, Mobilised, Live-Stage are in; Pipeline is out. He'll send the full list of statuses with the include/exclude decision per value. Update `dim_Project_Live.AddIsInScope` once received.
 
-#### 8. Are `EMSI-IT…` contracts your live Italian contracts?
-**Question:** We've spotted eight contracts whose MSA reference starts with **`EMSI-IT`** (e.g. `EMSI-IT001` → SUM-01, with billing running 2024→2040, in the ESS Italian entity, with current annual fees populated). Are these your live Italian contracts? And are they distinct from the older `EMS-IT*` numbering you described as "legacy"?
-**What we've assumed:** yes — `EMSI-IT*` = Live Italian, `EMS-IT*` = legacy (no longer used).
-**Why it matters:** if we've got this wrong, these eight live Italian contracts get labelled "Other" phase and **disappear from any "Live contracts" filter** on the report.
+#### 13. 2025 financials feed
+Sanjana asked for 2025 NetSuite data alongside FY26 for YoY comparisons. Chris confirmed he'll add it as a **separate Excel file** in the Data folder (not a new tab in the FY26 workbook). Ingest into a new staging table when delivered.
 
-#### 9. Which NetSuite account is used for temp staff / agency contractor invoices?
-**Question:** When you pay an agency invoice or a temp-staff contractor (someone who *also* books timesheets in Dogma), what account code in NetSuite does the invoice hit?
-**What we've assumed:** nothing — there's currently no exclusion in place.
-**Why it matters:** anyone who **both** books timesheets **and** has an invoice on that account will be **counted twice in total cost** — once via their timesheet, once via the invoice. We need to know the account code so we can exclude it from "Other Costs" and rely only on the timesheet figure for those people.
-
-### 🟡 Open — important but not yet blocking
-
-#### 10. Do day rates change mid-year, and are part-time rates pro-rated?
-**Question:** Two related parts:
-- If someone's day rate changes mid-year (e.g. a July promotion), does the rates file show the **new rate for the whole year**, the **old rate for the whole year**, or **two rows** (one before, one after)?
-- For part-time staff (e.g. 0.6 FTE), is the stored day rate already **pro-rated** (a smaller £/day), or is the full-time rate stored and we'd need to apply an FTE adjustment?
-
-**What we've assumed:** one rate per (employee, year), already FTE-adjusted.
-**Why it matters:** if either assumption is wrong, individual staff costs will drift — often small in total but visible at the per-person level on drill-throughs.
-
-#### 11. Should the "Forecast" columns show only future months, or the whole year?
-**Question:** On the YTF + Forecast table, the `Revenue For` and `Cost For` columns — for a partial year (say it's June 2026), do you want:
-- **(a)** the forecast for **remaining months only** (Jul–Dec), so `Total Rev = YTD actual + remaining forecast`, or
-- **(b)** the **full-year forecast** regardless, so the table compares YTD actual against the original full-year plan?
-
-**What we've assumed:** (b) — full-year forecast.
-**Why it matters:** option (a) prevents double-counting actual + forecast for the same months. Option (b) keeps the full-year plan visible as a benchmark. Both are valid views; we just need to pick one.
-
-#### 12. Should "Pipeline" (`EMS-PR…`) contracts appear by default?
-**Question:** Contracts starting with `EMS-PR` are work that's pre-signature — bids in flight, or delivery happening while paperwork is being signed. Should they appear by default in the main report views (alongside live contracts), or be hidden behind a filter so the default headline numbers only reflect signed business?
-**Why it matters:** this materially changes the headline revenue/cost figures. Pre-signature work is real income/cost but it's not yet contracted, so showing it as live carries a risk.
-
-#### 13. How far back should we pull timesheet data?
-**Question:** Dogma has timesheet data from 2023 onwards. Should the report pull **only 2026**, also include 2025 (for year-on-year comparisons), or include all years?
-**What we've assumed:** 2026 only.
-**Why it matters:** more years grows the model, but if visuals need 2025-vs-2026 comparisons we need 2025 too.
+#### 14. Timesheet data scope
+Dogma has data from 2023 onwards. Today we only ingest 2026. Once 2025 financials arrive (item 13), we likely want 2025 timesheets too for a like-for-like comparison.
 
 ### 🟢 Logistics
-14. **Fabric workspace** — currently Power BI Pro only. Confirm whether Fabric is being enabled.
-15. **VM clipboard** — email notes 3rd-party-user permissions were adjusted so scripts can be copied across. Verify this unblocks Sanjana.
+15. ~~Fabric workspace~~ → Dashboard 1 has been **published to the Fabric workspace**; client team to review and feed back.
+16. ~~VM clipboard~~ → Chris changed Sanjana's workspace access from **Contributor to Member**, which should restore copy-paste. Sanjana to retest and flag if still blocked.
 
 ## Reference: where each business rule comes from
 

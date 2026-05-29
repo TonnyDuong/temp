@@ -7,17 +7,18 @@
 // Dependencies: stg_FinanceOutput FY26_FY2026
 // Load:         DISABLED.
 // ---------------------------------------------------------------------
-// Account codes (confirmed by Chris):
-//   60201, 60203  →  Subcontractor.
-//   The temporary-staff / contractor code is EXCLUDED — those workers
-//   book timesheets, so including them here would double-count.
-//   TODO: confirm the exact temp-staff account code with Chris.
+// Account codes (CONFIRMED by Chris, 29 May meeting):
+//   60201, 60202, 60203  →  Subcontractor (consultancy/agency, not on
+//                            BambooHR or timesheets).
+//   607*                 →  EXCLUDED (handled in _Cost_Other_Actuals — these
+//                            workers ARE on timesheets, so the cost is
+//                            already counted via fact_Timesheet).
 // =====================================================================
 let
     Source = #"stg_FinanceOutput FY26_FY2026",
 
     SubcontractorOnly = Table.SelectRows(Source, each
-        List.Contains({60201, 60203}, [#"Account No."])),
+        List.Contains({60201, 60202, 60203}, [#"Account No."])),
 
     FilledLocation = Table.ReplaceValue(
         SubcontractorOnly,

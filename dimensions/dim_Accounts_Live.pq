@@ -7,15 +7,21 @@
 // Dependencies: stg_FinanceOutput FY26_CoA
 // Load:         enabled.
 // ---------------------------------------------------------------------
-// Account code classifications (confirmed by Chris):
+// Account code classifications (CONFIRMED by Chris, 29 May meeting):
 //   Contract Type:
 //     40010 / 40011 / 40012  →  In Contract
 //     40014                  →  Out of Contract
+//     (HARP currently posts to 40011 Construction; switches to 40010
+//      Operational after its 9-year construction phase ends.)
 //
 //   Cost Category:
-//     60201 / 60203          →  Subcontractor
-//     other Expense accounts →  Other Cost
-//     Income accounts        →  (not a cost)
+//     60201 / 60202 / 60203          →  Subcontractor (consultancy / agency
+//                                       costs NOT in BambooHR or timesheets).
+//     Other Expense accounts          →  Other Cost.
+//     Accounts starting 607*          →  EXCLUDED (temp staff / consultancy
+//                                       fees who ARE in timesheets — including
+//                                       them as cost would double-count).
+//     Income accounts                 →  (not a cost).
 //
 // "Staff" cost category does NOT appear here — it's stamped directly on
 // timesheet-derived rows in fact_Cost_Live (which have no Account Code).
@@ -51,9 +57,13 @@ let
         type text),
 
     // Step 4 — Cost Category
+    //   Subcontractor: 60201 / 60202 / 60203 (consultancy/agency, not on timesheets)
+    //   Excluded:      607xxx (temp staff / consultancy fees — these workers ARE
+    //                  on timesheets, so the cost is already in fact_Timesheet)
+    //   Other Cost:    any remaining Expense account
     AddCostCategory = Table.AddColumn(AddContractType, "Cost Category", each
-        if [Account Code] = 60201 then "Subcontractor"
-        else if [Account Code] = 60203 then "Subcontractor"
+        if List.Contains({60201, 60202, 60203}, [Account Code]) then "Subcontractor"
+        else if [Account Code] >= 607000 and [Account Code] < 608000 then "(excluded — on timesheets)"
         else if [Account Type] = "Expense" then "Other Cost"
         else if [Account Type] = "Income"  then "(not a cost)"
         else null,

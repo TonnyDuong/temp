@@ -9,9 +9,11 @@
 // Dependencies: stg_FinanceOutput FY26_FY2026, dim_Accounts_Live
 // Load:         DISABLED.
 // ---------------------------------------------------------------------
-// TODO:
-//   - Confirm the temp-staff account code (placeholder used here is
-//     null — replace with actual code).
+// Exclusions (CONFIRMED by Chris, 29 May meeting):
+//   60201 / 60202 / 60203  → routed to _Cost_Subcontractor_Actuals.
+//   607*  (any account starting 607) → temp staff / consultancy fees
+//          whose workers ARE on timesheets. Including them here would
+//          double-count, so they are dropped entirely.
 // =====================================================================
 let
     Source = #"stg_FinanceOutput FY26_FY2026",
@@ -25,12 +27,12 @@ let
     ExpandAccountType = Table.ExpandTableColumn(MergedAccountType, "Account_Lookup",
         {"Account Type"}, {"Account Type"}),
 
-    // Step 2 — keep Expense rows that are NOT subcontractor and NOT temp-staff
+    // Step 2 — keep Expense rows that are NOT subcontractor (60201/02/03)
+    //          and NOT temp-staff (any 607*xx code, already in timesheets)
     ExpensesOnly = Table.SelectRows(ExpandAccountType, each
         [Account Type] = "Expense"
-        and not List.Contains({60201, 60203}, [#"Account No."])
-        // TODO: add the temp-staff account code to this exclusion list:
-        // and [#"Account No."] <> {{TEMP_STAFF_CODE}}
+        and not List.Contains({60201, 60202, 60203}, [#"Account No."])
+        and not ([#"Account No."] >= 607000 and [#"Account No."] < 608000)
     ),
 
     FilledLocation = Table.ReplaceValue(
