@@ -10,11 +10,13 @@
 // Column names (CONFIRMED against the crbb5_jedoxallocation column list;
 // exposed by LOGICAL name):
 //   crbb5_version         → forecast version filter (Forecast / Baseline / ...)
-//   crbb5_hrreference     → the employee HR reference (join to dim_StaffCosts
-//                           TimeWorkReference). NOTE: crbb5_hrcode and
-//                           crbb5_hrreferencename also exist — confirm which
-//                           one carries the TWR code (SAG, CAL, ...).
-//   crbb5_projectreference→ the project code (EEC-01, ...)
+//   crbb5_hrreferencename → the employee HR reference as TEXT — the *_name
+//                           column of the HR lookup, which carries the
+//                           human-readable TWR code (vs crbb5_hrreference
+//                           which is the lookup GUID). Joins to
+//                           dim_StaffCosts[TimeWorkReference].
+//   crbb5_projectreferencename → the project code as TEXT (the *_name of the
+//                           project-reference lookup).
 //   crbb5_value           → the allocation figure
 //   crbb5_year / crbb5_yeardate / crbb5_yeartext → the period (ANNUAL).
 //                           There is NO "Allocation Date" — Jedox is yearly.
@@ -29,7 +31,8 @@
 //   - Jedox is ANNUAL. The PoC "Cost For (staff)" full-year column is fine
 //     with an annual figure; if a monthly spread is needed, define it.
 //   - Confirm crbb5_version value to filter on ("Forecast" vs a choice id).
-//   - Confirm crbb5_hrreference (vs crbb5_hrcode) is the TWR join key.
+//   - Confirm the *_name lookup columns carry the human-readable TWR / project
+//     code values. If not, expand the underlying lookup or switch to crbb5_hrcode.
 // =====================================================================
 let
     Source = #"crbb5_jedoxallocation",
@@ -37,13 +40,16 @@ let
     // Step 1 — keep Forecast rows only
     ForecastOnly = Table.SelectRows(Source, each [crbb5_version] = "Forecast"),
 
-    // Step 2 — friendly names (logical → friendly)
+    // Step 2 — friendly names (logical → friendly). Use the *_name lookup
+    //          columns for the join keys: they hold the human-readable codes
+    //          (TWR, project code), whereas crbb5_hrreference / crbb5_projectreference
+    //          hold the lookup GUIDs.
     Renamed = Table.RenameColumns(ForecastOnly, {
-        {"crbb5_hrreference",      "TimeWorkReference"},
-        {"crbb5_projectreference", "Project Code"},
-        {"crbb5_yeardate",         "Date"},
-        {"crbb5_value",            "Allocation"},
-        {"crbb5_year",             "Year"}
+        {"crbb5_hrreferencename",      "TimeWorkReference"},
+        {"crbb5_projectreferencename", "Project Code"},
+        {"crbb5_yeardate",             "Date"},
+        {"crbb5_value",                "Allocation"},
+        {"crbb5_year",                 "Year"}
     }),
     TypedYear = Table.TransformColumnTypes(Renamed, {{"Year", Int64.Type}}),
 

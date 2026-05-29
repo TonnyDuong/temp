@@ -95,6 +95,15 @@ let
     // Step 7 — hourly rate (DayRate comes straight from the source year column)
     AddHourlyRate = Table.AddColumn(AddHoursPerDay, "StaffCostPerHour",
         each [DayRate] / [HoursPerDay],
-        Currency.Type)
+        Currency.Type),
+
+    // Step 8 — composite StaffKey ("<TWR>-<Year>"). dim_StaffCosts keys on
+    //          (TimeWorkReference, Year) — Power BI relationships can't model
+    //          a composite key directly. This concat lets a single-column
+    //          relationship work IF the corresponding facts/helpers also
+    //          carry the same StaffKey shape.
+    AddStaffKey = Table.AddColumn(AddHourlyRate, "StaffKey",
+        each [TimeWorkReference] & "-" & Text.From([Year]),
+        type text)
 in
-    AddHourlyRate
+    AddStaffKey
