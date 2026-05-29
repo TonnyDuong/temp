@@ -248,25 +248,50 @@ Client also asked the dashboard to:
 Both of these were already in the Sheet 1 design — confirmed as required, not optional.
 
 ### Outstanding items pending the next call
-| Item | Status |
-|---|---|
-| ~~Exact replacement formula for staff cost~~ | ✅ **Resolved & validated** — see Final staff-cost formula section below. YUN-01 worked example provides a reconciliation target of £77,755.65. |
-| ~~Blank `Location: Full Name` values in `fact_FinanceFY2026`~~ | ✅ **Resolved** — set defaults by subsidiary; see Blank Location handling below |
-| ~~Subcontractor cost forecast source~~ | ✅ **Delivered** — Subcontractor Fees Forecast spreadsheet (wide monthly, header row 3) → `stg_SubcontractorForecast` |
-| ~~OOC revenue forecast source~~ | ✅ **Delivered** — Additional Services Forecast spreadsheet (wide monthly, header row 5) → `stg_AdditionalServicesForecast` |
-| ~~Rate type the client will send (Annual / Day / Hourly)~~ | ✅ **Resolved** — client supplies **day rates** directly in `stg_Staff Costs Summary[2025 / 2026]`; no `/261` step |
-| **HARP revenue account code** | 🔴 Open — helper defaults to `40011` (Construction); confirm vs `40010` (Operational) |
-| **Jedox `crbb5_value` measure** | 🔴 Open — days vs % of year vs FTE? Drives the £ formula |
-| **Jedox TWR join key** | 🔴 Open — helper uses `crbb5_hrreferencename` (the lookup `_name` column); confirm it carries the TWR code (vs `crbb5_hrcode`) |
-| **`EMSI-IT*` = Live Italian** | 🔴 Open — inferred from data (ESS, active to 2040); confirm explicitly |
-| **Temp-staff account code** | 🔴 Open — must exclude from `_Cost_Other_Actuals` to avoid double-counting workers who book timesheets |
-| **Mid-year rate changes / part-time pro-rating** | 🟡 Open — model assumes one rate per (employee, year); is the day rate already pro-rated for part-time? |
-| **Forecast vs actual overlap on YTF table** | 🟡 Open — should `Revenue For` / `Cost For` filter to remaining months only (`Date >= today`) or sum full-year forecast? |
-| **`EMS-PR*` Pipeline inclusion in Live views** | 🟡 Open — show or filter out? |
-| VM clipboard / copy-paste block | Email notes 3rd-party permissions adjusted; verify this unblocks copy-across |
-| Fabric workspace permissions (currently Power BI Pro only — Fabric not enabled) | Client to investigate; potential blocker |
-| Whether CSV delivery is feasible | Client prefers to keep Excel format; CSV conversion would need Power Automate, not manual |
-| Timesheet data scope — `dogma_timesheet` has rows from 2023 onwards; confirm we only ingest 2026 | Tonny asked Sanjana, not yet confirmed in transcript |
+
+#### ✅ Resolved
+- **Staff-cost formula** — resolved & validated. See Final staff-cost formula section below. YUN-01 worked example gives a reconciliation target of **£77,755.65**.
+- **Blank `Location: Full Name`** — defaults by subsidiary (ESS → Italy; EMS/BWG/BWS → UK).
+- **OOC revenue forecast source** — delivered: Additional Services Forecast (wide monthly, header row 5) → `stg_AdditionalServicesForecast`.
+- **Subcontractor cost forecast source** — delivered: Subcontractor Fees Forecast (wide monthly, header row 3) → `stg_SubcontractorForecast`.
+- **Rate type** — client provides **day rates** directly in the `2025` / `2026` columns of `Staff Costs Summary`. No `/261` step.
+
+#### 🔴 Open — block correct numbers in the report
+
+**1. Which NetSuite account does HARP revenue post to?**
+40010 (Operational revenue) or 40011 (Construction revenue)? We've assumed 40011 because HARP is Construction Phase delivery. If wrong, HARP's forecast revenue (~£4.5m/yr) will sit on the wrong line in the report.
+
+**2. What does the "value" in the Jedox forecast represent?**
+For each (employee, project, year) row, is the value a number of **days**, a **% of the year**, or an **FTE fraction**? We've assumed days. Get this wrong and the entire staff-cost forecast is off by a large factor (~261×).
+
+**3. Which Jedox column holds the employee's TWR code (SAG, CAL, TWH …)?**
+The candidates are `HR Reference`, `HR Reference (name)`, and `HR Code`. We've assumed `HR Reference (name)`. If that column actually holds the employee's full name instead, **every Jedox-driven forecast cost lands as £0 silently**.
+
+**4. Are `EMSI-IT…` contracts your live Italian contracts?**
+We've spotted eight (e.g. `EMSI-IT001` → SUM-01, billing 2024→2040, ESS entity, fees populated). We've assumed yes — distinct from the legacy `EMS-IT*`. If wrong, these contracts disappear from "Live" report views.
+
+**5. Which NetSuite account is used for temp staff / agency contractor invoices?**
+Anyone who *both* books timesheets *and* has invoices on this account will be **double-counted** in total cost. We need the code to exclude it from "Other Costs."
+
+#### 🟡 Open — important but not yet blocking
+
+**6. Do day rates change mid-year, and are part-time rates pro-rated?**
+- If someone's day rate changes mid-year, does the rates file show the new rate for the whole year, the old rate for the whole year, or two rows (one per period)?
+- For part-time staff, is the day rate already pro-rated, or do we need to apply an FTE factor?
+
+We've assumed one rate per (employee, year), already FTE-adjusted.
+
+**7. Forecast columns on the YTF table — full year, or remaining months only?**
+For a partial year (say it's June 2026), should `Revenue For` / `Cost For` show only Jul–Dec (so `Total Rev = YTD actual + remaining forecast`), or the full-year forecast as a benchmark (so the table shows YTD actual vs full-year plan)? We've assumed full-year.
+
+**8. Should "Pipeline" (`EMS-PR…`) contracts appear by default?**
+Pre-signature work (bids in flight, pre-MSA delivery) — show in the main views alongside live contracts, or hide by default and surface via a filter?
+
+#### 🟢 Logistics
+- **VM clipboard** — the latest email says 3rd-party-user permissions were adjusted so scripts can be copied across. Verify this has actually unblocked Sanjana.
+- **Fabric workspace permissions** — currently Power BI Pro only; confirm whether Fabric is being enabled (affects deployment options).
+- **CSV vs Excel delivery** — client prefers Excel; CSV conversion would need Power Automate, not manual.
+- **Timesheet data scope** — Dogma has data from 2023 onwards; confirm we ingest only 2026 (or also 2025 for YoY).
 
 ## Decisions from the 27 May 2026 weekly check-in (most recent — supersede everything below)
 

@@ -1391,18 +1391,59 @@ Open both `.pbix` files side-by-side: the `_pre-refactor` backup and the working
 3. ~~Subcontractor cost forecast file~~ — delivered. **Subcontractor Forecast** → `stg_SubcontractorForecast`.
 4. ~~Annual / Day / Hourly rate~~ — client supplies **day rates** directly (the `2025` / `2026` columns in `stg_Staff Costs Summary`).
 
-### 🔴 Open — block correct numbers if not answered
-5. **HARP revenue account code** — defaulted to **`40011` (Construction)** because HARP Project Type is "Construction"; confirm vs `40010` (Operational).
-6. **Jedox `crbb5_value` meaning** — days, % of year, or FTE? (Driven by `crbb5_resourcemeasure`.) Determines whether `Amount = value × DayRate` or `value × 261 × DayRate`. Helper currently assumes **days**.
-7. **Jedox TWR join key** — script uses `crbb5_hrreferencename` (the lookup `_name` column). Confirm this carries the 3-letter TWR code (`SAG`, `CAL` …) and not the employee's full name. Fallback: `crbb5_hrcode`.
-8. **`EMSI-IT*` = Live Italian** — inferred from data (active billing 2024–2040 ESS contracts). Confirm explicitly; without it those contracts fall into `"Other"` phase and disappear from Live-filtered visuals.
-9. **Temp-staff account code** — `_Cost_Other_Actuals` needs to exclude this code so timesheet-booked workers aren't double-counted. Currently no exclusion code in place.
+### 🔴 Open — wrong/missing numbers in the report until answered
+
+#### 5. Which account does HARP revenue post to?
+**Question (for Chris):** When HARP project revenue is booked in NetSuite, which account is it posted to — **40010 Operational revenue** or **40011 Construction revenue**?
+**What we've assumed:** 40011 (Construction), because HARP is described as "Construction Phase delivery" and Project Type = Construction.
+**Why it matters:** if our guess is wrong, HARP's forecast revenue (~£4.5m/year, running 2025→2058) will appear on the wrong revenue line. The In-Contract vs Out-of-Contract split is unaffected — both 40010 and 40011 are In-Contract — but the line-item breakdown is.
+
+#### 6. What does the "value" number in the Jedox forecast actually mean?
+**Question:** In your Jedox staff-allocation forecast, each row has a value for an (employee, project, year). Is that number **a count of days** the person will spend on that project that year, **a percentage** of their year, or an **FTE fraction** (e.g. 0.25 = a quarter of their time)?
+**What we've assumed:** days. Cost = value × day rate.
+**Why it matters:** the answer changes the formula. If it's a % of the year we'd multiply by ~261 working days first; if FTE we'd multiply by 261 too. Get it wrong and the entire staff-cost forecast is off by a large factor.
+
+#### 7. Which column in the Jedox feed holds the employee's TWR code?
+**Question:** The Jedox export has three employee-related columns. Which one carries the 3-letter Time@work reference (`SAG`, `CAL`, `TWH` …) — `HR Reference`, `HR Reference (name)`, or `HR Code`?
+**What we've assumed:** the "(name)" version — because in Dataverse the "_name" suffix usually holds the human-readable code.
+**Why it matters:** if that column actually holds the *employee's full name* ("Whitehead, Tom") instead of the TWR code, our match against the day-rate file fails and **every Jedox-driven staff-cost forecast line lands as £0** — silently, with no error.
+
+#### 8. Are `EMSI-IT…` contracts your live Italian contracts?
+**Question:** We've spotted eight contracts whose MSA reference starts with **`EMSI-IT`** (e.g. `EMSI-IT001` → SUM-01, with billing running 2024→2040, in the ESS Italian entity, with current annual fees populated). Are these your live Italian contracts? And are they distinct from the older `EMS-IT*` numbering you described as "legacy"?
+**What we've assumed:** yes — `EMSI-IT*` = Live Italian, `EMS-IT*` = legacy (no longer used).
+**Why it matters:** if we've got this wrong, these eight live Italian contracts get labelled "Other" phase and **disappear from any "Live contracts" filter** on the report.
+
+#### 9. Which NetSuite account is used for temp staff / agency contractor invoices?
+**Question:** When you pay an agency invoice or a temp-staff contractor (someone who *also* books timesheets in Dogma), what account code in NetSuite does the invoice hit?
+**What we've assumed:** nothing — there's currently no exclusion in place.
+**Why it matters:** anyone who **both** books timesheets **and** has an invoice on that account will be **counted twice in total cost** — once via their timesheet, once via the invoice. We need to know the account code so we can exclude it from "Other Costs" and rely only on the timesheet figure for those people.
 
 ### 🟡 Open — important but not yet blocking
-10. **Mid-year rate changes / part-time pro-rating** — the model assumes one day rate per (employee, year). If anyone changed rate mid-year, or any rate is not already pro-rated for part-time, numbers will drift.
-11. **Forecast vs actual overlap** — `31.12.2025` in-contract forecast covers all 2026 months; NetSuite actuals also flow in by month. Confirm whether the YTF table's `Revenue For` / `Cost For` should be **remaining months only** (filtered by `Date >= today`) or full-year forecast regardless.
-12. **`EMS-PR*` (Pipeline) inclusion** — should pipeline contracts appear in the Live report views or be filtered out by default?
-13. **Timesheet data scope** — `dogma_timesheet` has rows from 2023; confirm we only ingest 2026.
+
+#### 10. Do day rates change mid-year, and are part-time rates pro-rated?
+**Question:** Two related parts:
+- If someone's day rate changes mid-year (e.g. a July promotion), does the rates file show the **new rate for the whole year**, the **old rate for the whole year**, or **two rows** (one before, one after)?
+- For part-time staff (e.g. 0.6 FTE), is the stored day rate already **pro-rated** (a smaller £/day), or is the full-time rate stored and we'd need to apply an FTE adjustment?
+
+**What we've assumed:** one rate per (employee, year), already FTE-adjusted.
+**Why it matters:** if either assumption is wrong, individual staff costs will drift — often small in total but visible at the per-person level on drill-throughs.
+
+#### 11. Should the "Forecast" columns show only future months, or the whole year?
+**Question:** On the YTF + Forecast table, the `Revenue For` and `Cost For` columns — for a partial year (say it's June 2026), do you want:
+- **(a)** the forecast for **remaining months only** (Jul–Dec), so `Total Rev = YTD actual + remaining forecast`, or
+- **(b)** the **full-year forecast** regardless, so the table compares YTD actual against the original full-year plan?
+
+**What we've assumed:** (b) — full-year forecast.
+**Why it matters:** option (a) prevents double-counting actual + forecast for the same months. Option (b) keeps the full-year plan visible as a benchmark. Both are valid views; we just need to pick one.
+
+#### 12. Should "Pipeline" (`EMS-PR…`) contracts appear by default?
+**Question:** Contracts starting with `EMS-PR` are work that's pre-signature — bids in flight, or delivery happening while paperwork is being signed. Should they appear by default in the main report views (alongside live contracts), or be hidden behind a filter so the default headline numbers only reflect signed business?
+**Why it matters:** this materially changes the headline revenue/cost figures. Pre-signature work is real income/cost but it's not yet contracted, so showing it as live carries a risk.
+
+#### 13. How far back should we pull timesheet data?
+**Question:** Dogma has timesheet data from 2023 onwards. Should the report pull **only 2026**, also include 2025 (for year-on-year comparisons), or include all years?
+**What we've assumed:** 2026 only.
+**Why it matters:** more years grows the model, but if visuals need 2025-vs-2026 comparisons we need 2025 too.
 
 ### 🟢 Logistics
 14. **Fabric workspace** — currently Power BI Pro only. Confirm whether Fabric is being enabled.
