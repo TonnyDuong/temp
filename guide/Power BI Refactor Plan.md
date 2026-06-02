@@ -195,6 +195,25 @@ in
 
 ---
 
+### Task 1.1b: Build `dim_HolidayPolicy_Live`
+
+**What this does**: a tiny **manually-maintained** parameter table holding the holiday-day allowance per year. Used by `dim_StaffCosts_Live` to compute `WorkedDays` (= net working days minus holiday minus public holiday). Chris explicitly asked (02 Jun email) for the option to amend the holiday days per year in case of policy change.
+
+**Where to do it**: Power Query Editor → **New Source** → **Blank Query**.
+
+**Steps**:
+1. Rename the new query to **`dim_HolidayPolicy_Live`**.
+2. Open **Advanced Editor** and paste the full script from `powerquery/dimensions/dim_HolidayPolicy_Live.pq`. The default rows are `{2025, 28, 8}` and `{2026, 28, 8}`.
+3. **Close & Apply**. Right-click the query → **Hide** (it's a parameter, not for slicers).
+
+**How to check it worked**:
+- `dim_HolidayPolicy_Live` has one row per year, with `HolidayDays` and `PublicHolidayDays` columns.
+- `Year` is Int64.
+
+**Future years**: edit the script (or the table) to add new rows as Chris confirms the allowance for 2027+.
+
+---
+
 ### Task 1.2: Build `dim_StaffCosts_Live` — deduplicate contractor → permanent EmployeeID
 
 **Background you need**: when a contractor becomes a permanent employee, Equitix gives them a new EmployeeID. The contractor ID starts with `EMPEMCON`; the permanent ID starts with `EMPEM`. The same person ends up with **two** rows in `stg_Staff Costs Summary` — same Name, same Time@work Reference (TWR), different EmployeeID.
@@ -320,12 +339,20 @@ The client supplies **day rates** directly. No floor, no ceiling, no monthly cap
    - Custom column formula: `[DayRate] / [HoursPerDay]`
    - **OK**.
    - Change type to **Currency**.
-5. Add a composite `StaffKey` column (so a single-column relationship can join `dim_StaffCosts_Live` to a fact that carries the same key):
+5. Add the **forecast-cost inputs** Chris confirmed in his 02 Jun 2026 email. See `powerquery/dimensions/dim_StaffCosts_Live.pq` for the full M — in summary:
+   - Expand `crbb5_contracthours` alongside Country in the BambooHR merge.
+   - `FullTimeHours` = 37.5 (UK/IE) / 40 (Italy); `HoursRatio` = `ContractHours / FullTimeHours` (handles part-timers).
+   - `NetWorkingDays` per year (≈ 261 for 2026, computed dynamically).
+   - Join **`dim_HolidayPolicy_Live`** on Year to get `HolidayDays` (default 28) and `PublicHolidayDays` (default 8). Holiday allowance is configurable per year as Chris requested.
+   - `WorkedDays = (NetWorkingDays − HolidayDays − PublicHolidayDays) × HoursRatio`.
+   - `AnnualCost = NetWorkingDays × HoursRatio × DayRate`.
+   - **`RevisedAnnualCost = WorkedDays × DayRate`** (cost net of holiday allowance — the per-employee envelope `_Cost_Staff_Forecast` allocates by project).
+6. Add a composite `StaffKey` column (so a single-column relationship can join `dim_StaffCosts_Live` to a fact that carries the same key):
    - **Add Column** → **Custom Column**.
    - New column name: `StaffKey`
    - Custom column formula: `[TimeWorkReference] & "-" & Text.From([Year])`
    - **OK**. Change type to **Text**.
-6. Click **Home** → **Close & Apply**.
+7. Click **Home** → **Close & Apply**.
 
 **How to check it worked**:
 - Find `Agnew, Samantha` (TWR `SAG`): `DayRate` = £241.55 (her 2026 value) and `StaffCostPerHour` = £32.21 (241.55 / 7.5).
@@ -849,23 +876,25 @@ This one aggregates `fact_Timesheet_Live` rows up to the cost-fact grain (one ro
 
 #### Sub-query D — `_Cost_Staff_Forecast`
 
-`crbb5_jedoxallocation` is exposed by **logical** names (confirmed against its column list). See `powerquery/helpers/_Cost_Staff_Forecast.pq` for the full script.
+`crbb5_jedoxallocation` is exposed by **logical** names (confirmed against its column list). The full calculation principle was confirmed by Chris's 02 Jun 2026 email + workbook. See `powerquery/helpers/_Cost_Staff_Forecast.pq` for the full script.
 
 1. Right-click `crbb5_jedoxallocation` → **Reference**.
 2. Rename to **`_Cost_Staff_Forecast`**.
 3. Filter **`crbb5_version`** to `"Forecast"` only.
-4. Rename: `crbb5_hrreferencename` → `TimeWorkReference` and `crbb5_projectreferencename` → `Project Code` (use the **`_name`** columns — they hold the human-readable codes; the `crbb5_hrreference`/`crbb5_projectreference` columns are lookup GUIDs). Then `crbb5_yeardate` → `Date`, `crbb5_value` → `Allocation`, `crbb5_year` → `Year`. **Note: Jedox is ANNUAL — there is no "Allocation Date"; the period is `crbb5_year`/`crbb5_yeardate`.**
-5. Merge with `dim_StaffCosts_Live` on `TimeWorkReference` + `Year` to fetch `DayRate`.
-6. Compute the forecast cost. **Formula depends on what `crbb5_value` is** (`crbb5_resourcemeasure` is its unit):
-   ```
-   // if crbb5_value = allocated DAYS:
-   Amount = [Allocation] * [DayRate]
-   // if crbb5_value = % of the year:
-   // Amount = [Allocation] * 261 * [DayRate]
-   ```
-   The helper currently assumes **days**. Confirm with Chris before go-live.
-7. Add constants: `Account Code = null`, `Category = "Staff"`, `Type = "Forecast"`, `Snapshot Date` from the year-end.
-8. Disable load.
+4. Rename (use the **`_name`** lookup columns for the human-readable codes; the plain lookup columns are GUIDs):
+   - `crbb5_hrreferencename` → `TimeWorkReference`
+   - `crbb5_projectreferencename` → `Project Code`
+   - `crbb5_value` → `AllocationFraction` (the % of FTE time, e.g. 0.25)
+   - `crbb5_year` → `Year`
+5. Merge with `dim_StaffCosts_Live` on `(TimeWorkReference, Year)` and expand **`RevisedAnnualCost`** (this is the cost net of holiday + public-holiday allowance, already pro-rated for part-timers — see dim_StaffCosts script).
+6. Compute the annual project forecast: `AnnualForecastCost = AllocationFraction × RevisedAnnualCost`. Wrap with `if RevisedAnnualCost = null then 0 else ...` to handle missing-rate edge cases.
+7. **Expand each annual row into 12 monthly rows** (Jan-end through Dec-end of the row's Year), with `Amount = AnnualForecastCost / 12`. The monthly granularity is needed so the cutover-date measures (which gate by `Date`) can pick which months show as forecast vs actual.
+8. Add constants: `Account Code = null`, `Category = "Staff"`, `Type = "Forecast"`, `Snapshot Date = year-end`.
+9. Disable load.
+
+**Worked example (Chris's workbook).** Full-time UK employee on £500/day, 2026 (NetWorkingDays = 261, holiday = 28, public = 8 → WorkedDays = 225 → RevisedAnnualCost = £112,500). Allocated 25% to YUN-01: annual forecast = 0.25 × £112,500 = £28,125 = £2,343.75/month. Part-time same person at 20 h/wk (HoursRatio = 0.5333): RevisedAnnualCost = £60,000; 25% of YUN-01 = £15,000 annual / £1,250 per month.
+
+**Overhead bucket** — the holiday cost (`AnnualCost − RevisedAnnualCost`) is **not emitted** to `fact_Cost_Live`. It's classed as overhead and not shown in sector profitability tables (per Chris). Add a separate helper later if a "fully-loaded staff cost" view is ever required.
 
 #### Sub-query E — `_Cost_Subcontractor_Forecast`
 
@@ -990,14 +1019,30 @@ The same relationships with implementation notes:
 **Key uniqueness pre-checks** (a relationship fails if the "one" side isn't unique):
 - `dim_Date_Live[Date]`, `dim_Project_Live[Project Code]`, `dim_Accounts_Live[Account Code]`, `dim_Employee_Live[TimeWorkReference]`, `dim_ForecastSnapshot_Live[SnapshotDate]`, `dim_Transaction_Live[TransactionLineKey]` must each be **unique, no blanks**. If `dim_Employee_Live[TimeWorkReference]` has duplicates (contractor→permanent), dedupe it the same way `dim_StaffCosts_Live` does.
 
+**Type pre-check** (a relationship fails if the two sides disagree on type):
+- `Account Code` is **Int64** on both sides. The source `Nominal Code` is text in the CoA, but `dim_Accounts_Live` casts to `Int64.Type` (see the script header note) so it matches the fact-side `Account No.` (which is numeric in NetSuite). If the cast ever errors at refresh, fix the offending row in the CoA — every Nominal Code is expected to be a 5-digit integer.
+- `TransactionLineKey` is **text** on both sides (built as `Text.From([Transaction: Transaction ID]) & "-" & Text.From([Transaction Line ID])`).
+
+**Canonical filter for "Live contracts":** after Chris's 29 May decision (Pipeline excluded; only Live / Mobilised / Live-Stage in scope), use **`dim_Project_Live[IsInScope] = TRUE`** as the slicer / filter on report pages. It cascades through the project relationships and filters every fact correctly. Avoid filtering by the legacy MSA-prefix-derived `Contract Phase` column — that's informational only.
+
 **How to check it worked**:
 - In Model view all relationship lines should be solid (active), not dotted (inactive).
 - No relationship has a yellow exclamation icon (cardinality mismatch).
 - Build a quick test visual: a table with `dim_Project_Live[Sector]` and a measure `SUM(fact_Revenue_Live[Amount])`. Rows should appear, grouped by sector, with totals.
 
-#### TMDL — paste-in for a `.pbip` Semantic Model
+### Three ways to apply the 13 relationships
 
-If you're on the Power BI Project (`.pbip`) format, add these to `…\<model>.SemanticModel\definition\relationships.tmdl` (Power BI assigns GUID names normally; readable names are fine in TMDL). Defaults are many-to-one + single-direction + active, so only inactive/extra options need spelling out — none here.
+You don't have to drag-and-drop all 13 in Model view. Pick the option that matches your file format:
+
+| Your situation | Use |
+|---|---|
+| `.pbip` (Power BI Project format) | Option B — TMDL paste below |
+| `.pbix`, comfortable installing Tabular Editor (free) | Option C — C# script below |
+| `.pbix`, don't want to install anything | Option A — drag-and-drop following the table above |
+
+#### Option B — TMDL paste (`.pbip` only)
+
+Add these to `…\<model>.SemanticModel\definition\relationships.tmdl` (Power BI normally assigns GUID names; readable names are fine in TMDL). Defaults are many-to-one + single-direction + active, so only inactive/extra options need spelling out — none here.
 
 ```tmdl
 relationship rel_Revenue_Date
@@ -1051,6 +1096,48 @@ relationship rel_Timesheet_Project
 relationship rel_Timesheet_Employee
 	fromColumn: fact_Timesheet_Live.TimeWorkReference
 	toColumn: dim_Employee_Live.TimeWorkReference
+```
+
+#### Option C — Tabular Editor C# script (works on `.pbix` and `.pbip`)
+
+Tabular Editor 2 is free (download: tabulareditor.com). With Power BI Desktop open on the model, launch Tabular Editor (External Tools → Tabular Editor, or open TE2 manually and connect to the localhost port Desktop is hosting), paste this into the **Advanced Scripting** pane, and press **F5**. Then save the `.pbix` back in Desktop.
+
+```csharp
+// Create the 13 _Live model relationships in one go.
+// Many-to-One, single cross-filter direction, active.
+// Skips any relationship that already exists.
+
+void AddRel(string fromTable, string fromCol, string toTable, string toCol)
+{
+    var f = Model.Tables[fromTable].Columns[fromCol];
+    var t = Model.Tables[toTable].Columns[toCol];
+    if (Model.Relationships.OfType<SingleColumnRelationship>()
+            .Any(r => r.FromColumn == f && r.ToColumn == t)) return;
+
+    var r = Model.AddRelationship();
+    r.FromColumn = f;
+    r.ToColumn   = t;
+    r.FromCardinality = RelationshipEndCardinality.Many;
+    r.ToCardinality   = RelationshipEndCardinality.One;
+    r.CrossFilteringBehavior = CrossFilteringBehavior.OneDirection;
+    r.IsActive = true;
+}
+
+AddRel("fact_Revenue_Live",   "Date",               "dim_Date_Live",             "Date");
+AddRel("fact_Revenue_Live",   "Project Code",       "dim_Project_Live",          "Project Code");
+AddRel("fact_Revenue_Live",   "Account Code",       "dim_Accounts_Live",         "Account Code");
+AddRel("fact_Revenue_Live",   "Snapshot Date",      "dim_ForecastSnapshot_Live", "SnapshotDate");
+AddRel("fact_Revenue_Live",   "TransactionLineKey", "dim_Transaction_Live",      "TransactionLineKey");
+
+AddRel("fact_Cost_Live",      "Date",               "dim_Date_Live",             "Date");
+AddRel("fact_Cost_Live",      "Project Code",       "dim_Project_Live",          "Project Code");
+AddRel("fact_Cost_Live",      "Account Code",       "dim_Accounts_Live",         "Account Code");
+AddRel("fact_Cost_Live",      "TimeWorkReference",  "dim_Employee_Live",         "TimeWorkReference");
+AddRel("fact_Cost_Live",      "Snapshot Date",      "dim_ForecastSnapshot_Live", "SnapshotDate");
+
+AddRel("fact_Timesheet_Live", "Date",               "dim_Date_Live",             "Date");
+AddRel("fact_Timesheet_Live", "Project Code",       "dim_Project_Live",          "Project Code");
+AddRel("fact_Timesheet_Live", "TimeWorkReference",  "dim_Employee_Live",         "TimeWorkReference");
 ```
 
 ---
@@ -1426,20 +1513,16 @@ Open both `.pbix` files side-by-side: the `_pre-refactor` backup and the working
 9. ~~Mid-year rate changes~~ → **Not expected.** Annual rate assumption is fine. Nice-to-have for future flexibility — would require a monthly profile if introduced later.
 10. ~~Forecast columns: full year or remaining months~~ → **Remaining months only.** Forecast is forward-looking; Actual + Forecast must sum to total (otherwise the rolled-up totals confuse readers). **Cutover day = 12th of the month** — before the 12th, current month is still forecast; from the 12th onward, the prior month flips to actual.
 
-### 🟡 Still open — pending Chris's follow-up
+### ✅ Resolved at the 02 Jun email + workbook
+11. ~~Jedox forecast calculation~~ — confirmed by Chris's email + the worked-example workbook. `crbb5_value` is % of FTE time. The full formula is now implemented in `dim_StaffCosts_Live` + `_Cost_Staff_Forecast`:
+   - `dim_StaffCosts_Live` derives **`RevisedAnnualCost = WorkedDays × DayRate`**, where `WorkedDays = (NetWorkingDays − HolidayDays − PublicHolidayDays) × HoursRatio`. `HoursRatio = ContractHours / FullTimeHours` (37.5 UK/IE, 40 Italy) — handles part-timers correctly.
+   - `_Cost_Staff_Forecast` then does `AnnualForecastCost = crbb5_value × RevisedAnnualCost`, spread evenly across 12 months.
+   - Holiday allowance is held in **`dim_HolidayPolicy_Live`** (2025 / 2026 default 28 / 8) — configurable per year as Chris requested.
+12. ~~Contract statuses to include~~ — confirmed: **`Live`, `Mobilised`, `Terminated`** (the three statuses indicating Live or previously-Live). `dim_Project_Live[IsInScope]` updated.
 
-#### 11. Jedox forecast calculation (Chris is preparing a worked example)
-**What we know:** `crbb5_value` is most likely the **percentage of FTE time** (0.25 / 0.15 etc.). Naive `value × 261 × DayRate` would over-state because the 261 base days include public holidays + annual leave that are NOT charged to projects on the actuals side. The formula needs a **holiday-day stripping** adjustment using a standard allowance (Chris will pick one — not per-employee tenure-based).
-**Action:** Chris is putting together a worked example mirroring the YUN-01 actuals example. Replace `_Cost_Staff_Forecast.AddAmount` with the confirmed formula on receipt. Also confirm the right TWR / project-code columns (currently `crbb5_hrreferencename` / `crbb5_projectreferencename`).
-
-#### 12. Exact list of in-scope contract statuses
-Chris confirmed Live, Mobilised, Live-Stage are in; Pipeline is out. He'll send the full list of statuses with the include/exclude decision per value. Update `dim_Project_Live.AddIsInScope` once received.
-
-#### 13. 2025 financials feed
-Sanjana asked for 2025 NetSuite data alongside FY26 for YoY comparisons. Chris confirmed he'll add it as a **separate Excel file** in the Data folder (not a new tab in the FY26 workbook). Ingest into a new staging table when delivered.
-
-#### 14. Timesheet data scope
-Dogma has data from 2023 onwards. Today we only ingest 2026. Once 2025 financials arrive (item 13), we likely want 2025 timesheets too for a like-for-like comparison.
+### 🟡 Still open — pending Chris
+13. **2025 financials feed** — Chris will deliver a separate Excel file in the Data folder for YoY comparisons. Ingest into a new staging table when delivered.
+14. **Timesheet data scope** — once 2025 financials arrive, we likely want 2025 timesheets too for a like-for-like comparison. Currently we only ingest 2026.
 
 ### 🟢 Logistics
 15. ~~Fabric workspace~~ → Dashboard 1 has been **published to the Fabric workspace**; client team to review and feed back.

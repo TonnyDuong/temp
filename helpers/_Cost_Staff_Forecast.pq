@@ -1,49 +1,39 @@
 // =====================================================================
 // _Cost_Staff_Forecast  (helper — load disabled)
 // ---------------------------------------------------------------------
-// Purpose:      Staff cost forecast from Jedox allocations × employee
-//               day rates.
-// Grain:        One row per (Project Code, TimeWorkReference, Year).
+// Purpose:      Staff cost forecast from Jedox allocations × per-employee
+//               Revised Annual Cost. Expanded to MONTHLY rows so the
+//               cutover-date measures (which gate by Date) can pick which
+//               months show as forecast vs actual.
+// Grain:        One row per (Project Code, TimeWorkReference, Year, Month).
 // Dependencies: crbb5_jedoxallocation, dim_StaffCosts_Live
 // Load:         DISABLED.
 // ---------------------------------------------------------------------
-// Column names (CONFIRMED against the crbb5_jedoxallocation column list;
-// exposed by LOGICAL name):
-//   crbb5_version         → forecast version filter (Forecast / Baseline / ...)
-//   crbb5_hrreferencename → the employee HR reference as TEXT — the *_name
-//                           column of the HR lookup, which carries the
-//                           human-readable TWR code (vs crbb5_hrreference
-//                           which is the lookup GUID). Joins to
-//                           dim_StaffCosts[TimeWorkReference].
-//   crbb5_projectreferencename → the project code as TEXT (the *_name of the
-//                           project-reference lookup).
-//   crbb5_value           → the allocation figure
-//   crbb5_year / crbb5_yeardate / crbb5_yeartext → the period (ANNUAL).
-//                           There is NO "Allocation Date" — Jedox is yearly.
-//   crbb5_resourcemeasure → the unit of crbb5_value (days / % / FTE — TBC)
-// ---------------------------------------------------------------------
-// Business rule (29 May meeting — partial; full example pending from Chris):
-//   crbb5_value is most likely the **% of FTE time** allocated (e.g. 0.25
-//   = a quarter of the person's year). The naive formula
-//     Amount = value × 261 × DayRate
-//   would over-state cost because the 261 working days include public
-//   holidays + annual leave that are NOT charged to projects on the
-//   actuals side (only booked timesheet hours are). To reconcile with
-//   actuals we need to strip a standard holiday-day allowance from the
-//   261-day base, e.g.:
-//     Amount = value × (261 - holiday_days) × DayRate
-//   Chris is preparing a worked example and will confirm the exact
-//   holiday-day allowance + formula. UPDATE THIS HELPER WHEN RECEIVED.
+// Calculation (CONFIRMED by Chris's 02 Jun 2026 email + workbook):
+//   For each Jedox row (employee, project, year, % FTE):
+//     AnnualForecastCost = crbb5_value × dim_StaffCosts[RevisedAnnualCost]
+//   RevisedAnnualCost is the cost net of standard holiday + public-holiday
+//   allowance (computed in dim_StaffCosts — see that script for the full
+//   chain). Part-time staff are already pro-rated there via HoursRatio.
 //
-// The line below currently uses the placeholder `value × DayRate`
-// (the "value is in days" assumption from the previous pass). LEAVE A
-// BIG VISIBLE GAP until the FTE-with-holiday formula is confirmed.
+//   The annual figure is spread evenly across 12 months:
+//     MonthlyForecast = AnnualForecastCost / 12
+//   and emitted as 12 rows (Jan-end … Dec-end) so the cutover-date
+//   measure can filter on Date.
+//
+//   The "overhead bucket" (employee-level holiday cost = AnnualCost −
+//   RevisedAnnualCost) is NOT emitted here — it's not shown in sector
+//   profitability tables (Chris's note: "classed as overheads, not in
+//   sector report"). If a separate overhead view is later required, emit
+//   it as a synthetic project (e.g. "EMS-05") in its own helper.
 // ---------------------------------------------------------------------
-// TODO:
-//   - Replace AddAmount formula with Chris's confirmed FTE+holiday calc.
-//   - Confirm crbb5_version value to filter on ("Forecast" vs a choice id).
-//   - Confirm the *_name lookup columns carry the human-readable TWR / project
-//     code values. If not, expand the underlying lookup or switch to crbb5_hrcode.
+// Column names (CONFIRMED against the crbb5_jedoxallocation column list;
+// LOGICAL names; using the *_name lookup columns for the human codes):
+//   crbb5_version              → filter on "Forecast"
+//   crbb5_hrreferencename      → TimeWorkReference (TWR code SAG/CAL/…)
+//   crbb5_projectreferencename → Project Code (EEC-01/…)
+//   crbb5_value                → % of FTE time (0.25, 0.15 …)
+//   crbb5_year                 → Year (annual; we spread to months below)
 // =====================================================================
 let
     Source = #"crbb5_jedoxallocation",
@@ -51,36 +41,46 @@ let
     // Step 1 — keep Forecast rows only
     ForecastOnly = Table.SelectRows(Source, each [crbb5_version] = "Forecast"),
 
-    // Step 2 — friendly names (logical → friendly). Use the *_name lookup
-    //          columns for the join keys: they hold the human-readable codes
-    //          (TWR, project code), whereas crbb5_hrreference / crbb5_projectreference
-    //          hold the lookup GUIDs.
+    // Step 2 — friendly names; use the *_name lookup columns (text codes,
+    //          not lookup GUIDs)
     Renamed = Table.RenameColumns(ForecastOnly, {
         {"crbb5_hrreferencename",      "TimeWorkReference"},
         {"crbb5_projectreferencename", "Project Code"},
-        {"crbb5_yeardate",             "Date"},
-        {"crbb5_value",                "Allocation"},
+        {"crbb5_value",                "AllocationFraction"},
         {"crbb5_year",                 "Year"}
     }),
-    TypedYear = Table.TransformColumnTypes(Renamed, {{"Year", Int64.Type}}),
+    TypedYear = Table.TransformColumnTypes(Renamed, {{"Year", Int64.Type}, {"AllocationFraction", type number}}),
 
-    // Step 3 — fetch DayRate from the rate dim (by TWR + Year)
+    // Step 3 — join dim_StaffCosts on (TWR, Year) to get RevisedAnnualCost
     MergedRate = Table.NestedJoin(
         TypedYear, {"TimeWorkReference", "Year"},
         #"dim_StaffCosts_Live", {"TimeWorkReference", "Year"},
         "Rate_Lookup", JoinKind.LeftOuter
     ),
     ExpandRate = Table.ExpandTableColumn(MergedRate, "Rate_Lookup",
-        {"DayRate"}, {"DayRate"}),
+        {"RevisedAnnualCost"}, {"RevisedAnnualCost"}),
 
-    // Step 4 — compute forecast amount
-    // ASSUMES crbb5_value = allocated days. Confirm via crbb5_resourcemeasure (see TODO).
-    AddAmount = Table.AddColumn(ExpandRate, "Amount",
-        each [Allocation] * [DayRate],
+    // Step 4 — annual forecast cost per (employee, project)
+    AddAnnual = Table.AddColumn(ExpandRate, "AnnualForecastCost",
+        each [AllocationFraction] * (if [RevisedAnnualCost] = null then 0 else [RevisedAnnualCost]),
         Currency.Type),
 
-    // Step 5 — constants
-    AddAccountCode = Table.AddColumn(AddAmount,      "Account Code",  each null,        Int64.Type),
+    // Step 5 — expand each annual row into 12 monthly rows (Jan-end …
+    //          Dec-end of the row's Year). Even spread: Amount = annual / 12.
+    AddMonthly = Table.AddColumn(AddAnnual, "Monthly",
+        each List.Transform({1..12}, (m) => [
+            Date   = Date.EndOfMonth(#date([Year], m, 1)),
+            Amount = [AnnualForecastCost] / 12
+        ]),
+        type list),
+    Expanded = Table.ExpandListColumn(AddMonthly, "Monthly"),
+    ExpandedCols = Table.ExpandRecordColumn(Expanded, "Monthly",
+        {"Date", "Amount"}, {"Date", "Amount"}),
+    TypedMonthly = Table.TransformColumnTypes(ExpandedCols,
+        {{"Date", type date}, {"Amount", Currency.Type}}),
+
+    // Step 6 — constants for the fact schema
+    AddAccountCode = Table.AddColumn(TypedMonthly,   "Account Code",  each null,        Int64.Type),
     AddCategory    = Table.AddColumn(AddAccountCode, "Category",      each "Staff",     type text),
     AddType        = Table.AddColumn(AddCategory,    "Type",          each "Forecast",  type text),
     AddSnapshot    = Table.AddColumn(AddType,        "Snapshot Date",

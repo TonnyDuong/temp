@@ -267,17 +267,55 @@ Both of these were already in the Sheet 1 design — confirmed as required, not 
 - **VM clipboard** → Sanjana's workspace access upgraded from Contributor to **Member**. To retest.
 - **Fabric** → Dashboard 1 has been published to the Fabric workspace; client team to review.
 
-#### 🟡 Still open — pending Chris's follow-up
+#### ✅ Resolved by the 02 Jun 2026 email + workbook
 
-**Jedox forecast calculation.** `crbb5_value` is most likely **% of FTE time** (0.25, 0.15…). Naive `value × 261 × DayRate` over-states because the 261 base includes holidays / annual leave that aren't on the actuals side (only booked timesheet hours are). The formula needs **holiday-day stripping** with a standard allowance (Chris will pick one, not per-employee tenure-based). Chris is preparing a worked example mirroring the YUN-01 actuals one. Replace `_Cost_Staff_Forecast.AddAmount` on receipt; also confirm the right TWR / project-code columns (currently `crbb5_hrreferencename` / `crbb5_projectreferencename`).
+**Jedox forecast calculation** — confirmed: `crbb5_value` is the % of FTE time. Full formula (`value × RevisedAnnualCost`, with `RevisedAnnualCost` computed in `dim_StaffCosts_Live` from `WorkedDays × DayRate`) is implemented across `dim_StaffCosts_Live` + `_Cost_Staff_Forecast`, with monthly expansion. Holiday allowance per year held in the new `dim_HolidayPolicy_Live` parameter table (configurable as Chris requested). See the "Decisions from the 02 Jun 2026 …" section above for the full worked example.
 
-**Full list of in-scope contract statuses.** Chris confirmed Live / Mobilised / Live-Stage are in, Pipeline is out. Full status list with include/exclude per value to follow; update `dim_Project_Live[IsInScope]` then.
+**Contract statuses to include** — confirmed: **Live, Mobilised, Terminated**. `dim_Project_Live[IsInScope]` updated.
+
+#### 🟡 Still open — pending Chris
 
 **2025 financials feed.** Sanjana asked for 2025 NetSuite data alongside FY26 for YoY comparisons. Chris will deliver as a **separate Excel file** in the Data folder. Ingest into a new staging table on arrival.
 
-**Timesheet data scope.** Dogma has 2023+ data; we currently ingest only 2026. When the 2025 financials arrive, we likely want 2025 timesheets too.
+**Timesheet data scope.** Dogma has 2023+ data; we currently ingest only 2026. When the 2025 financials arrive, we likely want 2025 timesheets too for a like-for-like comparison.
 
-## Decisions from the 29 May 2026 Dashboard + Data Clarifications meeting (most recent — supersede everything below)
+## Decisions from the 02 Jun 2026 staff-cost forecast email (most recent — supersede everything below)
+
+Chris's email + the attached `Profitability model - forecast costs.xlsx` workbook lock down the staff-cost forecast formula and the contract-status filter.
+
+### Staff-cost forecast formula (confirmed)
+For each `(employee, year)`:
+- **`HoursRatio` = `crbb5_bamboohr.crbb5_contracthours` / FullTimeHours**, where FullTimeHours = 37.5 (UK / Ireland) or 40 (Italy). This is the FTE factor — handles part-timers.
+- **`NetWorkingDays(year)`** ≈ 261 for 2026, computed dynamically.
+- **`HolidayDays`** = 28 (the **average** rounded across all staff; the tenure-based range is 26–30). Configurable per year — held in `dim_HolidayPolicy_Live`.
+- **`PublicHolidayDays`** = 8 (UK). Also in `dim_HolidayPolicy_Live`.
+- **`WorkedDays`** = `(NetWorkingDays − HolidayDays − PublicHolidayDays) × HoursRatio`.
+- **`AnnualCost`** = `NetWorkingDays × HoursRatio × DayRate`.
+- **`RevisedAnnualCost`** = `WorkedDays × DayRate`. This is the cost net of holiday allowance — the per-employee envelope that gets allocated to projects.
+
+For each Jedox row `(employee, project, year, crbb5_value)`:
+- **`AnnualForecastCost`** = `crbb5_value × RevisedAnnualCost`.
+- **`MonthlyForecast`** = `AnnualForecastCost / 12` (evenly spread across 12 months).
+
+**Worked example (Chris's workbook, full-time UK staff on £500/day, 2026):**
+- HoursRatio = 1.0; NetWorkingDays = 261; WorkedDays = 225; RevisedAnnualCost = £112,500; AnnualCost = £130,500.
+- 25% on YUN-01 → £28,125 annual / £2,343.75 per month.
+- Overhead (= AnnualCost − RevisedAnnualCost) = £18,000 — **classed as overhead, NOT shown in sector profitability tables**.
+
+**Part-time example (20 h/wk, same rate):**
+- HoursRatio = 0.5333; RevisedAnnualCost = £60,000.
+- 25% on YUN-01 → £15,000 annual / £1,250 per month.
+
+### Contract status filter (confirmed)
+The `crbb5_contractstatus` values to include in profitability: **`Live`, `Mobilised`, `Terminated`** ("these 3 stages all indicate a Live or previously-Live contract"). All others (including Pipeline) are excluded. `dim_Project_Live[IsInScope]` updated accordingly.
+
+### What this means for the model
+- New parameter table **`dim_HolidayPolicy_Live`** holds the per-year holiday + public-holiday allowance. Configurable.
+- `dim_StaffCosts_Live` extended with `ContractHours`, `HoursRatio`, `NetWorkingDays`, `WorkedDays`, `AnnualCost`, `RevisedAnnualCost`.
+- `_Cost_Staff_Forecast` rewritten: `value × RevisedAnnualCost`, then expanded to 12 monthly rows so the cutover-date measures can filter by `Date`.
+- The overhead bucket (holiday cost per employee) is **not emitted** to `fact_Cost_Live` — explicitly excluded from sector reporting.
+
+## Decisions from the 29 May 2026 Dashboard + Data Clarifications meeting (still in force, except where superseded above)
 
 Walked through Eve Dillon's staff-cost worked example for YUN-01 (UK project, ÷ 7.5 divisor) and ran the open questions list. Resolutions:
 

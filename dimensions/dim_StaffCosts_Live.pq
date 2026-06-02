@@ -1,11 +1,12 @@
 // =====================================================================
 // dim_StaffCosts_Live
 // ---------------------------------------------------------------------
-// Purpose:      Per-(Employee, Year) day rate and hourly rate, with
-//               country-aware divisor and contractor → permanent ID
-//               deduplication.
+// Purpose:      Per-(Employee, Year) day rate, hourly rate, AND the staff
+//               forecast cost inputs (working hours, holiday allowance,
+//               revised annual cost net of holidays). Country-aware
+//               divisor for hourly; tenure-agnostic average for holidays.
 // Grain:        One row per TimeWorkReference per Year.
-// Dependencies: stg_Staff Costs Summary, crbb5_bamboohr
+// Dependencies: stg_Staff Costs Summary, crbb5_bamboohr, dim_HolidayPolicy_Live
 // Load:         enabled.
 // ---------------------------------------------------------------------
 // Business rules (CONFIRMED by client email):
@@ -23,6 +24,20 @@
 // Dedupe rule:
 //   When the same TimeWorkReference appears with both EMPEMCON* (contractor)
 //   and EMPEM* (permanent) EmployeeIDs, keep the EMPEM* row.
+//
+// Forecast-cost inputs (CONFIRMED by Chris's 02 Jun 2026 email + workbook):
+//   ContractHours      = crbb5_bamboohr.crbb5_contracthours (weekly, e.g. 37.5 FT / 20 PT)
+//   FullTimeHours      = 37.5 for UK + Ireland, 40 for Italy
+//   HoursRatio         = ContractHours / FullTimeHours  (FTE factor for the year)
+//   NetWorkingDays(yr) = Date.NetWorkingDays equivalent for that calendar year (≈ 261)
+//   HolidayDays        = dim_HolidayPolicy_Live[HolidayDays] for the year (default 28)
+//   PublicHolidayDays  = dim_HolidayPolicy_Live[PublicHolidayDays] (default 8)
+//   WorkedDays         = (NetWorkingDays − HolidayDays − PublicHolidayDays) × HoursRatio
+//   AnnualCost         = NetWorkingDays × HoursRatio × DayRate
+//   RevisedAnnualCost  = WorkedDays × DayRate
+//                        (this is the cost net of holiday allowance — the
+//                         figure used downstream by _Cost_Staff_Forecast as
+//                         the per-employee envelope for project allocation)
 // ---------------------------------------------------------------------
 // RESOLVED (confirmed by the latest data screenshots): the per-year
 // columns in stg_Staff Costs Summary (`2025`, `2026`) ARE DAY RATES
@@ -76,9 +91,12 @@ let
         #"crbb5_bamboohr", {"crbb5_timeworkreference"},
         "BambooHR_Lookup", JoinKind.LeftOuter
     ),
-    ExpandCountry = Table.ExpandTableColumn(MergedCountry, "BambooHR_Lookup", {"crbb5_country"}, {"Country"}),
+    ExpandCountry = Table.ExpandTableColumn(MergedCountry, "BambooHR_Lookup",
+        {"crbb5_country", "crbb5_contracthours"},
+        {"Country", "ContractHours"}),
 
-    // Step 5 — default blank Country to UK
+    // Step 5 — default blank Country to UK; default missing ContractHours
+    //          to the country full-time standard (37.5 UK/IE, 40 Italy)
     FilledCountry = Table.ReplaceValue(
         ExpandCountry,
         each [Country],
@@ -86,9 +104,22 @@ let
         Replacer.ReplaceValue,
         {"Country"}
     ),
+    AddFullTimeHours = Table.AddColumn(FilledCountry, "FullTimeHours",
+        each if [Country] = "Italy" then 40.0 else 37.5,
+        type number),
+    FilledContractHours = Table.ReplaceValue(
+        AddFullTimeHours,
+        each [ContractHours],
+        each (if [ContractHours] = null then [FullTimeHours] else [ContractHours]),
+        Replacer.ReplaceValue,
+        {"ContractHours"}
+    ),
+    AddHoursRatio = Table.AddColumn(FilledContractHours, "HoursRatio",
+        each [ContractHours] / [FullTimeHours],
+        type number),
 
-    // Step 6 — country-aware hours per day
-    AddHoursPerDay = Table.AddColumn(FilledCountry, "HoursPerDay",
+    // Step 6 — country-aware hours per day (for the timesheet-based hourly rate)
+    AddHoursPerDay = Table.AddColumn(AddHoursRatio, "HoursPerDay",
         each if [Country] = "Italy" then 8.0 else 7.5,
         type number),
 
@@ -97,12 +128,42 @@ let
         each [DayRate] / [HoursPerDay],
         Currency.Type),
 
-    // Step 8 — composite StaffKey ("<TWR>-<Year>"). dim_StaffCosts keys on
+    // Step 8 — NetWorkingDays for the year (≈ 261). Computed dynamically so
+    //          2025/2026/2027 each get the right count (260/261/262).
+    AddNetWorkingDays = Table.AddColumn(AddHourlyRate, "NetWorkingDays",
+        each let yr = [Year] in
+             List.Count(List.Select(
+                List.Dates(#date(yr,1,1), Duration.Days(#date(yr,12,31) - #date(yr,1,1)) + 1, #duration(1,0,0,0)),
+                (d) => Date.DayOfWeek(d, Day.Monday) < 5)),
+        Int64.Type),
+
+    // Step 9 — join the per-year holiday allowance
+    MergedPolicy = Table.NestedJoin(
+        AddNetWorkingDays, {"Year"},
+        #"dim_HolidayPolicy_Live", {"Year"},
+        "Policy_Lookup", JoinKind.LeftOuter
+    ),
+    ExpandPolicy = Table.ExpandTableColumn(MergedPolicy, "Policy_Lookup",
+        {"HolidayDays", "PublicHolidayDays"},
+        {"HolidayDays", "PublicHolidayDays"}),
+
+    // Step 10 — forecast-cost inputs
+    AddWorkedDays = Table.AddColumn(ExpandPolicy, "WorkedDays",
+        each ([NetWorkingDays] - [HolidayDays] - [PublicHolidayDays]) * [HoursRatio],
+        type number),
+    AddAnnualCost = Table.AddColumn(AddWorkedDays, "AnnualCost",
+        each [NetWorkingDays] * [HoursRatio] * [DayRate],
+        Currency.Type),
+    AddRevisedAnnualCost = Table.AddColumn(AddAnnualCost, "RevisedAnnualCost",
+        each [WorkedDays] * [DayRate],
+        Currency.Type),
+
+    // Step 11 — composite StaffKey ("<TWR>-<Year>"). dim_StaffCosts keys on
     //          (TimeWorkReference, Year) — Power BI relationships can't model
     //          a composite key directly. This concat lets a single-column
     //          relationship work IF the corresponding facts/helpers also
     //          carry the same StaffKey shape.
-    AddStaffKey = Table.AddColumn(AddHourlyRate, "StaffKey",
+    AddStaffKey = Table.AddColumn(AddRevisedAnnualCost, "StaffKey",
         each [TimeWorkReference] & "-" & Text.From([Year]),
         type text)
 in

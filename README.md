@@ -60,7 +60,8 @@ Queries depend on each other. If you're pasting them in for the first time, crea
 
 1. **Foundations**
    - `dimensions/dim_Date_Live.pq`
-   - `dimensions/dim_StaffCosts_Live.pq` (depends on `stg_Staff Costs Summary`, `crbb5_bamboohr`)
+   - `dimensions/dim_HolidayPolicy_Live.pq` (standalone parameter table; per-year holiday allowance, configurable)
+   - `dimensions/dim_StaffCosts_Live.pq` (depends on `stg_Staff Costs Summary`, `crbb5_bamboohr`, `dim_HolidayPolicy_Live`)
 2. **Core dimensions**
    - `dimensions/dim_Employee_Live.pq` (depends on `crbb5_bamboohr`)
    - `dimensions/dim_Accounts_Live.pq` (depends on `stg_FinanceOutput FY26_CoA`)
