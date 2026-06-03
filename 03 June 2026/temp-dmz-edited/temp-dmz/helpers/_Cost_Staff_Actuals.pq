@@ -1,0 +1,31 @@
+// =====================================================================
+// _Cost_Staff_Actuals  (helper — load disabled)
+// ---------------------------------------------------------------------
+// Purpose:      Aggregate fact_Timesheet_Live up to the fact_Cost_Live
+//               grain (Date × Project Code × TimeWorkReference).
+// Grain:        One row per (Date, Project Code, TimeWorkReference).
+// Dependencies: fact_Timesheet_Live
+// Load:         DISABLED.
+// ---------------------------------------------------------------------
+// Note: EMS 90 rows ARE included here (Chris said they should still
+// reconcile per employee). They are excluded from contract / sector
+// visuals via measure-level filters, not here.
+// =====================================================================
+let
+    Source = #"fact_Timesheet_Live",
+
+    Grouped = Table.Group(Source,
+        {"dogma_date", "Project Code", "TimeWorkReference"},
+        {{"Amount", each List.Sum([Cost]), Currency.Type}}
+    ),
+
+    AddAccountCode = Table.AddColumn(Grouped,        "Account Code",  each null,     Int64.Type),
+    AddCategory    = Table.AddColumn(AddAccountCode, "Category",      each "Staff",  type text),
+    AddType        = Table.AddColumn(AddCategory,    "Type",          each "Actual", type text),
+    AddSnapshot    = Table.AddColumn(AddType,        "Snapshot Date", each null,     type date),
+
+    Final = Table.SelectColumns(AddSnapshot,
+        {"dogma_date", "Project Code", "TimeWorkReference", "Account Code",
+         "Category", "Type", "Snapshot Date", "Amount"})
+in
+    Final
