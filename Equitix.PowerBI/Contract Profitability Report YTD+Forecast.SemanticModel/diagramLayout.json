@@ -1,0 +1,548 @@
+{
+  "version": "1.1.0",
+  "diagrams": [
+    {
+      "ordinal": 0,
+      "scrollPosition": {
+        "x": 2421.5973257927494,
+        "y": 0
+      },
+      "nodes": [
+        {
+          "location": {
+            "x": 284,
+            "y": 310.29342241245831
+          },
+          "nodeIndex": "stg_FinanceOutput FY26_CoA",
+          "size": {
+            "height": 200,
+            "width": 234
+          },
+          "zIndex": 0
+        },
+        {
+          "location": {
+            "x": 284,
+            "y": 260.29342241245831
+          },
+          "nodeIndex": "stg_FinanceOutput FY26_FY2026",
+          "size": {
+            "height": 300,
+            "width": 234
+          },
+          "zIndex": 0
+        },
+        {
+          "location": {
+            "x": 284,
+            "y": 310.29342241245831
+          },
+          "nodeIndex": "stg_Staff Costs Summary",
+          "size": {
+            "height": 200,
+            "width": 234
+          },
+          "zIndex": 0
+        },
+        {
+          "location": {
+            "x": 284,
+            "y": 260.29342241245831
+          },
+          "nodeIndex": "stg_EMS Fixed Fee Forecast_31Dec2025",
+          "size": {
+            "height": 300,
+            "width": 234
+          },
+          "zIndex": 0
+        },
+        {
+          "location": {
+            "x": 284,
+            "y": 274.29342241245831
+          },
+          "nodeIndex": "stg_EMS Fixed Fee Forecast_Actuals",
+          "size": {
+            "height": 272,
+            "width": 234
+          },
+          "zIndex": 0
+        },
+        {
+          "location": {
+            "x": 284,
+            "y": 260.29342241245831
+          },
+          "nodeIndex": "stg_EMS Fixed Fee Forecast_Contracts1",
+          "size": {
+            "height": 300,
+            "width": 234
+          },
+          "zIndex": 0
+        },
+        {
+          "location": {
+            "x": 284,
+            "y": 260.29342241245831
+          },
+          "nodeIndex": "stg_EMS Fixed Fee Forecast_Project HARP",
+          "nodeLineageTag": "82ab7460-519c-4fdf-b147-403bf6331a9e",
+          "size": {
+            "height": 524.37436309439909,
+            "width": 234
+          },
+          "zIndex": 0
+        },
+        {
+          "location": {
+            "x": 2423.4147522361854,
+            "y": 742.67000757217079
+          },
+          "nodeIndex": "crbb5_contractregister",
+          "nodeLineageTag": "84a5f36a-d92e-4a12-8da4-89d8618c4295",
+          "size": {
+            "height": 300,
+            "width": 234
+          },
+          "zIndex": 0
+        },
+        {
+          "location": {
+            "x": 2038.1503421438379,
+            "y": 310.0046963074351
+          },
+          "nodeIndex": "crbb5_project",
+          "nodeLineageTag": "842538ff-4c71-4cae-a366-64cf19656ab1",
+          "size": {
+            "height": 300,
+            "width": 234
+          },
+          "zIndex": 0
+        },
+        {
+          "location": {
+            "x": 1758.7403034456565,
+            "y": 756.56268496016719
+          },
+          "nodeIndex": "dogma_timesheet",
+          "nodeLineageTag": "3bcdcf52-d5e9-48f0-9488-32e012cecaed",
+          "size": {
+            "height": 300,
+            "width": 234
+          },
+          "zIndex": 0
+        },
+        {
+          "location": {
+            "x": 2423.4147522361854,
+            "y": 580.01206901224691
+          },
+          "nodeIndex": "Equitix_Measures",
+          "nodeLineageTag": "41dbe92d-0181-4760-a37b-157ca9e2077e",
+          "size": {
+            "height": 104,
+            "width": 234
+          },
+          "zIndex": 0
+        },
+        {
+          "location": {
+            "x": 2947.7768110914462,
+            "y": 846.18586145740915
+          },
+          "nodeIndex": "crbb5_billingschedule",
+          "nodeLineageTag": "26484233-1f22-4353-a143-867165f7d5e9",
+          "size": {
+            "height": 300,
+            "width": 234
+          },
+          "zIndex": 0
+        },
+        {
+          "location": {
+            "x": 2757.4147522361854,
+            "y": 391.56259248008359
+          },
+          "nodeIndex": "crbb5_bamboohr",
+          "nodeLineageTag": "2e89abe6-5113-45a2-99e5-21f4ca8c38d4",
+          "size": {
+            "height": 300,
+            "width": 234
+          },
+          "zIndex": 0
+        },
+        {
+          "location": {
+            "x": 2495.263171355155,
+            "y": 1213.8576393212877
+          },
+          "nodeIndex": "crbb5_jedoxallocation",
+          "nodeLineageTag": "e3ffe060-1137-40df-89b9-4e0b2b0cd5e5",
+          "size": {
+            "height": 300,
+            "width": 234
+          },
+          "zIndex": 0
+        },
+        {
+          "location": {
+            "x": 3325.4147522361854,
+            "y": 391.56259248008359
+          },
+          "nodeIndex": "dogma_timesheetheader",
+          "nodeLineageTag": "00baef7c-f46b-41ce-9c65-6842fe876593",
+          "size": {
+            "height": 300,
+            "width": 234
+          },
+          "zIndex": 0
+        },
+        {
+          "location": {
+            "x": 3041.4147522361854,
+            "y": 391.56259248008359
+          },
+          "nodeIndex": "dogma_timesheetperiod",
+          "nodeLineageTag": "7499e536-111b-41b9-b2f0-4b94c1d41222",
+          "size": {
+            "height": 300,
+            "width": 234
+          },
+          "zIndex": 0
+        },
+        {
+          "location": {
+            "x": 3392.9462295129997,
+            "y": 639.96006966064385
+          },
+          "nodeIndex": "dim_Accounts_Live",
+          "nodeLineageTag": "120427b9-95b2-453c-ae07-fe50f10f5955",
+          "size": {
+            "height": 248,
+            "width": 234
+          },
+          "zIndex": 0
+        },
+        {
+          "location": {
+            "x": 3676.9462295129997,
+            "y": 615.96006966064385
+          },
+          "nodeIndex": "dim_Date_Live",
+          "nodeLineageTag": "04c3404f-2ecc-4699-a56d-1f03e0b7f4b9",
+          "size": {
+            "height": 296,
+            "width": 234
+          },
+          "zIndex": 0
+        },
+        {
+          "location": {
+            "x": 4529.0670705129987,
+            "y": 993.29409966064338
+          },
+          "nodeIndex": "dim_Employee_Live",
+          "nodeLineageTag": "699ac260-a470-49cf-a355-f91579f097ea",
+          "size": {
+            "height": 300,
+            "width": 234
+          },
+          "zIndex": 0
+        },
+        {
+          "location": {
+            "x": 3960.9462295129997,
+            "y": 671.83506966064385
+          },
+          "nodeIndex": "dim_ForecastSnapshot_Live",
+          "nodeLineageTag": "00a06481-cc28-48f9-b22f-0132bb0dd27d",
+          "size": {
+            "height": 128,
+            "width": 234
+          },
+          "zIndex": 0
+        },
+        {
+          "location": {
+            "x": 4244.946229513,
+            "y": 683.83506966064385
+          },
+          "nodeIndex": "dim_ForecastVersion_Live",
+          "nodeLineageTag": "36cbb3e5-3cd2-436a-b228-6d97947294fd",
+          "size": {
+            "height": 104,
+            "width": 234
+          },
+          "zIndex": 0
+        },
+        {
+          "location": {
+            "x": 4528.946229513,
+            "y": 585.83506966064385
+          },
+          "nodeIndex": "dim_Project_Live",
+          "nodeLineageTag": "ac9fef59-837e-4b90-9bb7-6e507ae0952d",
+          "size": {
+            "height": 300,
+            "width": 234
+          },
+          "zIndex": 0
+        },
+        {
+          "location": {
+            "x": 4812.946229513,
+            "y": 587.83506966064385
+          },
+          "nodeIndex": "dim_StaffCosts_Live",
+          "nodeLineageTag": "0b7b968d-0963-4697-9b0b-b40e91298d39",
+          "size": {
+            "height": 296,
+            "width": 234
+          },
+          "zIndex": 0
+        },
+        {
+          "location": {
+            "x": 5096.946229513,
+            "y": 585.83506966064385
+          },
+          "nodeIndex": "dim_Transaction_Live",
+          "nodeLineageTag": "9dc104c7-db7f-4ed8-bd94-46a9dc462bfd",
+          "size": {
+            "height": 300,
+            "width": 234
+          },
+          "zIndex": 0
+        },
+        {
+          "location": {
+            "x": 7606.7077905393708,
+            "y": 14
+          },
+          "nodeIndex": "_Cost_Other_Actuals",
+          "nodeLineageTag": "fb18a855-bf4f-4277-9171-f6b74dd4a6a4",
+          "size": {
+            "height": 272,
+            "width": 234
+          },
+          "zIndex": 0
+        },
+        {
+          "location": {
+            "x": 8025.0013840437659,
+            "y": 14
+          },
+          "nodeIndex": "_Cost_Staff_Actuals",
+          "nodeLineageTag": "1ebba816-6aea-4aeb-a2df-1780033102ee",
+          "size": {
+            "height": 272,
+            "width": 234
+          },
+          "zIndex": 0
+        },
+        {
+          "location": {
+            "x": 8443.2949775481611,
+            "y": 14
+          },
+          "nodeIndex": "_Cost_Staff_Forecast",
+          "nodeLineageTag": "08726433-4566-4db8-86f6-306410e33b15",
+          "size": {
+            "height": 272,
+            "width": 234
+          },
+          "zIndex": 0
+        },
+        {
+          "location": {
+            "x": 8861.5885710525563,
+            "y": 14
+          },
+          "nodeIndex": "_Cost_Subcontractor_Actuals",
+          "nodeLineageTag": "5b97ca9b-c2e7-4658-b2fb-105449c2b1b7",
+          "size": {
+            "height": 272,
+            "width": 234
+          },
+          "zIndex": 0
+        },
+        {
+          "location": {
+            "x": 9279.8821645569515,
+            "y": 14
+          },
+          "nodeIndex": "_Cost_Subcontractor_Forecast",
+          "nodeLineageTag": "a23ade2a-7e40-4008-a3aa-5d53b2d6d3c8",
+          "size": {
+            "height": 272,
+            "width": 234
+          },
+          "zIndex": 0
+        },
+        {
+          "location": {
+            "x": 5933.53341652179,
+            "y": 2
+          },
+          "nodeIndex": "_Revenue_Actuals",
+          "nodeLineageTag": "341f2481-b894-480c-a395-8e4c7d0c0a3b",
+          "size": {
+            "height": 296,
+            "width": 234
+          },
+          "zIndex": 0
+        },
+        {
+          "location": {
+            "x": 6351.8270100261852,
+            "y": 2
+          },
+          "nodeIndex": "_Revenue_Forecast_31Dec2025",
+          "nodeLineageTag": "aa9066e7-123e-47fd-8de7-4224ad7c5d30",
+          "size": {
+            "height": 296,
+            "width": 234
+          },
+          "zIndex": 0
+        },
+        {
+          "location": {
+            "x": 6770.12060353058,
+            "y": 2
+          },
+          "nodeIndex": "_Revenue_Forecast_HARP",
+          "nodeLineageTag": "6991774d-a80a-432f-98bc-890ca9035dbe",
+          "size": {
+            "height": 296,
+            "width": 234
+          },
+          "zIndex": 0
+        },
+        {
+          "location": {
+            "x": 7188.4141970349756,
+            "y": 2
+          },
+          "nodeIndex": "_Revenue_Forecast_OOC",
+          "nodeLineageTag": "b5424e74-ee82-4720-a917-65c1cc357cec",
+          "size": {
+            "height": 296,
+            "width": 234
+          },
+          "zIndex": 0
+        },
+        {
+          "location": {
+            "x": 5096.946229513,
+            "y": 0
+          },
+          "nodeIndex": "fact_Cost_Live",
+          "nodeLineageTag": "42724366-3517-422b-9a8f-f095603bbf2b",
+          "size": {
+            "height": 300,
+            "width": 234
+          },
+          "zIndex": 0
+        },
+        {
+          "location": {
+            "x": 5515.2398230173949,
+            "y": 0
+          },
+          "nodeIndex": "fact_Revenue_Live",
+          "nodeLineageTag": "988fad42-e263-4d1b-bf0a-0c88916c9c5d",
+          "size": {
+            "height": 300,
+            "width": 234
+          },
+          "zIndex": 0
+        },
+        {
+          "location": {
+            "x": 5083.061521970516,
+            "y": 1034.9552541180317
+          },
+          "nodeIndex": "fact_Timesheet_Live",
+          "nodeLineageTag": "765a3e64-2ca5-4104-97cc-5cd3ac9b5150",
+          "size": {
+            "height": 272,
+            "width": 234
+          },
+          "zIndex": 0
+        },
+        {
+          "location": {
+            "x": 9982.1757580613466,
+            "y": 606.92881966064385
+          },
+          "nodeIndex": "stg_AdditionalServicesForecast",
+          "nodeLineageTag": "e7e8e52c-1c3d-4d24-ae94-db03ec97334a",
+          "size": {
+            "height": 300,
+            "width": 234
+          },
+          "zIndex": 0
+        },
+        {
+          "location": {
+            "x": 10266.175758061347,
+            "y": 606.92881966064385
+          },
+          "nodeIndex": "stg_SubcontractorForecast",
+          "nodeLineageTag": "564cc2c5-4b70-4833-b03a-bf19f72e8af1",
+          "size": {
+            "height": 300,
+            "width": 234
+          },
+          "zIndex": 0
+        },
+        {
+          "location": {
+            "x": 9698.1757580613466,
+            "y": 680.92881966064385
+          },
+          "nodeIndex": "FetchAllColumns",
+          "size": {
+            "height": 152,
+            "width": 234
+          },
+          "zIndex": 0
+        },
+        {
+          "location": {
+            "x": 10266.175758061347,
+            "y": 704.92881966064385
+          },
+          "nodeIndex": "_CutoverDate",
+          "nodeLineageTag": "5bdb6bf2-becb-44a3-9528-d98fb1431cf8",
+          "size": {
+            "height": 104,
+            "width": 234
+          },
+          "zIndex": 0
+        },
+        {
+          "location": {
+            "x": 10550.175758061347,
+            "y": 680.92881966064385
+          },
+          "nodeIndex": "dim_HolidayPolicy_Live",
+          "nodeLineageTag": "a89a062e-0c0a-40d5-86c5-c913308f782d",
+          "size": {
+            "height": 152,
+            "width": 234
+          },
+          "zIndex": 0
+        }
+      ],
+      "name": "All tables",
+      "zoomValue": 25.3964601566724,
+      "pinKeyFieldsToTop": false,
+      "showExtraHeaderInfo": false,
+      "hideKeyFieldsWhenCollapsed": false,
+      "tablesLocked": false
+    }
+  ],
+  "selectedDiagram": "All tables",
+  "defaultDiagram": "All tables"
+}

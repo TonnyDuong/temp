@@ -1,0 +1,38 @@
+table dim_ForecastVersion_Live
+	lineageTag: 36cbb3e5-3cd2-436a-b228-6d97947294fd
+
+	column Version
+		dataType: string
+		lineageTag: 30c89114-c47d-4e81-ac14-c338cd627336
+		summarizeBy: none
+		sourceColumn: Version
+
+		annotation SummarizationSetBy = Automatic
+
+	partition dim_ForecastVersion_Live = m
+		mode: import
+		source =
+				// =====================================================================
+				// dim_ForecastVersion_Live
+				// ---------------------------------------------------------------------
+				// Purpose:      Lookup table for distinct Jedox forecast versions
+				//               (e.g. "Forecast", "Actual"). Joined to forecast rows in
+				//               fact_Cost_Live.
+				// Grain:        One row per Version value.
+				// Dependencies: crbb5_jedoxallocation
+				// Load:         enabled.
+				// =====================================================================
+				// crbb5_jedoxallocation is exposed by LOGICAL name: the version column is
+				// crbb5_version (not "Version"). Renamed to "Version" for the friendly dim.
+				let
+				    Source = #"crbb5_jedoxallocation",
+				    KeepVersion = Table.SelectColumns(Source, {"crbb5_version"}),
+				    Renamed = Table.RenameColumns(KeepVersion, {{"crbb5_version", "Version"}}),
+				    Deduped = Table.Distinct(Renamed)
+				in
+				    Deduped
+
+	annotation PBI_NavigationStepName = Navigation
+
+	annotation PBI_ResultType = Table
+

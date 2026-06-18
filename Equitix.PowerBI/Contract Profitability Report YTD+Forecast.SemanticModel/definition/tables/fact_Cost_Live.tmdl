@@ -1,0 +1,120 @@
+table fact_Cost_Live
+	lineageTag: 42724366-3517-422b-9a8f-f095603bbf2b
+
+	column Date
+		dataType: dateTime
+		formatString: Long Date
+		lineageTag: 760bb193-517b-4ea2-9b6d-8930bb19968a
+		summarizeBy: none
+		sourceColumn: Date
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation UnderlyingDateTimeDataType = Date
+
+	column TimeWorkReference
+		dataType: string
+		lineageTag: 9b159187-ca86-4093-ba6f-b0ebb6cfe221
+		summarizeBy: none
+		sourceColumn: TimeWorkReference
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Account Code'
+		dataType: int64
+		formatString: 0
+		lineageTag: 5f9d95fd-5d14-45b5-beb3-2b1d6b3644ae
+		summarizeBy: none
+		sourceColumn: Account Code
+
+		annotation SummarizationSetBy = Automatic
+
+	column Category
+		dataType: string
+		lineageTag: b3f561e5-fd9b-4ce1-97fa-b1b964c574d9
+		summarizeBy: none
+		sourceColumn: Category
+
+		annotation SummarizationSetBy = Automatic
+
+	column Type
+		dataType: string
+		lineageTag: 7c4b90c0-1644-4253-802b-1e43f18df284
+		summarizeBy: none
+		sourceColumn: Type
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Snapshot Date'
+		dataType: dateTime
+		formatString: Long Date
+		lineageTag: 1ca6a340-e8a8-4e7b-b6ff-0d5610ff9309
+		summarizeBy: none
+		sourceColumn: Snapshot Date
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation UnderlyingDateTimeDataType = Date
+
+	column Amount
+		dataType: double
+		lineageTag: ab88cc2a-3c7d-44f8-a54f-0cdc6aa8d577
+		summarizeBy: sum
+		sourceColumn: Amount
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column 'Project Code'
+		dataType: string
+		lineageTag: df06f8af-ede9-4ab4-b8eb-fab560ca7f9e
+		summarizeBy: none
+		sourceColumn: Project Code
+
+		annotation SummarizationSetBy = Automatic
+
+	column StaffKey
+		dataType: string
+		lineageTag: e7362942-55c5-406a-8fac-8347f52179da
+		summarizeBy: none
+		sourceColumn: StaffKey
+
+		annotation SummarizationSetBy = Automatic
+
+	partition fact_Cost_Live = m
+		mode: import
+		source =
+				// =====================================================================
+				// fact_Cost_Live
+				// ---------------------------------------------------------------------
+				// Purpose:      Unified cost fact — actuals + forecast, across staff,
+				//               subcontractor and other categories — in a single table.
+				// Grain:        One row per (Date, Project, Employee, Account, Category,
+				//               Type, Snapshot).
+				// Dependencies: _Cost_Subcontractor_Actuals, _Cost_Other_Actuals,
+				//               _Cost_Staff_Actuals, _Cost_Staff_Forecast,
+				//               _Cost_Subcontractor_Forecast
+				// Load:         enabled.
+				// ---------------------------------------------------------------------
+				// Each helper conforms to the same column shape. Adding a new cost
+				// source means:
+				//   1. Build a new helper query in helpers/ with the same column shape.
+				//   2. Reference it in the Table.Combine call below.
+				// =====================================================================
+				let
+				    Combined = Table.Combine({
+				        #"_Cost_Subcontractor_Actuals",
+				        #"_Cost_Other_Actuals",
+				        #"_Cost_Staff_Actuals",
+				        #"_Cost_Staff_Forecast",
+				        #"_Cost_Subcontractor_Forecast"
+				    }),
+				    #"Changed Type" = Table.TransformColumnTypes(Combined,{{"Date", type date}})
+				in
+				    #"Changed Type"
+
+	annotation PBI_NavigationStepName = Navigation
+
+	annotation PBI_ResultType = Table
+

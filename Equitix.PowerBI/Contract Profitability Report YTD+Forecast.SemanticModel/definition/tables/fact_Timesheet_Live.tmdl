@@ -1,0 +1,178 @@
+table fact_Timesheet_Live
+	lineageTag: 765a3e64-2ca5-4104-97cc-5cd3ac9b5150
+
+	column Date
+		dataType: dateTime
+		formatString: General Date
+		lineageTag: 3a7c7182-e600-433e-8815-170886523946
+		summarizeBy: none
+		sourceColumn: Date
+
+		annotation SummarizationSetBy = Automatic
+
+	column TimeWorkReference
+		dataType: string
+		lineageTag: 02fa3094-42d2-4f07-ae30-b98984724a48
+		summarizeBy: none
+		sourceColumn: TimeWorkReference
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Project Code'
+		dataType: string
+		lineageTag: 8511c965-010f-460b-807f-9d0ab17d4d23
+		summarizeBy: none
+		sourceColumn: Project Code
+
+		annotation SummarizationSetBy = Automatic
+
+	column Duration
+		dataType: double
+		lineageTag: fff61925-8402-430a-84ec-066e1f88f681
+		summarizeBy: sum
+		sourceColumn: Duration
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column Year
+		dataType: int64
+		formatString: 0
+		lineageTag: a857ed18-af32-440f-aa54-038395d48d17
+		summarizeBy: sum
+		sourceColumn: Year
+
+		annotation SummarizationSetBy = Automatic
+
+	column StaffCostPerHour
+		dataType: decimal
+		formatString: "£"#,0.###############;-"£"#,0.###############;"£"#,0.###############
+		lineageTag: b386179e-aa08-421d-9903-49ca9a6cbf28
+		summarizeBy: sum
+		sourceColumn: StaffCostPerHour
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"currencyCulture":"en-GB"}
+
+	column Cost
+		dataType: decimal
+		formatString: "£"#,0.###############;-"£"#,0.###############;"£"#,0.###############
+		lineageTag: 3860d40a-46c4-4ed9-8676-a793985f1831
+		summarizeBy: sum
+		sourceColumn: Cost
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"currencyCulture":"en-GB"}
+
+	column IsEMS90
+		dataType: boolean
+		formatString: """TRUE"";""TRUE"";""FALSE"""
+		lineageTag: 3b7b1d7e-88af-4938-9a15-391ad3cd8fb1
+		summarizeBy: none
+		sourceColumn: IsEMS90
+
+		annotation SummarizationSetBy = Automatic
+
+	column StaffKey
+		dataType: string
+		lineageTag: c0174a3f-8470-4bd3-832a-3c27f34c339d
+		summarizeBy: none
+		sourceColumn: StaffKey
+
+		annotation SummarizationSetBy = Automatic
+
+	partition fact_Timesheet_Live = m
+		mode: import
+		source =
+				// =====================================================================
+				// fact_Timesheet_Live
+				// ---------------------------------------------------------------------
+				// Purpose:      Per-day-per-employee-per-project timesheet line with
+				//               cost already computed (Duration × StaffCostPerHour).
+				//               Feeds _Cost_Staff_Actuals (aggregated to fact_Cost_Live).
+				// Grain:        One row per timesheet line (after duplicate filter).
+				// Dependencies: dogma_timesheet, dim_StaffCosts_Live
+				// Load:         enabled.
+				// ---------------------------------------------------------------------
+				// Cost rule (final, confirmed by Chris post-Wednesday):
+				//   Cost = Duration × StaffCostPerHour
+				//   No floor, no ceiling, no monthly cap. Booked hours go to projects;
+				//   un-booked hours stay as overhead (not in this table).
+				//
+				// Join key:
+				//   Use the lookup column crbb5_crbb5_timeworkreferencename (DOUBLED
+				//   crbb5_ prefix). Confirmed by Chris — the alternative
+				//   systemuser(owninguser).crbb5_timeworkreference misses some users.
+				//
+				// EMS 90 flag:
+				//   Internal placeholder for unsubmitted timesheets. Flagged here for
+				//   exclusion in contract/sector/project visuals (via measure filters).
+				// =====================================================================
+				let
+				    Source = #"dogma_timesheet",
+				
+				    // dogma_timesheet is exposed by LOGICAL name (confirmed against its
+				    // column list): use crbb5_isduplicate / crbb5_marktodelete / dogma_date /
+				    // dogma_duration, NOT the display names.
+				
+				    // Step 1 — filter out flagged-bad rows
+				    NotDuplicate = Table.SelectRows(Source, each [crbb5_isduplicate] <> true),
+				    NotMarkToDelete = Table.SelectRows(NotDuplicate, each [crbb5_marktodelete] <> true),
+				
+				    // Step 2 — filter to 2026 only
+				    Year2026Only = Table.SelectRows(NotMarkToDelete, each Date.Year([dogma_date]) = 2026),
+				
+				    // Step 3 — surface TWR from the (doubled-prefix) lookup column, plus
+				    //          friendly names for date / duration / project.
+				    Renamed = Table.RenameColumns(Year2026Only, {
+				        {"crbb5_crbb5_timeworkreferencename", "TimeWorkReference"},
+				        {"dogma_project",                     "Project Code"},
+				        {"dogma_date",                        "Date"},
+				        {"dogma_duration",                    "Duration"}
+				    }),
+				
+				    // Step 4 — keep only columns we need
+				    Selected = Table.SelectColumns(Renamed, {
+				        "Date", "TimeWorkReference", "Project Code",
+				        "Duration", "crbb5_originalprojectcode"
+				    }),
+				
+				    // Step 5 — add Year for joining to the rate dim
+				    AddYear = Table.AddColumn(Selected, "Year", each Date.Year([Date]), Int64.Type),
+				
+				    // Step 6 — fetch StaffCostPerHour
+				    MergedRate = Table.NestedJoin(
+				        AddYear, {"TimeWorkReference", "Year"},
+				        #"dim_StaffCosts_Live", {"TimeWorkReference", "Year"},
+				        "Rate_Lookup", JoinKind.LeftOuter
+				    ),
+				    ExpandRate = Table.ExpandTableColumn(MergedRate, "Rate_Lookup",
+				        {"StaffCostPerHour"}, {"StaffCostPerHour"}),
+				
+				    // Step 7 — compute cost. If the employee has no rate in dim_StaffCosts
+				    //          for that year (joiner, leaver, missing rate row), default the
+				    //          cost to 0 — mirrors the client's IFERROR(..., 0) pattern in
+				    //          the YUN-01 reference workbook.
+				    AddCost = Table.AddColumn(ExpandRate, "Cost",
+				        each [Duration] * (if [StaffCostPerHour] = null then 0 else [StaffCostPerHour]),
+				        Currency.Type),
+				
+				    // Step 8 — flag EMS 90 rows
+				    AddIsEMS90 = Table.AddColumn(AddCost, "IsEMS90",
+				        each [Project Code] = "EMS 90" or [crbb5_originalprojectcode] = "EMS 90",
+				        type logical),
+				
+				    // Step 9 — drop the helper column used for EMS 90 detection
+				    Final = Table.RemoveColumns(AddIsEMS90, {"crbb5_originalprojectcode"}),
+				    #"Added Custom" = Table.AddColumn(Final, "Custom", each [TimeWorkReference] & "-" & Text.From([Year])),
+				    #"Renamed Columns" = Table.RenameColumns(#"Added Custom",{{"Custom", "StaffKey"}})
+				in
+				    #"Renamed Columns"
+
+	annotation PBI_NavigationStepName = Navigation
+
+	annotation PBI_ResultType = Table
+

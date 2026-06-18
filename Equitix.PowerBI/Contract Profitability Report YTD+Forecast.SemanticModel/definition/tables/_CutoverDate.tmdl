@@ -1,0 +1,56 @@
+table _CutoverDate
+	lineageTag: 5bdb6bf2-becb-44a3-9528-d98fb1431cf8
+
+	column _CutoverDate
+		dataType: dateTime
+		formatString: Long Date
+		lineageTag: 78f8c993-1396-469e-947c-da98bb387fb6
+		summarizeBy: none
+		sourceColumn: _CutoverDate
+
+		variation Variation
+			isDefault
+			relationship: 6cb5edb6-5bb2-4561-9826-80ac53a1b76f
+			defaultHierarchy: LocalDateTable_08e05b4a-7c6d-4057-9432-816baae6f777.'Date Hierarchy'
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation UnderlyingDateTimeDataType = Date
+
+	partition _CutoverDate = m
+		mode: import
+		source =
+				// =====================================================================
+				// _CutoverDate  (helper — load disabled)
+				// ---------------------------------------------------------------------
+				// Purpose:  Returns the last day of the most recent month for which
+				//           actuals should be used. On/after the 12th of the current
+				//           month, actuals are available for the PREVIOUS month, so
+				//           the cutover = end of previous month.
+				//           Before the 12th, actuals are NOT yet reliable, so the
+				//           cutover = end of the month two months ago.
+				//
+				// Examples (CutoffDay = 12):
+				//   Today = 10 Jun 2026  →  CutoverDate = 30 Apr 2026
+				//   Today = 12 Jun 2026  →  CutoverDate = 31 May 2026
+				//   Today = 20 Jun 2026  →  CutoverDate = 31 May 2026
+				//
+				// Dependencies: none — uses system date only (DateTime.LocalNow()).
+				// Load:         DISABLED — right-click query → untick "Enable load"
+				// =====================================================================
+				let
+				    Today       = Date.From(DateTime.LocalNow()),
+				    CutoffDay   = 5,
+				
+				    // If on/after the 12th, previous month's actuals are ready.
+				    // If before the 12th, go back one more month.
+				    MonthsBack  = if Date.Day(Today) >= CutoffDay then 1 else 2,
+				
+				    CutoverDate = Date.EndOfMonth(Date.AddMonths(Today, -MonthsBack))
+				in
+				    CutoverDate
+
+	annotation PBI_NavigationStepName = Navigation
+
+	annotation PBI_ResultType = Date
+

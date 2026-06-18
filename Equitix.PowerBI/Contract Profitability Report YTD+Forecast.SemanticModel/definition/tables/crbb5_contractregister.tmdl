@@ -1,0 +1,2427 @@
+table crbb5_contractregister
+	lineageTag: 84a5f36a-d92e-4a12-8da4-89d8618c4295
+
+	column 'Contract Register'
+		dataType: string
+		lineageTag: 6f8389f9-1004-49e4-9524-3a91a5e4f36e
+		summarizeBy: none
+		sourceColumn: crbb5_contractregisterid
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Created On'
+		dataType: dateTime
+		formatString: General Date
+		lineageTag: 269164e6-2213-4681-961f-1ab1bed11ec2
+		summarizeBy: none
+		sourceColumn: createdon
+
+		variation Variation
+			isDefault
+			relationship: 35288fb8-59be-44a0-84ed-460e62c011ab
+			defaultHierarchy: LocalDateTable_3fbbe913-40ee-4b2f-b105-3e3d5431262d.'Date Hierarchy'
+
+		annotation SummarizationSetBy = Automatic
+
+	column createdby
+		dataType: string
+		lineageTag: d98bd62e-c353-472c-b4d0-74d2f8d8a016
+		summarizeBy: none
+		sourceColumn: createdby
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Modified On'
+		dataType: dateTime
+		formatString: General Date
+		lineageTag: 3e9eb0e2-caad-4b5b-8ab7-35252594b7f2
+		summarizeBy: none
+		sourceColumn: modifiedon
+
+		variation Variation
+			isDefault
+			relationship: e577af33-9f0d-4cd7-acb4-69da17f63986
+			defaultHierarchy: LocalDateTable_734669f8-11a4-4d2c-9aef-aa6539be976e.'Date Hierarchy'
+
+		annotation SummarizationSetBy = Automatic
+
+	column modifiedby
+		dataType: string
+		lineageTag: e22be395-d464-477f-bca4-faecd7df4da0
+		summarizeBy: none
+		sourceColumn: modifiedby
+
+		annotation SummarizationSetBy = Automatic
+
+	column createdonbehalfby
+		dataType: string
+		lineageTag: dac75601-82fb-40cd-9d60-a4f2879625c6
+		summarizeBy: none
+		sourceColumn: createdonbehalfby
+
+		annotation SummarizationSetBy = Automatic
+
+	column modifiedonbehalfby
+		dataType: string
+		lineageTag: b806e5d7-2672-4083-a915-4f9e59a66916
+		summarizeBy: none
+		sourceColumn: modifiedonbehalfby
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Created By'
+		dataType: string
+		lineageTag: 8ed0d7ba-d72e-49a5-8e1d-1be65abc387c
+		summarizeBy: none
+		sourceColumn: createdbyname
+
+		annotation SummarizationSetBy = Automatic
+
+	column createdbyyominame
+		dataType: string
+		lineageTag: f86f2b5a-4939-4759-bbf8-27239498ecf6
+		summarizeBy: none
+		sourceColumn: createdbyyominame
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Created By (Delegate)'
+		dataType: string
+		lineageTag: 2b5c3ab5-a8c0-4ab2-bde1-d137f7701ede
+		summarizeBy: none
+		sourceColumn: createdonbehalfbyname
+
+		annotation SummarizationSetBy = Automatic
+
+	column createdonbehalfbyyominame
+		dataType: string
+		lineageTag: 48bbf3c9-7420-463f-a9ca-b9fa72e320b0
+		summarizeBy: none
+		sourceColumn: createdonbehalfbyyominame
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Modified By'
+		dataType: string
+		lineageTag: ad523594-79e2-48a5-8429-1ceafbcf0834
+		summarizeBy: none
+		sourceColumn: modifiedbyname
+
+		annotation SummarizationSetBy = Automatic
+
+	column modifiedbyyominame
+		dataType: string
+		lineageTag: 6a853a78-b672-48ac-84cc-77aa8b0f4590
+		summarizeBy: none
+		sourceColumn: modifiedbyyominame
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Modified By (Delegate)'
+		dataType: string
+		lineageTag: bb5e567a-b33d-4fec-8fe2-b60f245c073a
+		summarizeBy: none
+		sourceColumn: modifiedonbehalfbyname
+
+		annotation SummarizationSetBy = Automatic
+
+	column modifiedonbehalfbyyominame
+		dataType: string
+		lineageTag: d4199371-583c-4ae0-a8c3-9f9fdb20a119
+		summarizeBy: none
+		sourceColumn: modifiedonbehalfbyyominame
+
+		annotation SummarizationSetBy = Automatic
+
+	column ownerid
+		dataType: string
+		lineageTag: 4fb7f4bf-3fa5-40ed-ae1b-85e605a9390d
+		summarizeBy: none
+		sourceColumn: ownerid
+
+		annotation SummarizationSetBy = Automatic
+
+	column Owner
+		dataType: string
+		lineageTag: 54d9ea2d-6df9-406e-9a35-8ce672ae57f2
+		summarizeBy: none
+		sourceColumn: owneridname
+
+		annotation SummarizationSetBy = Automatic
+
+	column owneridyominame
+		dataType: string
+		lineageTag: d5231ea0-f4e9-4f8e-8613-ab241dc50c8e
+		summarizeBy: none
+		sourceColumn: owneridyominame
+
+		annotation SummarizationSetBy = Automatic
+
+	column owningbusinessunit
+		dataType: string
+		lineageTag: e73a734a-605e-4c52-a37b-ecbac0aba2b8
+		summarizeBy: none
+		sourceColumn: owningbusinessunit
+
+		annotation SummarizationSetBy = Automatic
+
+	column owninguser
+		dataType: string
+		lineageTag: 6b9d92fc-f133-4b8d-b599-aa037abaaf75
+		summarizeBy: none
+		sourceColumn: owninguser
+
+		annotation SummarizationSetBy = Automatic
+
+	column owningteam
+		dataType: string
+		lineageTag: e831415c-31e4-4e2a-8917-d586030a3d3c
+		summarizeBy: none
+		sourceColumn: owningteam
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Owning Business Unit'
+		dataType: string
+		lineageTag: 8ed03694-1c37-4247-b5e3-9c9a6d778e9d
+		summarizeBy: none
+		sourceColumn: owningbusinessunitname
+
+		annotation SummarizationSetBy = Automatic
+
+	column Status
+		dataType: int64
+		formatString: 0
+		lineageTag: 1f01c6fc-c993-4a6a-9b8d-d56366cd2507
+		summarizeBy: sum
+		sourceColumn: statecode
+
+		annotation SummarizationSetBy = Automatic
+
+	column statecodename
+		dataType: string
+		lineageTag: baaa594c-2111-4b7e-9c67-d2c903a3c252
+		summarizeBy: none
+		sourceColumn: statecodename
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Status Reason'
+		dataType: int64
+		formatString: 0
+		lineageTag: 244e75f2-afa6-4fa2-8802-75ecc083d5b0
+		summarizeBy: sum
+		sourceColumn: statuscode
+
+		annotation SummarizationSetBy = Automatic
+
+	column statuscodename
+		dataType: string
+		lineageTag: e9af3a15-217d-477e-9921-c2c470e1b272
+		summarizeBy: none
+		sourceColumn: statuscodename
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Import Sequence Number'
+		dataType: int64
+		formatString: 0
+		lineageTag: ad0872cd-c241-4066-a0c1-7c7b2d4d7972
+		summarizeBy: sum
+		sourceColumn: importsequencenumber
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Record Created On'
+		dataType: dateTime
+		formatString: General Date
+		lineageTag: 274d0537-e186-422c-a11b-c69b645bbdf4
+		summarizeBy: none
+		sourceColumn: overriddencreatedon
+
+		variation Variation
+			isDefault
+			relationship: 3a3b1b65-35fa-49b6-9944-0cb74caa360e
+			defaultHierarchy: LocalDateTable_5520d565-24f9-4831-8be2-601fb2db2356.'Date Hierarchy'
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Time Zone Rule Version Number'
+		dataType: int64
+		formatString: 0
+		lineageTag: 49c5210a-b278-458b-9eef-c24048dda66e
+		summarizeBy: sum
+		sourceColumn: timezoneruleversionnumber
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'UTC Conversion Time Zone Code'
+		dataType: int64
+		formatString: 0
+		lineageTag: 628e25f7-b0b7-4d3e-a4cd-304f4c2ab746
+		summarizeBy: count
+		sourceColumn: utcconversiontimezonecode
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Contract Reference'
+		dataType: string
+		lineageTag: adc32804-e09f-493a-b17b-f1e05beba749
+		summarizeBy: none
+		sourceColumn: crbb5_contractreference
+
+		annotation SummarizationSetBy = Automatic
+
+	column Attachments
+		dataType: string
+		lineageTag: 26295b12-d8e5-43c2-af0b-945245fd51b6
+		summarizeBy: none
+		sourceColumn: crbb5_attachments
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Base Currency'
+		dataType: string
+		lineageTag: 6d6804dc-bae0-4017-81cb-51ecf67d2266
+		summarizeBy: none
+		sourceColumn: crbb5_basecurrency
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Base fee (Legacy)'
+		dataType: double
+		lineageTag: 1ba5af46-07b0-487c-9892-92d67aa22c59
+		summarizeBy: sum
+		sourceColumn: crbb5_basefee
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column 'Billable Disbursements?'
+		dataType: string
+		lineageTag: 8b4225f1-2d84-4995-8374-ee8ba4f13b4a
+		summarizeBy: none
+		sourceColumn: crbb5_billabledisbursements
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'BudgetLead.EMail'
+		dataType: string
+		lineageTag: 52b0d4ff-0118-463e-a2b5-951a59eb7581
+		summarizeBy: none
+		sourceColumn: crbb5_budgetleademail
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'BudgetLead.Title'
+		dataType: string
+		lineageTag: 81819e1c-7760-4751-83db-9b0cd37b7b2e
+		summarizeBy: none
+		sourceColumn: crbb5_budgetleadtitle
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Building Contractor'
+		dataType: string
+		lineageTag: 04c1dd03-6fd4-4295-8eed-d0d70f1739aa
+		summarizeBy: none
+		sourceColumn: crbb5_buildingcontractor
+
+		annotation SummarizationSetBy = Automatic
+
+	column Client
+		dataType: string
+		lineageTag: d63962cb-b41f-4aa8-9109-0ea1e7b8f50c
+		summarizeBy: none
+		sourceColumn: crbb5_client
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Company Secretary Services?'
+		dataType: string
+		lineageTag: 28285bb8-2236-4365-8507-178e280c9046
+		summarizeBy: none
+		sourceColumn: crbb5_companysecretaryservices
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Concession Expiry'
+		dataType: dateTime
+		formatString: General Date
+		lineageTag: fb472d3e-d815-4060-9477-f4ea8188b1d9
+		summarizeBy: none
+		sourceColumn: crbb5_concessionexpiry
+
+		variation Variation
+			isDefault
+			relationship: d0024938-595b-4ec8-93a8-0107ede4ed12
+			defaultHierarchy: LocalDateTable_25bba294-088d-459c-8936-acda89e62179.'Date Hierarchy'
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Construction management services?'
+		dataType: string
+		lineageTag: 950676a5-d594-489b-a0d3-63d3415fc566
+		summarizeBy: none
+		sourceColumn: crbb5_constructionmanagementservices
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Contract Representative Email'
+		dataType: string
+		lineageTag: 0fc3f34f-b77d-4fe6-948d-e8064ff2e0fb
+		summarizeBy: none
+		sourceColumn: crbb5_contractrepresentativeemail
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Contract Representative Title'
+		dataType: string
+		lineageTag: bcb82ef1-432e-4fc5-bf2b-df36c35dcd7f
+		summarizeBy: none
+		sourceColumn: crbb5_contractrepresentativetitle
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Contract Status'
+		dataType: string
+		lineageTag: ac2676ca-f0a4-4f1d-82f5-142e268ab6c7
+		summarizeBy: none
+		sourceColumn: crbb5_contractstatus
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Contract Type'
+		dataType: string
+		lineageTag: da814a74-781a-434e-9072-fcadc64f4e36
+		summarizeBy: none
+		sourceColumn: crbb5_contracttype
+
+		annotation SummarizationSetBy = Automatic
+
+	column Co-shareholders?
+		dataType: string
+		lineageTag: fea45a12-fa93-4b25-8c62-9e249aa8f2b8
+		summarizeBy: none
+		sourceColumn: crbb5_coshareholders
+
+		annotation SummarizationSetBy = Automatic
+
+	column Created
+		dataType: dateTime
+		formatString: General Date
+		lineageTag: a6f5ef98-ecd5-4531-8ca0-a99f1076762c
+		summarizeBy: none
+		sourceColumn: crbb5_created
+
+		variation Variation
+			isDefault
+			relationship: 2613c338-9a6d-4e30-a58a-f0532a31af1b
+			defaultHierarchy: LocalDateTable_5cf7ce48-8287-48ef-b236-dc7b1f2afba3.'Date Hierarchy'
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Deal type OLD'
+		dataType: string
+		lineageTag: 3fc6d3ee-b84d-4188-ae92-1e9c9ea945ca
+		summarizeBy: none
+		sourceColumn: crbb5_dealtype
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Deal Type Stage Description'
+		dataType: string
+		lineageTag: c0180dfb-5fda-45ce-9cc4-13a5c9315f06
+		summarizeBy: none
+		sourceColumn: crbb5_dealtypestagedescription
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Deal Type Stage Probability Model'
+		dataType: double
+		lineageTag: 0d850fcc-2d1f-4fe3-9672-daaa0338784c
+		summarizeBy: sum
+		sourceColumn: crbb5_dealtypestageprobabilitymodel
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column 'Deal Type Stage Title'
+		dataType: string
+		lineageTag: bb08d55a-8250-4b24-909d-2ee3ea13505f
+		summarizeBy: none
+		sourceColumn: crbb5_dealtypestagetitle
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Deal Type Validation'
+		dataType: string
+		lineageTag: c449d2f9-d2ca-4287-a3c1-fa6b5e4a6d5d
+		summarizeBy: none
+		sourceColumn: crbb5_dealtypevalidation
+
+		annotation SummarizationSetBy = Automatic
+
+	column Description
+		dataType: string
+		lineageTag: c930b096-77fc-4a57-9208-83a4f1176c07
+		summarizeBy: none
+		sourceColumn: crbb5_description
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Direct Link'
+		dataType: string
+		lineageTag: 09b29ff8-f8a0-4b11-a709-bbb23a9c7217
+		summarizeBy: none
+		sourceColumn: crbb5_directlink
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Editor Email'
+		dataType: string
+		lineageTag: 1404cd34-43fe-4149-b36a-b7dfa9c9e0e9
+		summarizeBy: none
+		sourceColumn: crbb5_editoremail
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Editor Title'
+		dataType: string
+		lineageTag: 09cc5994-0042-4384-a564-7d4b36a7fc90
+		summarizeBy: none
+		sourceColumn: crbb5_editortitle
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Estimated Assets'
+		dataType: string
+		lineageTag: a920a51d-4cff-4763-b5e6-a4918747ccd0
+		summarizeBy: none
+		sourceColumn: crbb5_estimatedassets
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Expiry Terms'
+		dataType: string
+		lineageTag: 570ddf2a-b01d-412c-b903-6b8a9d598d2a
+		summarizeBy: none
+		sourceColumn: crbb5_expiryterms
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'FinanceLead.EMail'
+		dataType: string
+		lineageTag: 10f2bcd3-e523-4a38-ad00-b3d3600a16fd
+		summarizeBy: none
+		sourceColumn: crbb5_financeleademail
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'FinanceLead.Title'
+		dataType: string
+		lineageTag: f9957bf9-63bb-45c3-af6d-041c68326e8f
+		summarizeBy: none
+		sourceColumn: crbb5_financeleadtitle
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Financial Close'
+		dataType: dateTime
+		formatString: General Date
+		lineageTag: 0103ade7-a01c-4e8c-b688-1198ab8ae8eb
+		summarizeBy: none
+		sourceColumn: crbb5_financialclose
+
+		variation Variation
+			isDefault
+			relationship: 906eb655-526f-4911-9054-7efb0dbe023c
+			defaultHierarchy: LocalDateTable_b6e2a64e-eb74-4e6a-af6d-5970cb6eb3e6.'Date Hierarchy'
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Financial management services?'
+		dataType: string
+		lineageTag: 790f3a99-a276-4818-a9cd-c12574709617
+		summarizeBy: none
+		sourceColumn: crbb5_financialmanagementservices
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Hard FM Contractor'
+		dataType: string
+		lineageTag: 47ff61fb-8240-4140-898e-481e0fabdc08
+		summarizeBy: none
+		sourceColumn: crbb5_hardfmcontractor
+
+		annotation SummarizationSetBy = Automatic
+
+	column ID
+		dataType: string
+		lineageTag: 7a906d9b-866a-4b6d-8cbc-201bd53036fd
+		summarizeBy: none
+		sourceColumn: crbb5_id
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Next Term Ends On'
+		dataType: dateTime
+		formatString: General Date
+		lineageTag: 63218f70-08e6-446b-b326-38156b22cbe1
+		summarizeBy: none
+		sourceColumn: crbb5_initialtermenddate
+
+		variation Variation
+			isDefault
+			relationship: 090127e4-a2d2-49b1-9adb-a0705a64c9e9
+			defaultHierarchy: LocalDateTable_afb2507d-3632-4455-baa4-87a2d96859c0.'Date Hierarchy'
+
+		annotation SummarizationSetBy = Automatic
+
+	column Introducer
+		dataType: string
+		lineageTag: 90521e0c-1ffa-4d9a-97a6-2593f84dbec6
+		summarizeBy: none
+		sourceColumn: crbb5_introducer
+
+		annotation SummarizationSetBy = Automatic
+
+	column Lenders
+		dataType: string
+		lineageTag: 70d8178c-1abf-4d1f-92a5-26c456bec529
+		summarizeBy: none
+		sourceColumn: crbb5_lenders
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Lifecycle Risk'
+		dataType: string
+		lineageTag: 762eb90c-3bd6-41a5-89f2-0fc8db2b730d
+		summarizeBy: none
+		sourceColumn: crbb5_lifecyclerisk
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Mobilised Date'
+		dataType: dateTime
+		formatString: General Date
+		lineageTag: e66852a1-2ab8-4e40-a2f6-1b7a7300e7c7
+		summarizeBy: none
+		sourceColumn: crbb5_mobiliseddate
+
+		variation Variation
+			isDefault
+			relationship: 14cc82aa-b54b-49b2-aa8b-f6141de22e54
+			defaultHierarchy: LocalDateTable_535f720a-2b57-424e-ab2a-895e015c7ca6.'Date Hierarchy'
+
+		annotation SummarizationSetBy = Automatic
+
+	column Modified
+		dataType: dateTime
+		formatString: General Date
+		lineageTag: 61f0769c-3e9d-4623-ad3e-cf81c433ccb8
+		summarizeBy: none
+		sourceColumn: crbb5_modified
+
+		variation Variation
+			isDefault
+			relationship: 4940357d-bc83-45d1-a0c7-ac1885a6cb18
+			defaultHierarchy: LocalDateTable_5f0ac23f-6d25-4ba3-a258-bed158ee84a7.'Date Hierarchy'
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'MSA Executed Date'
+		dataType: dateTime
+		formatString: General Date
+		lineageTag: 95bdf158-c929-4c2c-acd2-87e41d4d8601
+		summarizeBy: none
+		sourceColumn: crbb5_msaexecuteddate
+
+		variation Variation
+			isDefault
+			relationship: 77ad1de6-e2a0-4fce-a0f3-22d67e3176ae
+			defaultHierarchy: LocalDateTable_34955bdb-dbd6-443c-b393-2bc671fffb5a.'Date Hierarchy'
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'MSA Reference'
+		dataType: string
+		lineageTag: 2f1fe679-c8a1-49cb-8f42-d6403e583f65
+		summarizeBy: none
+		sourceColumn: crbb5_msareference
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Notice Period (months)'
+		dataType: int64
+		formatString: 0
+		lineageTag: 3a05e1b8-46c0-43bb-ab73-44f99e17ebd5
+		summarizeBy: sum
+		sourceColumn: crbb5_noticeperiodmonths
+
+		annotation SummarizationSetBy = Automatic
+
+	column Office
+		dataType: string
+		lineageTag: cf8c805c-f710-49fe-80cf-401e40dc0137
+		summarizeBy: none
+		sourceColumn: crbb5_office
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Operational management services?'
+		dataType: string
+		lineageTag: 48665424-fd2f-4b6e-b711-98f9a37dbe71
+		summarizeBy: none
+		sourceColumn: crbb5_operationalmanagementservices
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'OperationsLead.EMail'
+		dataType: string
+		lineageTag: 6ea352f8-01db-4078-85f8-116a0f3f6fb1
+		summarizeBy: none
+		sourceColumn: crbb5_operationsleademail
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'OperationsLead.Title'
+		dataType: string
+		lineageTag: 59256cc9-9e1a-404c-b264-dfb7cbd89bd7
+		summarizeBy: none
+		sourceColumn: crbb5_operationsleadtitle
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'PI Cover'
+		dataType: string
+		lineageTag: 693bfaad-d8bb-403c-b636-c6d1bfaca90e
+		summarizeBy: none
+		sourceColumn: crbb5_picover
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Pipeline Entry Date'
+		dataType: dateTime
+		formatString: General Date
+		lineageTag: eb514dc2-7f75-44cc-818e-2a962b4c3c9f
+		summarizeBy: none
+		sourceColumn: crbb5_pipelineentrydate
+
+		variation Variation
+			isDefault
+			relationship: dbd2c4fb-6639-44dc-876d-21dea9a1b46f
+			defaultHierarchy: LocalDateTable_98ab4e54-3434-4cb9-ace0-fd5914953e95.'Date Hierarchy'
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Pipeline Reference'
+		dataType: string
+		lineageTag: 2ac504a4-ef5c-40d1-8124-6caf78539799
+		summarizeBy: none
+		sourceColumn: crbb5_pipelinereference
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'PipelineRepresentative.EMail'
+		dataType: string
+		lineageTag: 3b272957-9515-4188-91c1-e7edc286b939
+		summarizeBy: none
+		sourceColumn: crbb5_pipelinerepresentativeemail
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'PipelineRepresentative.Title'
+		dataType: string
+		lineageTag: 2bda58c9-51b5-4ca6-b128-91d2ed0ad681
+		summarizeBy: none
+		sourceColumn: crbb5_pipelinerepresentativetitle
+
+		annotation SummarizationSetBy = Automatic
+
+	column PipelineStatus
+		dataType: string
+		lineageTag: 9df3af04-87c2-413e-acb4-bfa349fda0d1
+		summarizeBy: none
+		sourceColumn: crbb5_pipelinestatus
+
+		annotation SummarizationSetBy = Automatic
+
+	column Portfolio
+		dataType: string
+		lineageTag: bd7abc15-09f6-46bd-a001-f4f9936f9ab2
+		summarizeBy: none
+		sourceColumn: crbb5_portfolio
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Practical Completion Date'
+		dataType: dateTime
+		formatString: General Date
+		lineageTag: 1d6d994b-2a38-4a06-99f6-3cfe0ca890ee
+		summarizeBy: none
+		sourceColumn: crbb5_practicalcompletiondate
+
+		variation Variation
+			isDefault
+			relationship: 509d8a7f-0f50-4119-987e-61045d5a1070
+			defaultHierarchy: LocalDateTable_96a2823c-d1f9-4c9b-8f9d-66219a2d27d6.'Date Hierarchy'
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Previous MSA Provider'
+		dataType: string
+		lineageTag: 5759a937-0a9c-43cf-bbe4-878ed0ed7082
+		summarizeBy: none
+		sourceColumn: crbb5_previousmsaprovider
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Project Name'
+		dataType: string
+		lineageTag: 2e04a8d3-0a59-43a2-b30a-a9d917e48ce5
+		summarizeBy: none
+		sourceColumn: crbb5_projectname
+
+		annotation SummarizationSetBy = Automatic
+
+	column Region
+		dataType: string
+		lineageTag: ad1bb635-ecf6-4b79-a27e-eecb14b41406
+		summarizeBy: none
+		sourceColumn: crbb5_region
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Region 2'
+		dataType: string
+		lineageTag: 37e3b0da-7728-4765-8090-942a42123af2
+		summarizeBy: none
+		sourceColumn: crbb5_region2
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Next Renewal Period Duration (Months)'
+		dataType: int64
+		formatString: 0
+		lineageTag: 62688dff-050d-4ff6-b797-1308e35b9048
+		summarizeBy: sum
+		sourceColumn: crbb5_renewalperiodmonths
+
+		annotation SummarizationSetBy = Automatic
+
+	column Sector
+		dataType: string
+		lineageTag: df9e7343-8e15-493b-960f-56f742e93ea7
+		summarizeBy: none
+		sourceColumn: crbb5_sector
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Senior Debt £'
+		dataType: double
+		lineageTag: 1ee4acb5-0731-4794-b4e1-a5280de3e0ba
+		summarizeBy: sum
+		sourceColumn: crbb5_seniordebt
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column 'Service Availability'
+		dataType: dateTime
+		formatString: General Date
+		lineageTag: e74ed00f-5ed8-4a0e-963d-9bd0166e0182
+		summarizeBy: none
+		sourceColumn: crbb5_serviceavailability
+
+		variation Variation
+			isDefault
+			relationship: cad52bca-ed1c-4844-b64c-55d5b9f76414
+			defaultHierarchy: LocalDateTable_1bb8f4c7-f938-4b1b-850b-a624c2c3b917.'Date Hierarchy'
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Service Commencement Date'
+		dataType: dateTime
+		formatString: General Date
+		lineageTag: 7a324b18-8357-4d42-9947-0422029d87c0
+		summarizeBy: none
+		sourceColumn: crbb5_servicecommencementdate
+
+		variation Variation
+			isDefault
+			relationship: 53b8531c-d33a-42e2-a20c-b5fa8cd659c3
+			defaultHierarchy: LocalDateTable_e0787064-ee8f-4c1f-8c90-5d418219d378.'Date Hierarchy'
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'SharepointChampion.EMail'
+		dataType: string
+		lineageTag: 2223a3f0-f30d-4bbf-af79-7d4a0b05dedd
+		summarizeBy: none
+		sourceColumn: crbb5_sharepointchampionemail
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'SharepointChampion.Title'
+		dataType: string
+		lineageTag: 0e666588-1480-4794-b0e2-0361b34b3d36
+		summarizeBy: none
+		sourceColumn: crbb5_sharepointchampiontitle
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Sharepoint Link'
+		dataType: string
+		lineageTag: c6528154-0451-4618-8892-31ca97294e50
+		summarizeBy: none
+		sourceColumn: crbb5_sharepointlink
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Soft FM Contractor'
+		dataType: string
+		lineageTag: 9f57e0fa-4d4e-4184-9fbf-74622ac9b3b8
+		summarizeBy: none
+		sourceColumn: crbb5_softfmcontractor
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'SPV Name'
+		dataType: string
+		lineageTag: 9221c081-01e2-4bf8-a9cf-33e22798fd27
+		summarizeBy: none
+		sourceColumn: crbb5_spvname
+
+		annotation SummarizationSetBy = Automatic
+
+	column Supersector
+		dataType: string
+		lineageTag: 2c82b5e1-ccaf-4d1c-aa8a-a2044053b0ac
+		summarizeBy: none
+		sourceColumn: crbb5_supersector
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Termination Date'
+		dataType: dateTime
+		formatString: General Date
+		lineageTag: 9531e3c9-b292-49ea-b04a-ada4b3e2c5f7
+		summarizeBy: none
+		sourceColumn: crbb5_terminationdate
+
+		variation Variation
+			isDefault
+			relationship: 1e13024a-3898-4964-8d49-716bdc085987
+			defaultHierarchy: LocalDateTable_bab9c6e9-97ff-4b3d-8329-33d2d712b173.'Date Hierarchy'
+
+		annotation SummarizationSetBy = Automatic
+
+	column Title
+		dataType: string
+		lineageTag: 43b4f939-8031-4390-b605-a321b056e2bb
+		summarizeBy: none
+		sourceColumn: crbb5_title
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Update Notes'
+		dataType: string
+		lineageTag: 4de29dd2-9617-4646-a64d-655b2c8b0898
+		summarizeBy: none
+		sourceColumn: crbb5_updatenotes
+
+		annotation SummarizationSetBy = Automatic
+
+	column Projects
+		dataType: int64
+		formatString: 0
+		lineageTag: afb746f7-2814-4c8c-8ae8-64c91dce07cf
+		summarizeBy: sum
+		sourceColumn: crbb5_projects
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Projects (Last Updated On)'
+		dataType: dateTime
+		formatString: General Date
+		lineageTag: 88021d89-dc26-4885-9e96-64904ed5521f
+		summarizeBy: none
+		sourceColumn: crbb5_projects_date
+
+		variation Variation
+			isDefault
+			relationship: 5be9efd7-d47d-45b9-832a-8af24ef3accf
+			defaultHierarchy: LocalDateTable_0d358291-1095-485c-947d-90973f62bf4f.'Date Hierarchy'
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Projects (State)'
+		dataType: int64
+		formatString: 0
+		lineageTag: b38d8c44-81a1-439d-bef1-e13c0213beac
+		summarizeBy: sum
+		sourceColumn: crbb5_projects_state
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Company Count'
+		dataType: int64
+		formatString: 0
+		lineageTag: 3235f2c5-4d3d-4080-8e0a-a8e8e520fa0f
+		summarizeBy: sum
+		sourceColumn: crbb5_companycount
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Company Count (Last Updated On)'
+		dataType: dateTime
+		formatString: General Date
+		lineageTag: 23d3001d-04a1-4c53-861f-460277155b55
+		summarizeBy: none
+		sourceColumn: crbb5_companycount_date
+
+		variation Variation
+			isDefault
+			relationship: bf4e951b-657e-4680-868c-bab8458dc43a
+			defaultHierarchy: LocalDateTable_251b3782-d84c-4b68-bcc7-f5220128f490.'Date Hierarchy'
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Company Count (State)'
+		dataType: int64
+		formatString: 0
+		lineageTag: 7e730520-f3d0-4c12-9f61-960943743beb
+		summarizeBy: sum
+		sourceColumn: crbb5_companycount_state
+
+		annotation SummarizationSetBy = Automatic
+
+	column crbb5_clientfundowner
+		dataType: string
+		lineageTag: 27646646-3eab-46b2-8572-20e1338556c3
+		summarizeBy: none
+		sourceColumn: crbb5_clientfundowner
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Client Fund Owner'
+		dataType: string
+		lineageTag: 66715312-b087-4164-9037-402385116b8f
+		summarizeBy: none
+		sourceColumn: crbb5_clientfundownername
+
+		annotation SummarizationSetBy = Automatic
+
+	column crbb5_clientfundowneryominame
+		dataType: string
+		lineageTag: b8b59dd6-b9c6-459a-8c42-0350c7a601f9
+		summarizeBy: none
+		sourceColumn: crbb5_clientfundowneryominame
+
+		annotation SummarizationSetBy = Automatic
+
+	column Now
+		dataType: dateTime
+		formatString: General Date
+		lineageTag: 8096f54d-649c-44c0-865c-3d12002a6331
+		summarizeBy: none
+		sourceColumn: crbb5_now
+
+		variation Variation
+			isDefault
+			relationship: 3db1f281-1518-4ea4-be35-225ba54ccade
+			defaultHierarchy: LocalDateTable_b9d8ee6d-d6b3-4589-ad8e-789417c2f68e.'Date Hierarchy'
+
+		annotation SummarizationSetBy = Automatic
+
+	column crbb5_inconstructionphase
+		dataType: boolean
+		formatString: """TRUE"";""TRUE"";""FALSE"""
+		lineageTag: fb9b2b2f-bcf9-43d6-a138-9c239d705149
+		summarizeBy: none
+		sourceColumn: crbb5_inconstructionphase
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'In Construction Phase ?'
+		dataType: string
+		lineageTag: d958bc79-6efd-4451-80ff-73de82987be1
+		summarizeBy: none
+		sourceColumn: crbb5_inconstructionphasename
+
+		annotation SummarizationSetBy = Automatic
+
+	column crbb5_dealtypes
+		dataType: int64
+		formatString: 0
+		lineageTag: 5cb63127-553c-4069-8ed1-61ed60afd9f4
+		summarizeBy: sum
+		sourceColumn: crbb5_dealtypes
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Deal Type'
+		dataType: string
+		lineageTag: 0e7b8f20-ff88-49d3-a13a-ae0ca1a5a77a
+		summarizeBy: none
+		sourceColumn: crbb5_dealtypesname
+
+		annotation SummarizationSetBy = Automatic
+
+	column crbb5_operationslead
+		dataType: string
+		lineageTag: 51372cb2-f4e5-4c5a-9291-13203b461ef1
+		summarizeBy: none
+		sourceColumn: crbb5_operationslead
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Operations Lead'
+		dataType: string
+		lineageTag: 205ef8a4-5c49-4d38-84a6-049aa8126118
+		summarizeBy: none
+		sourceColumn: crbb5_operationsleadname
+
+		annotation SummarizationSetBy = Automatic
+
+	column crbb5_operationsleadyominame
+		dataType: string
+		lineageTag: 0e66ea5d-2f24-44bd-b2f2-16c34831490b
+		summarizeBy: none
+		sourceColumn: crbb5_operationsleadyominame
+
+		annotation SummarizationSetBy = Automatic
+
+	column crbb5_financelead
+		dataType: string
+		lineageTag: 839c5824-dd1d-43d0-845b-f55d6d559ccc
+		summarizeBy: none
+		sourceColumn: crbb5_financelead
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Finance Lead'
+		dataType: string
+		lineageTag: cd68b1c3-0891-425a-91a0-4506f146e798
+		summarizeBy: none
+		sourceColumn: crbb5_financeleadname
+
+		annotation SummarizationSetBy = Automatic
+
+	column crbb5_financeleadyominame
+		dataType: string
+		lineageTag: b8ec3de2-452f-4195-9d39-f23f9e881038
+		summarizeBy: none
+		sourceColumn: crbb5_financeleadyominame
+
+		annotation SummarizationSetBy = Automatic
+
+	column crbb5_budgetlead
+		dataType: string
+		lineageTag: 8c241cc1-c34b-4de8-b196-d5ec24f255c3
+		summarizeBy: none
+		sourceColumn: crbb5_budgetlead
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Budget Lead'
+		dataType: string
+		lineageTag: d48c5ae1-e190-468a-9d82-b33e76798d72
+		summarizeBy: none
+		sourceColumn: crbb5_budgetleadname
+
+		annotation SummarizationSetBy = Automatic
+
+	column crbb5_budgetleadyominame
+		dataType: string
+		lineageTag: d8dd55d4-4e1c-4712-84d8-75b847bd7f81
+		summarizeBy: none
+		sourceColumn: crbb5_budgetleadyominame
+
+		annotation SummarizationSetBy = Automatic
+
+	column crbb5_supersectorchoice
+		dataType: int64
+		formatString: 0
+		lineageTag: ce46dff3-0c70-4cac-943d-e5ff74519fa3
+		summarizeBy: sum
+		sourceColumn: crbb5_supersectorchoice
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Supersector Choice'
+		dataType: string
+		lineageTag: d74770ca-bff1-4748-9111-5b150c6b13df
+		summarizeBy: none
+		sourceColumn: crbb5_supersectorchoicename
+
+		annotation SummarizationSetBy = Automatic
+
+	column crbb5_sectorchoice
+		dataType: int64
+		formatString: 0
+		lineageTag: e71bdcd3-ba0c-40c0-ac4a-2f5bbfcd0184
+		summarizeBy: sum
+		sourceColumn: crbb5_sectorchoice
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Sector Choice'
+		dataType: string
+		lineageTag: 8c0c2e29-9e1c-4e6b-b17d-4b0f0e85239f
+		summarizeBy: none
+		sourceColumn: crbb5_sectorchoicename
+
+		annotation SummarizationSetBy = Automatic
+
+	column crbb5_officelookup
+		dataType: string
+		lineageTag: 47901c48-bd65-4b88-961b-7b6e60e5ad07
+		summarizeBy: none
+		sourceColumn: crbb5_officelookup
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Office Lookup'
+		dataType: string
+		lineageTag: 4d5123ed-1c3b-4ac5-9c96-6435d5101b79
+		summarizeBy: none
+		sourceColumn: crbb5_officelookupname
+
+		annotation SummarizationSetBy = Automatic
+
+	column crbb5_pipelinestatuschoice
+		dataType: int64
+		formatString: 0
+		lineageTag: e6e290af-7cf1-4eab-a289-ef7d4119b366
+		summarizeBy: sum
+		sourceColumn: crbb5_pipelinestatuschoice
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Pipeline Status'
+		dataType: string
+		lineageTag: ea586ab7-7607-4e60-8315-72039c75616d
+		summarizeBy: none
+		sourceColumn: crbb5_pipelinestatuschoicename
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Mobilising Days until SCD'
+		dataType: int64
+		formatString: 0
+		lineageTag: 0b605e46-1249-4f2a-9195-db36f0b980e6
+		summarizeBy: sum
+		sourceColumn: crbb5_mobilisingdaysuntilscd
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Next Term Days Remaining'
+		dataType: int64
+		formatString: 0
+		lineageTag: f4db0560-94a0-4db7-80ec-c900c0076aa7
+		summarizeBy: sum
+		sourceColumn: crbb5_initialtermdaysremaining
+
+		annotation SummarizationSetBy = Automatic
+
+	column crbb5_remoteapprovalstatus
+		dataType: int64
+		formatString: 0
+		lineageTag: 3b3b2c86-9630-4c3e-938a-0b1ad94662ea
+		summarizeBy: sum
+		sourceColumn: crbb5_remoteapprovalstatus
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Remote Approval Status'
+		dataType: string
+		lineageTag: f078c075-bf81-4faa-b905-014e6387ed67
+		summarizeBy: none
+		sourceColumn: crbb5_remoteapprovalstatusname
+
+		annotation SummarizationSetBy = Automatic
+
+	column crbb5_companysecretarial
+		dataType: boolean
+		formatString: """TRUE"";""TRUE"";""FALSE"""
+		lineageTag: 55a5cf07-4388-4a54-9691-730f19c4afd2
+		summarizeBy: none
+		sourceColumn: crbb5_companysecretarial
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Company Secretarial ?'
+		dataType: string
+		lineageTag: cb4df0dd-3355-4eec-bdc7-029ee8ed8f87
+		summarizeBy: none
+		sourceColumn: crbb5_companysecretarialname
+
+		annotation SummarizationSetBy = Automatic
+
+	column crbb5_constructionmanagement
+		dataType: boolean
+		formatString: """TRUE"";""TRUE"";""FALSE"""
+		lineageTag: 2016258b-dfdc-4528-8151-aa73fa5b6f65
+		summarizeBy: none
+		sourceColumn: crbb5_constructionmanagement
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Construction Management ?'
+		dataType: string
+		lineageTag: 444d2bc3-2c30-4e1e-ad29-8d3bca78aa56
+		summarizeBy: none
+		sourceColumn: crbb5_constructionmanagementname
+
+		annotation SummarizationSetBy = Automatic
+
+	column crbb5_financialmanagement
+		dataType: boolean
+		formatString: """TRUE"";""TRUE"";""FALSE"""
+		lineageTag: 3fcc0264-9cf9-40cc-95f1-f73f10fc92a6
+		summarizeBy: none
+		sourceColumn: crbb5_financialmanagement
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Financial Management ?'
+		dataType: string
+		lineageTag: e2e94236-2dd0-4761-925a-a69601134e8d
+		summarizeBy: none
+		sourceColumn: crbb5_financialmanagementname
+
+		annotation SummarizationSetBy = Automatic
+
+	column crbb5_operationalmanagement
+		dataType: boolean
+		formatString: """TRUE"";""TRUE"";""FALSE"""
+		lineageTag: 4b87d607-04f2-4a7e-bcd0-1d412b622558
+		summarizeBy: none
+		sourceColumn: crbb5_operationalmanagement
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Operational Management ?'
+		dataType: string
+		lineageTag: 10029549-63f7-4db4-acc6-450344708262
+		summarizeBy: none
+		sourceColumn: crbb5_operationalmanagementname
+
+		annotation SummarizationSetBy = Automatic
+
+	column crbb5_readytoprice
+		dataType: boolean
+		formatString: """TRUE"";""TRUE"";""FALSE"""
+		lineageTag: 1cb75670-4b02-466c-b5e5-5e3cb1cccf46
+		summarizeBy: none
+		sourceColumn: crbb5_readytoprice
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Ready to price ?'
+		dataType: string
+		lineageTag: 9043dca8-1d97-4ed3-b7e5-5a3b1ac4cc0b
+		summarizeBy: none
+		sourceColumn: crbb5_readytopricename
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Proposal Last Submitted '
+		dataType: dateTime
+		formatString: General Date
+		lineageTag: 3593d424-bed6-4c31-99f0-f32a13f5efc1
+		summarizeBy: none
+		sourceColumn: crbb5_proposallastsubmitted
+
+		variation Variation
+			isDefault
+			relationship: 80dfdb09-43b0-4df9-91db-5041b64a3433
+			defaultHierarchy: LocalDateTable_a4d69dbb-02c0-4a18-bec7-2dbf84886313.'Date Hierarchy'
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Proposal Last Accepted'
+		dataType: dateTime
+		formatString: General Date
+		lineageTag: 26fd93e6-1964-4a2f-a54a-0e5ab2d28953
+		summarizeBy: none
+		sourceColumn: crbb5_proposallastaccepted
+
+		variation Variation
+			isDefault
+			relationship: 2e0e4619-731c-4345-b4a8-7d7a222a2dac
+			defaultHierarchy: LocalDateTable_5fb6b5bf-7f0b-481f-ad38-1898442062de.'Date Hierarchy'
+
+		annotation SummarizationSetBy = Automatic
+
+	column crbb5_incumbentterminationissued
+		dataType: boolean
+		formatString: """TRUE"";""TRUE"";""FALSE"""
+		lineageTag: 3f0622f1-9e74-4acd-b37c-cecfcee865ec
+		summarizeBy: none
+		sourceColumn: crbb5_incumbentterminationissued
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Incumbent Termination Issued?'
+		dataType: string
+		lineageTag: 8f6193c8-089e-4dc8-a0aa-c91deaebc65c
+		summarizeBy: none
+		sourceColumn: crbb5_incumbentterminationissuedname
+
+		annotation SummarizationSetBy = Automatic
+
+	column crbb5_clienthasprequalified
+		dataType: boolean
+		formatString: """TRUE"";""TRUE"";""FALSE"""
+		lineageTag: 190a6c5b-8f4e-4794-8b8d-8f8d4e43fae3
+		summarizeBy: none
+		sourceColumn: crbb5_clienthasprequalified
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Client has prequalified ?'
+		dataType: string
+		lineageTag: f872a181-cc7b-46fd-80c5-3b8f4a186ae6
+		summarizeBy: none
+		sourceColumn: crbb5_clienthasprequalifiedname
+
+		annotation SummarizationSetBy = Automatic
+
+	column crbb5_clientsubmittedabid
+		dataType: boolean
+		formatString: """TRUE"";""TRUE"";""FALSE"""
+		lineageTag: 694b937e-53f0-4e47-b20d-aac0b559469e
+		summarizeBy: none
+		sourceColumn: crbb5_clientsubmittedabid
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Client has submitted a bid?'
+		dataType: string
+		lineageTag: 778752f5-8e29-42d1-a4bd-351ad6307090
+		summarizeBy: none
+		sourceColumn: crbb5_clientsubmittedabidname
+
+		annotation SummarizationSetBy = Automatic
+
+	column crbb5_directorservices
+		dataType: boolean
+		formatString: """TRUE"";""TRUE"";""FALSE"""
+		lineageTag: df192798-60ce-4b43-b2c0-36cd87030a45
+		summarizeBy: none
+		sourceColumn: crbb5_directorservices
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Director Services'
+		dataType: string
+		lineageTag: ded9be7d-c41d-4bc7-bae3-c7b8135e05a3
+		summarizeBy: none
+		sourceColumn: crbb5_directorservicesname
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Client Awarded Preferred Bidder'
+		dataType: dateTime
+		formatString: General Date
+		lineageTag: 2d0212c4-c04e-4f07-87a0-1d0bf199c10d
+		summarizeBy: none
+		sourceColumn: crbb5_clientawardedpreferredbidder
+
+		variation Variation
+			isDefault
+			relationship: c3ab2746-304c-4046-93d4-fd53f73494ea
+			defaultHierarchy: LocalDateTable_963a270f-536a-494b-b41c-1120af919f25.'Date Hierarchy'
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'FC Fee'
+		dataType: decimal
+		formatString: "£"#,0.###############;-"£"#,0.###############;"£"#,0.###############
+		lineageTag: a035f1d3-6b74-45c0-b893-4069985c6006
+		summarizeBy: sum
+		sourceColumn: crbb5_fcfee
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"currencyCulture":"en-GB"}
+
+	column transactioncurrencyid
+		dataType: string
+		lineageTag: 09094939-9b24-4c85-b62b-4c95f5ca2357
+		summarizeBy: none
+		sourceColumn: transactioncurrencyid
+
+		annotation SummarizationSetBy = Automatic
+
+	column Currency
+		dataType: string
+		lineageTag: 078a502b-8e56-420b-a535-4883f0af0f80
+		summarizeBy: none
+		sourceColumn: transactioncurrencyidname
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Exchange Rate'
+		dataType: double
+		lineageTag: 1d663322-38e1-4fa0-bf76-463b19005cef
+		summarizeBy: sum
+		sourceColumn: exchangerate
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column 'FC Fee (Base)'
+		dataType: decimal
+		formatString: "£"#,0.###############;-"£"#,0.###############;"£"#,0.###############
+		lineageTag: a119e21f-3bb3-4e61-87b1-c0616fd106a7
+		summarizeBy: sum
+		sourceColumn: crbb5_fcfee_base
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"currencyCulture":"en-GB"}
+
+	column crbb5_upstreamreporta
+		dataType: string
+		lineageTag: 354f517a-be36-4733-be43-5ce5b217c0b6
+		summarizeBy: none
+		sourceColumn: crbb5_upstreamreporta
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Upstream Ops'
+		dataType: string
+		lineageTag: b6027c3e-8e08-40fd-b9a5-8ded06aa37f2
+		summarizeBy: none
+		sourceColumn: crbb5_upstreamreportaname
+
+		annotation SummarizationSetBy = Automatic
+
+	column crbb5_upstreamreportb
+		dataType: string
+		lineageTag: e3cbcf94-c352-484c-815a-fb77111d2272
+		summarizeBy: none
+		sourceColumn: crbb5_upstreamreportb
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Upstream Finance'
+		dataType: string
+		lineageTag: b7b61a95-f751-4549-acfa-9ed040e81854
+		summarizeBy: none
+		sourceColumn: crbb5_upstreamreportbname
+
+		annotation SummarizationSetBy = Automatic
+
+	column crbb5_equitixermproject
+		dataType: string
+		lineageTag: bb8ebd8e-80a5-40f7-a0ec-90eda316aa00
+		summarizeBy: none
+		sourceColumn: crbb5_equitixermproject
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Equitix ERM Project'
+		dataType: string
+		lineageTag: 74a32e90-9ecb-436c-b26a-e204bff035fb
+		summarizeBy: none
+		sourceColumn: crbb5_equitixermprojectname
+
+		annotation SummarizationSetBy = Automatic
+
+	column crbb5_projectagreements
+		dataType: boolean
+		formatString: """TRUE"";""TRUE"";""FALSE"""
+		lineageTag: 64fa3738-e173-4cbc-8bda-07c5b64506cb
+		summarizeBy: none
+		sourceColumn: crbb5_projectagreements
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Project Agreements ?'
+		dataType: string
+		lineageTag: fc466b74-18b7-4f8a-a111-82af2ed13abd
+		summarizeBy: none
+		sourceColumn: crbb5_projectagreementsname
+
+		annotation SummarizationSetBy = Automatic
+
+	column crbb5_projectcompanies
+		dataType: boolean
+		formatString: """TRUE"";""TRUE"";""FALSE"""
+		lineageTag: 8e56dc34-4862-4cd2-aa99-55d113890bc3
+		summarizeBy: none
+		sourceColumn: crbb5_projectcompanies
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Project Companies ?'
+		dataType: string
+		lineageTag: 19aca489-d91d-49ff-bcf9-81f58769ff7d
+		summarizeBy: none
+		sourceColumn: crbb5_projectcompaniesname
+
+		annotation SummarizationSetBy = Automatic
+
+	column crbb5_clientcanterminate
+		dataType: boolean
+		formatString: """TRUE"";""TRUE"";""FALSE"""
+		lineageTag: bd3cb457-f965-4415-8687-c53e7cef59a8
+		summarizeBy: none
+		sourceColumn: crbb5_clientcanterminate
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Client can terminate ?'
+		dataType: string
+		lineageTag: 57eabf1c-2616-428e-8240-2cc09e262064
+		summarizeBy: none
+		sourceColumn: crbb5_clientcanterminatename
+
+		annotation SummarizationSetBy = Automatic
+
+	column crbb5_emscanterminate
+		dataType: boolean
+		formatString: """TRUE"";""TRUE"";""FALSE"""
+		lineageTag: 47311d26-9e6f-4c93-af4a-f3ab5fc03b51
+		summarizeBy: none
+		sourceColumn: crbb5_emscanterminate
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'EMS can terminate ?'
+		dataType: string
+		lineageTag: a5e51cba-5536-4687-9a05-d2d3c736fb1a
+		summarizeBy: none
+		sourceColumn: crbb5_emscanterminatename
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Term Length Summary'
+		dataType: string
+		lineageTag: d6b205df-30cd-43f1-99c9-6d2dcd811936
+		summarizeBy: none
+		sourceColumn: crbb5_termlengthsummary
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Term Length Clause Ref'
+		dataType: string
+		lineageTag: e4f1f44f-570b-43ae-a960-898cbefeb6b2
+		summarizeBy: none
+		sourceColumn: crbb5_termlengthclauseref
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Termination Clause Ref'
+		dataType: string
+		lineageTag: e5dbe339-38cd-439b-b521-7c8fd87b5657
+		summarizeBy: none
+		sourceColumn: crbb5_terminationclauseref
+
+		annotation SummarizationSetBy = Automatic
+
+	column crbb5_benchmarkingmarkettesting
+		dataType: boolean
+		formatString: """TRUE"";""TRUE"";""FALSE"""
+		lineageTag: 29eed94d-f13c-4d39-9045-5d86b4aedadb
+		summarizeBy: none
+		sourceColumn: crbb5_benchmarkingmarkettesting
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Benchmarking / Market Testing ?'
+		dataType: string
+		lineageTag: ff885a4f-3867-46a0-b67f-d1f09f519f3e
+		summarizeBy: none
+		sourceColumn: crbb5_benchmarkingmarkettestingname
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Client Notice Period'
+		dataType: int64
+		formatString: 0
+		lineageTag: 1161e36f-a2a7-49ef-8aec-fe64b590b171
+		summarizeBy: sum
+		sourceColumn: crbb5_clientnoticeperiod
+
+		annotation SummarizationSetBy = Automatic
+
+	column crbb5_changeofcontroltermination
+		dataType: boolean
+		formatString: """TRUE"";""TRUE"";""FALSE"""
+		lineageTag: f214a009-b849-4391-b4e9-f3dc7056147a
+		summarizeBy: none
+		sourceColumn: crbb5_changeofcontroltermination
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Change of control termination ?'
+		dataType: string
+		lineageTag: e47404d5-cd14-47ce-8338-fbecb3e0be5e
+		summarizeBy: none
+		sourceColumn: crbb5_changeofcontrolterminationname
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Change Of Control Clause Ref'
+		dataType: string
+		lineageTag: babd835d-79fe-4e81-bae7-bdcea0c070a9
+		summarizeBy: none
+		sourceColumn: crbb5_changeofcontrolclauseref
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'EMS Notice Period'
+		dataType: int64
+		formatString: 0
+		lineageTag: 46fac78b-854a-4008-a648-4f745e31b49f
+		summarizeBy: sum
+		sourceColumn: crbb5_emsnoticeperiod
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Notice Period Starts'
+		dataType: dateTime
+		formatString: General Date
+		lineageTag: 5fc09db3-70f6-4de4-86bd-23dfa3a8f61e
+		summarizeBy: none
+		sourceColumn: crbb5_noticeperiodstarts
+
+		variation Variation
+			isDefault
+			relationship: e5a8e7ab-f6e7-4f23-bfc4-339482a9bb03
+			defaultHierarchy: LocalDateTable_6c41669f-fb2b-4f45-85ab-43d59b39215b.'Date Hierarchy'
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Closedown Start Date'
+		dataType: dateTime
+		formatString: General Date
+		lineageTag: a8e6bc3d-113c-4e8c-bd05-3740430a45d9
+		summarizeBy: none
+		sourceColumn: crbb5_closedownstartdate
+
+		variation Variation
+			isDefault
+			relationship: ddd28f1b-5a23-4d5f-937f-69d6b288f2fb
+			defaultHierarchy: LocalDateTable_03a434e3-5913-4065-ae64-ec2da48f9c1a.'Date Hierarchy'
+
+		annotation SummarizationSetBy = Automatic
+
+	column crbb5_projectsinlockup
+		dataType: boolean
+		formatString: """TRUE"";""TRUE"";""FALSE"""
+		lineageTag: c8a93b2e-e6e8-4c2f-a2f8-100a90d0d9e5
+		summarizeBy: none
+		sourceColumn: crbb5_projectsinlockup
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Projects in lockup ?'
+		dataType: string
+		lineageTag: ad30ccf7-6990-416a-bffb-f6e93e07d616
+		summarizeBy: none
+		sourceColumn: crbb5_projectsinlockupname
+
+		annotation SummarizationSetBy = Automatic
+
+	column crbb5_developmentservices
+		dataType: boolean
+		formatString: """TRUE"";""TRUE"";""FALSE"""
+		lineageTag: cf8e057a-eed7-49a2-a82d-ae16d9ba79f2
+		summarizeBy: none
+		sourceColumn: crbb5_developmentservices
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Development Services ?'
+		dataType: string
+		lineageTag: 16635972-0faa-4e51-a110-1440fea44625
+		summarizeBy: none
+		sourceColumn: crbb5_developmentservicesname
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Services - Other'
+		dataType: string
+		lineageTag: d3807658-760a-4964-8503-56c80698440e
+		summarizeBy: none
+		sourceColumn: crbb5_servicesother
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Contract First Reminder Date Sent'
+		dataType: dateTime
+		formatString: General Date
+		lineageTag: f0f40360-5195-47b5-b84d-e197f0085d99
+		summarizeBy: none
+		sourceColumn: crbb5_contractfirstreminderdatesent
+
+		variation Variation
+			isDefault
+			relationship: aaece621-ae26-4a11-89d0-b53fe6164942
+			defaultHierarchy: LocalDateTable_4b85ebf0-f9ac-49e5-af46-f13bd58eacb6.'Date Hierarchy'
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Contract Most Recent Reminder Date Sent'
+		dataType: dateTime
+		formatString: General Date
+		lineageTag: 0a56369c-8465-4c9f-9cbd-17c421e031d6
+		summarizeBy: none
+		sourceColumn: crbb5_contractmostrecentreminderdatesent
+
+		variation Variation
+			isDefault
+			relationship: dc15c92d-33d5-4e17-ad25-25112c96c5ef
+			defaultHierarchy: LocalDateTable_b850b5be-1378-4953-932a-2ebe596e0458.'Date Hierarchy'
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Project Terminating Date'
+		dataType: dateTime
+		formatString: General Date
+		lineageTag: 8aee6901-1f2a-45ba-982a-9cae8e335f2d
+		summarizeBy: none
+		sourceColumn: crbb5_projectterminatingdate
+
+		variation Variation
+			isDefault
+			relationship: ac58587b-fd52-4661-8c3d-a5b127356ef1
+			defaultHierarchy: LocalDateTable_35a3a61a-1b93-4b15-8b8c-455101bd7659.'Date Hierarchy'
+
+		annotation SummarizationSetBy = Automatic
+
+	column isSCDInPast
+		dataType: string
+		lineageTag: 4b017e3b-d24b-488c-bebc-8ece05643a83
+		summarizeBy: none
+		sourceColumn: crbb5_isscdinpast
+
+		annotation SummarizationSetBy = Automatic
+
+	column crbb5_hasprojects
+		dataType: boolean
+		formatString: """TRUE"";""TRUE"";""FALSE"""
+		lineageTag: 6bbee6a8-9f16-444f-8b28-bf19e37a5c7b
+		summarizeBy: none
+		sourceColumn: crbb5_hasprojects
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Has Projects'
+		dataType: string
+		lineageTag: ca3eb58f-e28e-4f6c-8015-33626a955ac1
+		summarizeBy: none
+		sourceColumn: crbb5_hasprojectsname
+
+		annotation SummarizationSetBy = Automatic
+
+	column crbb5_businessunit
+		dataType: string
+		lineageTag: 55dd9a9b-e384-41c8-b13f-a1b199ff2455
+		summarizeBy: none
+		sourceColumn: crbb5_businessunit
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Business Unit'
+		dataType: string
+		lineageTag: f069f38d-d380-4f5c-af29-0c99bfaf375b
+		summarizeBy: none
+		sourceColumn: crbb5_businessunitname
+
+		annotation SummarizationSetBy = Automatic
+
+	column crbb5_disbursementsrecoverable
+		dataType: boolean
+		formatString: """TRUE"";""TRUE"";""FALSE"""
+		lineageTag: e4a4f7db-adfa-440f-8ddc-3c931e49aa71
+		summarizeBy: none
+		sourceColumn: crbb5_disbursementsrecoverable
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Disbursements Recoverable?'
+		dataType: string
+		lineageTag: 743e1fb4-cee1-4419-8123-ca72739efba5
+		summarizeBy: none
+		sourceColumn: crbb5_disbursementsrecoverablename
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Liability Cap Summary'
+		dataType: string
+		lineageTag: e677e438-0473-43fe-8da7-3954eeb103be
+		summarizeBy: none
+		sourceColumn: crbb5_liabilitycapsummary
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Non-Standard Terms Summary'
+		dataType: string
+		lineageTag: 0a34433a-82f1-4378-940a-b644523af29d
+		summarizeBy: none
+		sourceColumn: crbb5_nonstandardtermssummary
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Confidence In Contract Signature'
+		dataType: int64
+		formatString: 0
+		lineageTag: 9e72ef3d-2405-47a7-815f-fac53fad620f
+		summarizeBy: sum
+		sourceColumn: crbb5_confidenceincontractsignature
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Confidence In Service Commencement Date'
+		dataType: int64
+		formatString: 0
+		lineageTag: adb0b891-67cc-4301-929f-77cb38de6923
+		summarizeBy: sum
+		sourceColumn: crbb5_confidenceinservicecommencementdate
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Confidence In Client Bid Success'
+		dataType: int64
+		formatString: 0
+		lineageTag: d2d61b94-de8f-49a9-b5d0-d3c0f303b919
+		summarizeBy: sum
+		sourceColumn: crbb5_confidenceinclientbidsuccess
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Contract Report Link'
+		dataType: string
+		lineageTag: 5a42e696-c035-4c2e-b052-fad4f04b7d1e
+		summarizeBy: none
+		sourceColumn: crbb5_contractreportlink
+
+		annotation SummarizationSetBy = Automatic
+
+	column crbb5_bankingproviderreference1
+		dataType: string
+		lineageTag: c596afa5-c4a1-4120-ab65-af87634207ef
+		summarizeBy: none
+		sourceColumn: crbb5_bankingproviderreference1
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Banking Provider Reference 1'
+		dataType: string
+		lineageTag: f87e467b-271a-4903-b3af-f76863e373e0
+		summarizeBy: none
+		sourceColumn: crbb5_bankingproviderreference1name
+
+		annotation SummarizationSetBy = Automatic
+
+	column crbb5_bankingproviderreference2
+		dataType: string
+		lineageTag: fe368273-7a88-4cef-ad39-a88451085b67
+		summarizeBy: none
+		sourceColumn: crbb5_bankingproviderreference2
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Banking Provider Reference 2'
+		dataType: string
+		lineageTag: 2404abea-c392-400e-9312-31a94dbb31e0
+		summarizeBy: none
+		sourceColumn: crbb5_bankingproviderreference2name
+
+		annotation SummarizationSetBy = Automatic
+
+	column crbb5_bankingproviderreference3
+		dataType: string
+		lineageTag: 772ff24a-b183-48b7-80ef-cce4ed5d652a
+		summarizeBy: none
+		sourceColumn: crbb5_bankingproviderreference3
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Banking Provider Reference 3'
+		dataType: string
+		lineageTag: 2894f37b-591a-46bf-9ef9-50e2815e4aed
+		summarizeBy: none
+		sourceColumn: crbb5_bankingproviderreference3name
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Base Fee'
+		dataType: decimal
+		formatString: "£"#,0.###############;-"£"#,0.###############;"£"#,0.###############
+		lineageTag: 4e5310ed-95fb-4781-af0f-a866bf0ca2b9
+		summarizeBy: sum
+		sourceColumn: crbb5_fee
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"currencyCulture":"en-GB"}
+
+	column 'Fee (Base)'
+		dataType: decimal
+		formatString: "£"#,0.###############;-"£"#,0.###############;"£"#,0.###############
+		lineageTag: f2870548-5d40-4a11-ad57-c186da3d15aa
+		summarizeBy: sum
+		sourceColumn: crbb5_fee_base
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"currencyCulture":"en-GB"}
+
+	column 'MSA Expiry/Renewal Notes'
+		dataType: string
+		lineageTag: 50ef26e7-5ee6-42f3-a54e-6fc222979a07
+		summarizeBy: none
+		sourceColumn: crbb5_msaexpiryrenewalnotes
+
+		annotation SummarizationSetBy = Automatic
+
+	column crbb5_msaexpiryrenewalreviewedby
+		dataType: string
+		lineageTag: 181bf7dd-5346-4172-b89a-6530020c4715
+		summarizeBy: none
+		sourceColumn: crbb5_msaexpiryrenewalreviewedby
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Reviewed On'
+		dataType: dateTime
+		formatString: General Date
+		lineageTag: 78f79ae4-1d79-43fa-bc2f-51aa141ca605
+		summarizeBy: none
+		sourceColumn: crbb5_msaexpiryrenewalreviewedon
+
+		variation Variation
+			isDefault
+			relationship: f0e3b2b4-15ff-491c-b424-bc6965cb8cfc
+			defaultHierarchy: LocalDateTable_4211f584-6562-44b5-9b5c-05524fa1c6c5.'Date Hierarchy'
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'MSA Expiry/Renewal Reviewed By'
+		dataType: string
+		lineageTag: a88d6785-515f-4d1a-b232-f303b157b72b
+		summarizeBy: none
+		sourceColumn: crbb5_msaexpiryrenewalreviewedbyname
+
+		annotation SummarizationSetBy = Automatic
+
+	column crbb5_msaexpiryrenewalreviewedbyyominame
+		dataType: string
+		lineageTag: 3c49faf2-7429-422e-a431-0759a70a9782
+		summarizeBy: none
+		sourceColumn: crbb5_msaexpiryrenewalreviewedbyyominame
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Update Notes Modified On'
+		dataType: dateTime
+		formatString: General Date
+		lineageTag: 772f7211-3dde-4ffb-8bbc-e05425e425ea
+		summarizeBy: none
+		sourceColumn: crbb5_updatenotesmodifiedon
+
+		variation Variation
+			isDefault
+			relationship: 539403b6-0ce5-4758-b9f2-9225ed140b49
+			defaultHierarchy: LocalDateTable_9562a5ab-1420-4545-ba08-a6dc8d09dcd3.'Date Hierarchy'
+
+		annotation SummarizationSetBy = Automatic
+
+	column crbb5_waitingonupdate
+		dataType: boolean
+		formatString: """TRUE"";""TRUE"";""FALSE"""
+		lineageTag: 442ff48f-7783-4cf1-8c8a-5c10f819f0d2
+		summarizeBy: none
+		sourceColumn: crbb5_waitingonupdate
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Waiting on Update'
+		dataType: string
+		lineageTag: 905eff70-21ca-468e-b4e8-589a2a0febd9
+		summarizeBy: none
+		sourceColumn: crbb5_waitingonupdatename
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Owner For Grouping'
+		dataType: string
+		lineageTag: f5728f74-b438-451d-855e-bf7de3a1075b
+		summarizeBy: none
+		sourceColumn: crbb5_ownerforgrouping
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Update Modified Days'
+		dataType: double
+		lineageTag: e416aadb-9a3f-4b1c-8ceb-01deeb212c58
+		summarizeBy: sum
+		sourceColumn: crbb5_updatemodifieddays
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column crbb5_updaterag
+		dataType: int64
+		formatString: 0
+		lineageTag: 84da000d-2bf3-418f-83a2-92228827095b
+		summarizeBy: sum
+		sourceColumn: crbb5_updaterag
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Update RAG'
+		dataType: string
+		lineageTag: 208fc6fe-a8c2-4048-959d-f57875b2ec5c
+		summarizeBy: none
+		sourceColumn: crbb5_updateragname
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Confidence - SCD Delay Months'
+		dataType: int64
+		formatString: 0
+		lineageTag: d10dc7ac-a044-484a-9a39-77e313228218
+		summarizeBy: sum
+		sourceColumn: crbb5_confidencescddelaymonths
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Project Code Prefix'
+		dataType: string
+		lineageTag: c7c9bbe9-e02a-49ed-aae2-cd2f370d7941
+		summarizeBy: none
+		sourceColumn: crbb5_projectcodeprefix
+
+		annotation SummarizationSetBy = Automatic
+
+	column crbb5_automaticrenewal
+		dataType: boolean
+		formatString: """TRUE"";""TRUE"";""FALSE"""
+		lineageTag: 372e1eee-1d1a-4da0-b971-3bd333a62c99
+		summarizeBy: none
+		sourceColumn: crbb5_automaticrenewal
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Automatic Renewal'
+		dataType: string
+		lineageTag: 13327db3-8d13-40f5-ac10-3bb6332f0be4
+		summarizeBy: none
+		sourceColumn: crbb5_automaticrenewalname
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Automatic Renewal Long Stop Date'
+		dataType: dateTime
+		formatString: General Date
+		lineageTag: c190e482-7be0-4886-a54f-025cf1279499
+		summarizeBy: none
+		sourceColumn: crbb5_automaticrenewallongstopdate
+
+		variation Variation
+			isDefault
+			relationship: 11757c92-4227-4a98-83b8-736d684c7958
+			defaultHierarchy: LocalDateTable_7ec9af5d-bb75-494b-8519-fff1842c7538.'Date Hierarchy'
+
+		annotation SummarizationSetBy = Automatic
+
+	column crbb5_boardmeetingmasterref
+		dataType: string
+		lineageTag: 9239a416-af07-4e54-b4fe-3be22e6f5ff6
+		summarizeBy: none
+		sourceColumn: crbb5_boardmeetingmasterref
+
+		annotation SummarizationSetBy = Automatic
+
+	column crbb5_buildingcontractorlookup
+		dataType: string
+		lineageTag: 593bd1da-807b-4833-96b7-a6e320bc2cf4
+		summarizeBy: none
+		sourceColumn: crbb5_buildingcontractorlookup
+
+		annotation SummarizationSetBy = Automatic
+
+	column crbb5_clientintroducerlookup
+		dataType: string
+		lineageTag: 6e5c13ce-c68c-480c-9818-5d1953cbfe0e
+		summarizeBy: none
+		sourceColumn: crbb5_clientintroducerlookup
+
+		annotation SummarizationSetBy = Automatic
+
+	column crbb5_contracttypechoice
+		dataType: int64
+		formatString: 0
+		lineageTag: 1c564fd4-ec08-4313-953e-3cff9827a9dd
+		summarizeBy: sum
+		sourceColumn: crbb5_contracttypechoice
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Contract Type 2'
+		dataType: string
+		lineageTag: bdbe9a8f-e20f-4d5b-b11c-8d4e57dfd85e
+		summarizeBy: none
+		sourceColumn: crbb5_contracttypechoicename
+
+		annotation SummarizationSetBy = Automatic
+
+	column crbb5_hardfmcontractorlookup
+		dataType: string
+		lineageTag: 94f9d0a4-ca98-47d1-b10f-3e487e7052c4
+		summarizeBy: none
+		sourceColumn: crbb5_hardfmcontractorlookup
+
+		annotation SummarizationSetBy = Automatic
+
+	column crbb5_islongstopdatetheconcessionexpiry
+		dataType: boolean
+		formatString: """TRUE"";""TRUE"";""FALSE"""
+		lineageTag: cf59d486-472c-4751-b5d4-d20fd65869c0
+		summarizeBy: none
+		sourceColumn: crbb5_islongstopdatetheconcessionexpiry
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Is Long Stop Date The Concession Expiry? '
+		dataType: string
+		lineageTag: 5c1cf855-a51b-4cc8-a413-7a869f31ee30
+		summarizeBy: none
+		sourceColumn: crbb5_islongstopdatetheconcessionexpiryname
+
+		annotation SummarizationSetBy = Automatic
+
+	column crbb5_primarycounterpartylookup
+		dataType: string
+		lineageTag: 0632504d-7f0a-4930-8030-54f51c797175
+		summarizeBy: none
+		sourceColumn: crbb5_primarycounterpartylookup
+
+		annotation SummarizationSetBy = Automatic
+
+	column crbb5_regionchoice
+		dataType: int64
+		formatString: 0
+		lineageTag: 288f2da4-1e0c-4553-a1b5-241f7c26bd11
+		summarizeBy: sum
+		sourceColumn: crbb5_regionchoice
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Region 3'
+		dataType: string
+		lineageTag: 0e316c7d-6d69-4d5b-9e41-bcf12d77790c
+		summarizeBy: none
+		sourceColumn: crbb5_regionchoicename
+
+		annotation SummarizationSetBy = Automatic
+
+	column crbb5_softfmcontractorlookup
+		dataType: string
+		lineageTag: ceb23d44-8649-4d67-beee-a85b57c4d07e
+		summarizeBy: none
+		sourceColumn: crbb5_softfmcontractorlookup
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Summary Of Services'
+		dataType: string
+		lineageTag: 6937c8f0-d147-49d7-a856-2976218b426c
+		summarizeBy: none
+		sourceColumn: crbb5_summaryofservices
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Amount of ERM Assets'
+		dataType: int64
+		formatString: 0
+		lineageTag: 161d1300-35ff-40b0-a46b-fd2c5b1099a9
+		summarizeBy: sum
+		sourceColumn: crbb5_amountofermprojects
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Amount of ERM Assets (Last Updated On)'
+		dataType: dateTime
+		formatString: General Date
+		lineageTag: c715eb10-b6cc-421b-b306-52eba029c367
+		summarizeBy: none
+		sourceColumn: crbb5_amountofermprojects_date
+
+		variation Variation
+			isDefault
+			relationship: a1cc5558-10b4-41b0-b6e5-e02153e351ef
+			defaultHierarchy: LocalDateTable_ab8b13a5-5b59-41cc-94db-d3616837680e.'Date Hierarchy'
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Amount of ERM Assets (State)'
+		dataType: int64
+		formatString: 0
+		lineageTag: f5cdeea6-2762-4313-87c5-ad6e68d16a3c
+		summarizeBy: sum
+		sourceColumn: crbb5_amountofermprojects_state
+
+		annotation SummarizationSetBy = Automatic
+
+	column crbb5_fullconcessioncontract
+		dataType: boolean
+		formatString: """TRUE"";""TRUE"";""FALSE"""
+		lineageTag: d6f1d87e-01ce-4fe5-9d2d-f1650db247e1
+		summarizeBy: none
+		sourceColumn: crbb5_fullconcessioncontract
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Full Concession Contract'
+		dataType: string
+		lineageTag: fa7f0c46-9e14-4e79-b581-e1d9b9078d15
+		summarizeBy: none
+		sourceColumn: crbb5_fullconcessioncontractname
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Next Extension Date'
+		dataType: dateTime
+		formatString: General Date
+		lineageTag: b55b65b3-f9be-4926-9381-409a2ee72242
+		summarizeBy: none
+		sourceColumn: crbb5_nextextensiondate
+
+		variation Variation
+			isDefault
+			relationship: d666f7eb-728c-4f9f-ae32-f4a43df7a791
+			defaultHierarchy: LocalDateTable_1f81f902-8cf8-4e19-a099-60d027599d19.'Date Hierarchy'
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Notice Period Reminder'
+		dataType: dateTime
+		formatString: General Date
+		lineageTag: 88b0019e-6a62-4bf3-aa0a-28bb35c9aa45
+		summarizeBy: none
+		sourceColumn: crbb5_noticeperiodreminder
+
+		variation Variation
+			isDefault
+			relationship: 5ac8ba15-2cf5-42c4-bf76-eba435d92f5f
+			defaultHierarchy: LocalDateTable_e5394b35-b49f-4350-8502-87dd08d80e88.'Date Hierarchy'
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Board Meeting Master Ref'
+		dataType: string
+		lineageTag: a9d59633-13e8-4dac-9c21-6b7684c79ec2
+		summarizeBy: none
+		sourceColumn: crbb5_boardmeetingmasterrefname
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Building Contractor 2'
+		dataType: string
+		lineageTag: 619ae02e-ea35-440d-8e08-51ceca1bef30
+		summarizeBy: none
+		sourceColumn: crbb5_buildingcontractorlookupname
+
+		annotation SummarizationSetBy = Automatic
+
+	column crbb5_buildingcontractorlookupyominame
+		dataType: string
+		lineageTag: 364fc108-bce4-444a-9760-01aca75ae8c4
+		summarizeBy: none
+		sourceColumn: crbb5_buildingcontractorlookupyominame
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Client Introducer'
+		dataType: string
+		lineageTag: 7f81775f-c5de-48f3-9c1c-1bd982d981ac
+		summarizeBy: none
+		sourceColumn: crbb5_clientintroducerlookupname
+
+		annotation SummarizationSetBy = Automatic
+
+	column crbb5_clientintroducerlookupyominame
+		dataType: string
+		lineageTag: 0fb9395d-0244-4823-af9b-f853317eef83
+		summarizeBy: none
+		sourceColumn: crbb5_clientintroducerlookupyominame
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Hard FM Contractor 2'
+		dataType: string
+		lineageTag: 1602fa48-215b-4ccd-8e9d-eaff3dd7408f
+		summarizeBy: none
+		sourceColumn: crbb5_hardfmcontractorlookupname
+
+		annotation SummarizationSetBy = Automatic
+
+	column crbb5_hardfmcontractorlookupyominame
+		dataType: string
+		lineageTag: 1ccd9ce3-596c-464f-8367-5172ab1b9b96
+		summarizeBy: none
+		sourceColumn: crbb5_hardfmcontractorlookupyominame
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Primary Counterparty'
+		dataType: string
+		lineageTag: 8dc8fac8-3cd0-46f5-98d3-c83901086745
+		summarizeBy: none
+		sourceColumn: crbb5_primarycounterpartylookupname
+
+		annotation SummarizationSetBy = Automatic
+
+	column crbb5_primarycounterpartylookupyominame
+		dataType: string
+		lineageTag: 3c0ff0cd-8b9a-4519-8aab-fb0d94166703
+		summarizeBy: none
+		sourceColumn: crbb5_primarycounterpartylookupyominame
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Soft FM Contractor 2'
+		dataType: string
+		lineageTag: f1dde7a7-dd42-47b7-9d44-bc09e132016a
+		summarizeBy: none
+		sourceColumn: crbb5_softfmcontractorlookupname
+
+		annotation SummarizationSetBy = Automatic
+
+	column crbb5_softfmcontractorlookupyominame
+		dataType: string
+		lineageTag: 1e984586-559f-47ee-be74-165cb3ffd6ed
+		summarizeBy: none
+		sourceColumn: crbb5_softfmcontractorlookupyominame
+
+		annotation SummarizationSetBy = Automatic
+
+	partition crbb5_contractregister = m
+		mode: import
+		source =
+				let
+				    Source = CommonDataService.Database("emservices.crm11.dynamics.com"),
+				    dbo_crbb5_contractregister = Source{[Schema="dbo",Item="crbb5_contractregister"]}[Data]
+				in
+				    dbo_crbb5_contractregister
+
+	annotation PBI_ResultType = Table
+
+	annotation PBI_NavigationStepName = Navigation
+

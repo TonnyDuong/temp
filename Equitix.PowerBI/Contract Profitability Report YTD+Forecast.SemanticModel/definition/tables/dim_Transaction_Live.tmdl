@@ -1,0 +1,247 @@
+table dim_Transaction_Live
+	lineageTag: 9dc104c7-db7f-4ed8-bd94-46a9dc462bfd
+
+	column 'Transaction Ref.'
+		dataType: string
+		lineageTag: d3e4f9a8-a8d6-4ed5-ac50-bda5398fe1ef
+		summarizeBy: none
+		sourceColumn: Transaction Ref.
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Transaction Line ID'
+		dataType: int64
+		formatString: 0
+		lineageTag: 27938c6e-999e-4b64-bc71-f8eb8636aeff
+		summarizeBy: count
+		sourceColumn: Transaction Line ID
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Account No.'
+		dataType: int64
+		formatString: 0
+		lineageTag: 061c247c-e8a8-4612-a8a9-d9b1c7ba044c
+		summarizeBy: sum
+		sourceColumn: Account No.
+
+		annotation SummarizationSetBy = Automatic
+
+	column Memo
+		dataType: string
+		lineageTag: 8056b99a-86c1-4d46-a7eb-a4f3c174a90f
+		summarizeBy: none
+		sourceColumn: Memo
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Class: Class ID'
+		dataType: string
+		lineageTag: 60fd2b25-38d6-4a22-b83a-f851ecc730c5
+		summarizeBy: none
+		sourceColumn: Class: Class ID
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Project Code'
+		dataType: string
+		lineageTag: 3be28285-dab6-474e-b581-f9566042c931
+		summarizeBy: none
+		sourceColumn: Project Code
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Customer: Full Name'
+		dataType: string
+		lineageTag: 738f61c8-f4bf-46c8-b6e3-c020fdb45b0f
+		summarizeBy: none
+		sourceColumn: Customer: Full Name
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Vendor: Full Name'
+		dataType: string
+		lineageTag: 5025397e-2367-4a9a-884f-ff2248f0a098
+		summarizeBy: none
+		sourceColumn: Vendor: Full Name
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Department: Department ID'
+		dataType: string
+		lineageTag: db025943-2532-4a5c-b65b-9786737c8ff4
+		summarizeBy: none
+		sourceColumn: Department: Department ID
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Department: Full Name'
+		dataType: string
+		lineageTag: 0eba12ab-5b23-4e6e-9721-a1eb03205c8b
+		summarizeBy: none
+		sourceColumn: Department: Full Name
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Subsidiary: Full Name'
+		dataType: string
+		lineageTag: 7b31dc74-9020-45d1-bc43-c2296627fa98
+		summarizeBy: none
+		sourceColumn: Subsidiary: Full Name
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Location: Location ID'
+		dataType: string
+		lineageTag: 2a62bcad-67f4-45d1-b541-422377bb99dc
+		summarizeBy: none
+		sourceColumn: Location: Location ID
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Location: Full Name'
+		dataType: string
+		lineageTag: 1525635f-a861-49d9-9af2-13892e720117
+		summarizeBy: none
+		sourceColumn: Location: Full Name
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Employee: Employee External ID'
+		dataType: string
+		lineageTag: b8bf5b88-59e4-4795-a925-f6fbcd3e4c98
+		summarizeBy: none
+		sourceColumn: Employee: Employee External ID
+
+		annotation SummarizationSetBy = Automatic
+
+	column TransactionLineKey
+		dataType: string
+		lineageTag: 2f8ddc1e-14f6-4f60-b520-e82d84566b45
+		summarizeBy: none
+		sourceColumn: TransactionLineKey
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Transaction: Transaction ID'
+		dataType: string
+		lineageTag: de29094c-b989-4377-b0ec-ff37fa3a9b1f
+		summarizeBy: none
+		sourceColumn: Transaction: Transaction ID
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Account Name'
+		dataType: string
+		lineageTag: e6aa300f-0348-4ec6-971c-b73b2a5e3ba4
+		summarizeBy: none
+		sourceColumn: Account Name
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Class: Full Name'
+		dataType: string
+		lineageTag: 68b301ec-8616-4782-8ec6-782e31072f34
+		summarizeBy: none
+		sourceColumn: Class: Full Name
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Employee: First Name'
+		dataType: string
+		lineageTag: a5e1c1c3-f892-49cf-bcbb-c4cc4b40f9a0
+		summarizeBy: none
+		sourceColumn: Employee: First Name
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Employee: Last Name'
+		dataType: string
+		lineageTag: 9b7c9cd4-59d3-4d96-9f74-d01556862fad
+		summarizeBy: none
+		sourceColumn: Employee: Last Name
+
+		annotation SummarizationSetBy = Automatic
+
+	partition dim_Transaction_Live = m
+		mode: import
+		source =
+				// =====================================================================
+				// dim_Transaction_Live
+				// ---------------------------------------------------------------------
+				// Purpose:      Transaction dimension with the unique line-key concat
+				//               baked in.
+				// Grain:        One row per NetSuite transaction line.
+				// Dependencies: stg_FinanceOutput FY26_FY2026
+				// Load:         enabled.
+				// ---------------------------------------------------------------------
+				// Unique key rule (confirmed by Chris): NetSuite has no native unique
+				// identifier for transaction lines. Concatenate [Transaction: Transaction
+				// ID] and [Transaction Line ID] to produce one (e.g. "770163-0", "770163-1").
+				//
+				// Project Code (corrected): the GL has no literal Project Code column; the
+				// project is the NetSuite Class. [Class: Class External ID] holds the code
+				// (e.g. "ASH-01") and [Class: Full Name] the description.
+				//
+				// Blank Location: Full Name rule (confirmed by Chris):
+				//   Subsidiary ending in ESS  →  "Italy"
+				//   Subsidiary ending in EMS / BWG / BWS  →  "UK"
+				// =====================================================================
+				let
+				    Source = #"stg_FinanceOutput FY26_FY2026",
+				
+				    Selected = Table.SelectColumns(Source, {
+				        "Transaction: Transaction ID",
+				        "Transaction Ref.",
+				        "Transaction Line ID",
+				        "Account No.",
+				        "Account Name",
+				        "Memo",
+				        "Class: Class ID",
+				        "Class: Class External ID",
+				        "Class: Full Name",
+				        "Customer: Full Name",
+				        "Vendor: Full Name",
+				        "Department: Department ID",
+				        "Department: Full Name",
+				        "Subsidiary: Full Name",
+				        "Location: Location ID",
+				        "Location: Full Name",
+				        "Employee: Employee External ID",
+				        "Employee: First Name",
+				        "Employee: Last Name"
+				    }),
+				
+				    // Project Code = Class External ID (corrected); keep Class: Full Name as the name
+				    AddProjectCode = Table.RenameColumns(Selected, {{"Class: Class External ID", "Project Code"}}),
+				
+				    // Step 1 — default blank Location: Full Name by subsidiary
+				    FilledLocation = Table.ReplaceValue(
+				        AddProjectCode,
+				        each [#"Location: Full Name"],
+				        each (
+				            if [#"Location: Full Name"] <> null and [#"Location: Full Name"] <> ""
+				                then [#"Location: Full Name"]
+				            else if Text.EndsWith([#"Subsidiary: Full Name"] ?? "", "ESS")
+				                then "Italy"
+				            else
+				                "UK"
+				        ),
+				        Replacer.ReplaceValue,
+				        {"Location: Full Name"}
+				    ),
+				
+				    // Step 2 — unique key concat (Transaction ID + Transaction Line ID)
+				    AddKey = Table.AddColumn(FilledLocation, "TransactionLineKey",
+				        each Text.From([#"Transaction: Transaction ID"]) & "-" & Text.From([#"Transaction Line ID"]),
+				        type text),
+				
+				    // Step 3 — dedupe on the key (one row per line)
+				    Deduped = Table.Distinct(AddKey, {"TransactionLineKey"})
+				in
+				    Deduped
+
+	annotation PBI_NavigationStepName = Navigation
+
+	annotation PBI_ResultType = Table
+

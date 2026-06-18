@@ -1,0 +1,491 @@
+table crbb5_jedoxallocation
+	lineageTag: e3ffe060-1137-40df-89b9-4e0b2b0cd5e5
+
+	column 'Jedox Allocation'
+		dataType: string
+		lineageTag: b58822a2-eb7e-4b8d-a5ba-aae16ca7df8e
+		summarizeBy: none
+		sourceColumn: crbb5_jedoxallocationid
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Created On'
+		dataType: dateTime
+		formatString: General Date
+		lineageTag: 47c9d4d6-80f9-4192-b72b-f6db6a9ccccb
+		summarizeBy: none
+		sourceColumn: createdon
+
+		variation Variation
+			isDefault
+			relationship: b7275cca-27db-4423-a050-afc7eeb1f0d3
+			defaultHierarchy: LocalDateTable_37441a28-0211-46ae-93c5-7eaa1179fc5b.'Date Hierarchy'
+
+		annotation SummarizationSetBy = Automatic
+
+	column createdby
+		dataType: string
+		lineageTag: 994decf6-efb1-4de5-826f-2d56c3862a8a
+		summarizeBy: none
+		sourceColumn: createdby
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Modified On'
+		dataType: dateTime
+		formatString: General Date
+		lineageTag: e0dfd6a5-3da3-4082-b28a-d414f96e8a9a
+		summarizeBy: none
+		sourceColumn: modifiedon
+
+		variation Variation
+			isDefault
+			relationship: 8384b1aa-9c6c-4e1e-9deb-e35141379eeb
+			defaultHierarchy: LocalDateTable_77fb3dd3-85d5-45a7-9911-34c0250282c7.'Date Hierarchy'
+
+		annotation SummarizationSetBy = Automatic
+
+	column modifiedby
+		dataType: string
+		lineageTag: a6a40634-94d0-4b14-ba3a-d3c47e5fb2a0
+		summarizeBy: none
+		sourceColumn: modifiedby
+
+		annotation SummarizationSetBy = Automatic
+
+	column createdonbehalfby
+		dataType: string
+		lineageTag: ca874132-235d-4dbf-a8a1-ad323df04096
+		summarizeBy: none
+		sourceColumn: createdonbehalfby
+
+		annotation SummarizationSetBy = Automatic
+
+	column modifiedonbehalfby
+		dataType: string
+		lineageTag: 508f774f-ea20-45c7-ae7a-aa63a49becbf
+		summarizeBy: none
+		sourceColumn: modifiedonbehalfby
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Created By'
+		dataType: string
+		lineageTag: a5182ee7-eef6-4e96-a20b-45ae556aae3c
+		summarizeBy: none
+		sourceColumn: createdbyname
+
+		annotation SummarizationSetBy = Automatic
+
+	column createdbyyominame
+		dataType: string
+		lineageTag: 4282f904-6476-48bc-886b-b766016d7be2
+		summarizeBy: none
+		sourceColumn: createdbyyominame
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Created By (Delegate)'
+		dataType: string
+		lineageTag: d5d1dde5-07c7-4ad0-bb27-2d9910aada36
+		summarizeBy: none
+		sourceColumn: createdonbehalfbyname
+
+		annotation SummarizationSetBy = Automatic
+
+	column createdonbehalfbyyominame
+		dataType: string
+		lineageTag: 5e7ab979-e924-4df1-b5a1-29d2785f95fc
+		summarizeBy: none
+		sourceColumn: createdonbehalfbyyominame
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Modified By'
+		dataType: string
+		lineageTag: 52a66425-b68b-4538-af75-b48fa882b7bc
+		summarizeBy: none
+		sourceColumn: modifiedbyname
+
+		annotation SummarizationSetBy = Automatic
+
+	column modifiedbyyominame
+		dataType: string
+		lineageTag: 6ffcf417-437d-4311-92d0-a9bf28f34246
+		summarizeBy: none
+		sourceColumn: modifiedbyyominame
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Modified By (Delegate)'
+		dataType: string
+		lineageTag: 2676834d-f323-493e-92e8-a7957d7bcd97
+		summarizeBy: none
+		sourceColumn: modifiedonbehalfbyname
+
+		annotation SummarizationSetBy = Automatic
+
+	column modifiedonbehalfbyyominame
+		dataType: string
+		lineageTag: 689c9b57-8a3f-4362-87fa-2c9956df60d4
+		summarizeBy: none
+		sourceColumn: modifiedonbehalfbyyominame
+
+		annotation SummarizationSetBy = Automatic
+
+	column ownerid
+		dataType: string
+		lineageTag: ecf2f094-2f8c-475a-a50b-5730d19b6899
+		summarizeBy: none
+		sourceColumn: ownerid
+
+		annotation SummarizationSetBy = Automatic
+
+	column Owner
+		dataType: string
+		lineageTag: 1dcaa810-351f-4630-9bef-0a2686d617fa
+		summarizeBy: none
+		sourceColumn: owneridname
+
+		annotation SummarizationSetBy = Automatic
+
+	column owneridyominame
+		dataType: string
+		lineageTag: 66a0a5ca-6ec3-41ef-bc6d-4c7e66d7027c
+		summarizeBy: none
+		sourceColumn: owneridyominame
+
+		annotation SummarizationSetBy = Automatic
+
+	column owningbusinessunit
+		dataType: string
+		lineageTag: 04d9769b-afda-415e-939b-41f0984dd244
+		summarizeBy: none
+		sourceColumn: owningbusinessunit
+
+		annotation SummarizationSetBy = Automatic
+
+	column owninguser
+		dataType: string
+		lineageTag: da132f1f-105d-4eeb-abb3-115af73f4891
+		summarizeBy: none
+		sourceColumn: owninguser
+
+		annotation SummarizationSetBy = Automatic
+
+	column owningteam
+		dataType: string
+		lineageTag: b60de844-2b8c-4c47-aeba-90560eb4e78d
+		summarizeBy: none
+		sourceColumn: owningteam
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Owning Business Unit'
+		dataType: string
+		lineageTag: 14aa778c-d504-4004-b598-1f827fae01e7
+		summarizeBy: none
+		sourceColumn: owningbusinessunitname
+
+		annotation SummarizationSetBy = Automatic
+
+	column Status
+		dataType: int64
+		formatString: 0
+		lineageTag: 29cd13b4-791a-4c30-88dc-be95ef749c34
+		summarizeBy: sum
+		sourceColumn: statecode
+
+		annotation SummarizationSetBy = Automatic
+
+	column statecodename
+		dataType: string
+		lineageTag: 19981ed9-eb45-42b3-ac26-054f0fb01856
+		summarizeBy: none
+		sourceColumn: statecodename
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Status Reason'
+		dataType: int64
+		formatString: 0
+		lineageTag: 93d7b976-2efe-4d8d-9ed5-0199beca3cfd
+		summarizeBy: sum
+		sourceColumn: statuscode
+
+		annotation SummarizationSetBy = Automatic
+
+	column statuscodename
+		dataType: string
+		lineageTag: c237992c-3f2d-45a9-9f71-060a877a17f9
+		summarizeBy: none
+		sourceColumn: statuscodename
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Import Sequence Number'
+		dataType: int64
+		formatString: 0
+		lineageTag: 01dcf851-1617-449d-b1ed-36d3d61863c0
+		summarizeBy: sum
+		sourceColumn: importsequencenumber
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Record Created On'
+		dataType: dateTime
+		formatString: General Date
+		lineageTag: ecd14909-b106-4862-9d74-83984913cb7e
+		summarizeBy: none
+		sourceColumn: overriddencreatedon
+
+		variation Variation
+			isDefault
+			relationship: ffd20612-b51e-4886-8d61-f76016ad85fa
+			defaultHierarchy: LocalDateTable_19f447b1-818f-4261-9090-325ec5ffc8bb.'Date Hierarchy'
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Time Zone Rule Version Number'
+		dataType: int64
+		formatString: 0
+		lineageTag: 7279e9a4-9271-4b05-b8d7-29852bddb915
+		summarizeBy: sum
+		sourceColumn: timezoneruleversionnumber
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'UTC Conversion Time Zone Code'
+		dataType: int64
+		formatString: 0
+		lineageTag: b4990222-d0c1-472b-be88-5b340f972429
+		summarizeBy: count
+		sourceColumn: utcconversiontimezonecode
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Allocation Identifier'
+		dataType: string
+		lineageTag: 29b9c301-ce03-4848-8992-8680484e2f81
+		summarizeBy: none
+		sourceColumn: crbb5_allocationidentifier
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'HR Code'
+		dataType: string
+		lineageTag: f8e8bc7b-8486-42f0-957d-637dd37dbd77
+		summarizeBy: none
+		sourceColumn: crbb5_hrcode
+
+		annotation SummarizationSetBy = Automatic
+
+	column crbb5_hrreference
+		dataType: string
+		lineageTag: 737d3780-534a-4622-8cd7-65c298e78e44
+		summarizeBy: none
+		sourceColumn: crbb5_hrreference
+
+		annotation SummarizationSetBy = Automatic
+
+	column JedoxID
+		dataType: int64
+		formatString: 0
+		lineageTag: d7c567ab-0354-4608-97e1-a10d2c804ca9
+		summarizeBy: count
+		sourceColumn: crbb5_jedoxid
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Jedox Path'
+		dataType: string
+		lineageTag: 53ef351a-6e5d-42d3-8743-c0df86229383
+		summarizeBy: none
+		sourceColumn: crbb5_jedoxpath
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Office Role'
+		dataType: string
+		lineageTag: e5a31a78-801e-47bd-a184-7fdd32b5e92d
+		summarizeBy: none
+		sourceColumn: crbb5_officerole
+
+		annotation SummarizationSetBy = Automatic
+
+	column Project
+		dataType: string
+		lineageTag: 43317b3d-e984-4b36-8ad1-3fec5b0071ab
+		summarizeBy: none
+		sourceColumn: crbb5_project
+
+		annotation SummarizationSetBy = Automatic
+
+	column crbb5_projectreference
+		dataType: string
+		lineageTag: 42cb2e38-d5b8-4a10-a2b8-d491e18bf4e5
+		summarizeBy: none
+		sourceColumn: crbb5_projectreference
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Resource Measure'
+		dataType: string
+		lineageTag: b31b316f-1dc5-40d1-b624-79d5d82ecb22
+		summarizeBy: none
+		sourceColumn: crbb5_resourcemeasure
+
+		annotation SummarizationSetBy = Automatic
+
+	column UniqueID
+		dataType: string
+		lineageTag: fa6aa07c-ee94-4650-ab04-89d5438735a3
+		summarizeBy: none
+		sourceColumn: crbb5_uniqueid
+
+		annotation SummarizationSetBy = Automatic
+
+	column Value
+		dataType: double
+		lineageTag: 80e1e374-1453-4423-b3bb-853f3f0957d2
+		summarizeBy: sum
+		sourceColumn: crbb5_value
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column Version
+		dataType: string
+		lineageTag: 01180180-cd8a-4c9a-b42f-d08c8fd5fcde
+		summarizeBy: none
+		sourceColumn: crbb5_version
+
+		annotation SummarizationSetBy = Automatic
+
+	column Year
+		dataType: int64
+		formatString: 0
+		lineageTag: d77db310-ba6b-49fc-a668-3b314a0e77e2
+		summarizeBy: sum
+		sourceColumn: crbb5_year
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Allocation Date'
+		dataType: dateTime
+		formatString: General Date
+		lineageTag: 247dc613-e37a-49c9-b7ff-ff61e3613b79
+		summarizeBy: none
+		sourceColumn: crbb5_yeardate
+
+		variation Variation
+			isDefault
+			relationship: 0f2a09fc-82e1-405e-85d5-0ae15ae3c508
+			defaultHierarchy: LocalDateTable_4afac8c5-221d-4636-8e84-42001bf14d51.'Date Hierarchy'
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Year Text'
+		dataType: string
+		lineageTag: e381ce7d-a759-45f4-b0a6-387f594e557d
+		summarizeBy: none
+		sourceColumn: crbb5_yeartext
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'HR Reference'
+		dataType: string
+		lineageTag: 0c1939dd-84fb-477e-94bc-e0e5af08cc76
+		summarizeBy: none
+		sourceColumn: crbb5_hrreferencename
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Project Reference'
+		dataType: string
+		lineageTag: 1d948e9d-be60-4648-80ce-9cc887f75c05
+		summarizeBy: none
+		sourceColumn: crbb5_projectreferencename
+
+		annotation SummarizationSetBy = Automatic
+
+	column crbb5_userreference
+		dataType: string
+		lineageTag: d4d195e1-3b5e-4f97-b988-dc53be32edcd
+		summarizeBy: none
+		sourceColumn: crbb5_userreference
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'User Reference'
+		dataType: string
+		lineageTag: e034a085-829b-4d74-8d2d-21b1201f233f
+		summarizeBy: none
+		sourceColumn: crbb5_userreferencename
+
+		annotation SummarizationSetBy = Automatic
+
+	column crbb5_userreferenceyominame
+		dataType: string
+		lineageTag: 31a238f5-9636-4d3b-bd1a-6c67c29e36eb
+		summarizeBy: none
+		sourceColumn: crbb5_userreferenceyominame
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Allocation Reference'
+		dataType: string
+		lineageTag: 30f5c613-50f5-4cd9-9182-5467db53ecfb
+		summarizeBy: none
+		sourceColumn: crbb5_allocationreference
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Source file'
+		dataType: string
+		lineageTag: 5fc3981b-cdbc-4b69-8966-1e81243982c6
+		summarizeBy: none
+		sourceColumn: crbb5_sourcefile
+
+		annotation SummarizationSetBy = Automatic
+
+	column sourceid
+		dataType: int64
+		formatString: 0
+		lineageTag: 5b6f1d9a-13ef-4848-9566-9e36a28880d6
+		summarizeBy: sum
+		sourceColumn: crbb5_sourceid
+
+		annotation SummarizationSetBy = Automatic
+
+	column crbb5_ownerchangeneeded
+		dataType: boolean
+		formatString: """TRUE"";""TRUE"";""FALSE"""
+		lineageTag: 292a2345-cd68-4d96-9eb8-87ddd4af97ad
+		summarizeBy: none
+		sourceColumn: crbb5_ownerchangeneeded
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Owner change needed?'
+		dataType: string
+		lineageTag: 63f44be0-a613-45e8-bd93-02197b89a285
+		summarizeBy: none
+		sourceColumn: crbb5_ownerchangeneededname
+
+		annotation SummarizationSetBy = Automatic
+
+	partition crbb5_jedoxallocation = m
+		mode: import
+		source =
+				let
+				    Source = CommonDataService.Database("emservices.crm11.dynamics.com"),
+				    dbo_crbb5_jedoxallocation = Source{[Schema="dbo",Item="crbb5_jedoxallocation"]}[Data]
+				in
+				    dbo_crbb5_jedoxallocation
+
+	annotation PBI_NavigationStepName = Navigation
+
+	annotation PBI_ResultType = Table
+

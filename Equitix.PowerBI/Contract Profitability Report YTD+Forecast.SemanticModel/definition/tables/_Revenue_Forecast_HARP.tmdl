@@ -1,0 +1,180 @@
+table _Revenue_Forecast_HARP
+	lineageTag: 6991774d-a80a-432f-98bc-890ca9035dbe
+
+	column Date
+		dataType: dateTime
+		formatString: Long Date
+		lineageTag: 63e06ac5-4cc3-4994-94eb-da7a2727557c
+		summarizeBy: none
+		sourceColumn: Date
+
+		variation Variation
+			isDefault
+			relationship: 5feb1f2f-3d12-47c0-ad81-a0f8b7c3edad
+			defaultHierarchy: LocalDateTable_000377dc-9582-4023-971b-81db4da9fdf0.'Date Hierarchy'
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation UnderlyingDateTimeDataType = Date
+
+	column 'Project Code'
+		dataType: string
+		lineageTag: 592989dc-24a7-4a78-b7c8-0d7d1d1acdb7
+		summarizeBy: none
+		sourceColumn: Project Code
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Account Code'
+		dataType: int64
+		formatString: 0
+		lineageTag: d531fd43-4887-4110-afc1-e9156c0346c2
+		summarizeBy: count
+		sourceColumn: Account Code
+
+		annotation SummarizationSetBy = Automatic
+
+	column Subsidiary
+		dataType: string
+		lineageTag: dca4267b-4f58-47d0-894a-73826e61b113
+		summarizeBy: none
+		sourceColumn: Subsidiary
+
+		annotation SummarizationSetBy = Automatic
+
+	column Type
+		dataType: string
+		lineageTag: 4386924e-96cb-4146-94ff-35cb7df782be
+		summarizeBy: none
+		sourceColumn: Type
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Contract Type'
+		dataType: string
+		lineageTag: ddbfa20a-217d-46c4-9539-5f3d7dd8f39a
+		summarizeBy: none
+		sourceColumn: Contract Type
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Snapshot Date'
+		dataType: dateTime
+		formatString: Long Date
+		lineageTag: b3a8023a-a7cf-4aaa-b7a6-c90bb68e083c
+		summarizeBy: none
+		sourceColumn: Snapshot Date
+
+		variation Variation
+			isDefault
+			relationship: 81311f50-d032-4fd8-b764-118f5c376352
+			defaultHierarchy: LocalDateTable_19beadb8-f1a6-4b35-9e47-c7d2f74311a5.'Date Hierarchy'
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation UnderlyingDateTimeDataType = Date
+
+	column Amount
+		dataType: decimal
+		formatString: "£"#,0.###############;-"£"#,0.###############;"£"#,0.###############
+		lineageTag: 18999885-b782-45ca-87ab-00016de514e0
+		summarizeBy: sum
+		sourceColumn: Amount
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"currencyCulture":"en-GB"}
+
+	column TransactionLineKey
+		dataType: string
+		lineageTag: 36200858-fa60-4e60-8bd2-2cb41e4836da
+		summarizeBy: none
+		sourceColumn: TransactionLineKey
+
+		annotation SummarizationSetBy = Automatic
+
+	partition _Revenue_Forecast_HARP = m
+		mode: import
+		source =
+				// =====================================================================
+				// _Revenue_Forecast_HARP  (helper — load disabled)
+				// ---------------------------------------------------------------------
+				// Purpose:      In-contract revenue forecast for the HARP project,
+				//               unpivoted from the wide HARP_DATA sheet.
+				// Grain:        One row per (Project, Forecast Date).
+				// Dependencies: stg_EMS Fixed Fee Forecast_Project HARP
+				// Load:         DISABLED.
+				// ---------------------------------------------------------------------
+				// Column names (corrected from the latest data screenshots):
+				//   - HARP is a SINGLE contract row: MSA `EMS-MSA289`, Project Code `HAP-03`,
+				//     Project (name) "HARP - Construction Phase delivery", Entity EMS,
+				//     Project Type "Construction", Supersector "Environmental Services".
+				//   - The project-code column is literally `Project Code` (HAP-03) here —
+				//     NOT `Project` (which is the name). This is the OPPOSITE of the
+				//     31.12.2025 sheet, so the two helpers anchor on different columns.
+				//   - Wide forecast columns run monthly from 31/01/2025 → 31/12/2035.
+				//   - The sheet carries junk trailing columns `Column154`, `Column155`
+				//     (and a `BLANK` column) that MUST be removed before unpivot, else
+				//     Date.From("Column154") errors.
+				// ---------------------------------------------------------------------
+				// TODO:
+				//   - Account Code: HARP is Construction-phase delivery (Project Type =
+				//     Construction) so the revenue is most likely account 40011
+				//     (Construction revenue), NOT 40010. Confirm with Chris; default set
+				//     to 40011 below.
+				//   - Confirm the snapshot date for this file (currently 2025-12-31).
+				// =====================================================================
+				let
+				    Source = #"stg_EMS Fixed Fee Forecast_Project HARP",
+				
+				    // Step 0 — drop junk trailing columns if present (safe if absent)
+				    JunkColumns = List.Select(Table.ColumnNames(Source),
+				        each Text.StartsWith(_, "Column") or _ = "BLANK"),
+				    Cleaned = Table.RemoveColumns(Source, JunkColumns, MissingField.Ignore),
+				
+				    // Step 1 — all NON-forecast-period columns (anchors). Everything else
+				    //          (the date-named month columns) gets unpivoted.
+				    NonDateColumns = {
+				        "MSA Reference", "Project Code", "Billing Schedule item",
+				        "crbb5_billingmethod", "crbb5_billingmethodname",
+				        "crbb5_billingstartdate", "crbb5_billingenddate",
+				        "crbb5_baseannualfee", "crbb5_basecurrency", "crbb5_basecurrencyname",
+				        "crbb5_indexmonth", "crbb5_currentannualfee",
+				        "Entity", "Project", "Project Type", "Monthly Fee",
+				        "Supersector", "Concession expiry", "Exchange", "GBP Value"
+				    },
+				
+				    // Step 2 — unpivot the wide date columns
+				    Unpivoted = Table.UnpivotOtherColumns(Cleaned, NonDateColumns, "Forecast Date Text", "Amount"),
+				
+				    // Step 3 — parse the "31/01/2025" column name into a real Date
+				    ParsedDate = Table.AddColumn(Unpivoted, "Date",
+				        each Date.From([#"Forecast Date Text"]),
+				        type date),
+				
+				    Typed = Table.TransformColumnTypes(ParsedDate, {{"Amount", Currency.Type}}),
+				
+				    // Step 4 — surface Subsidiary from Entity (single HARP contract = EMS)
+				    AddSubsidiary = Table.AddColumn(Typed, "Subsidiary", each [Entity], type text),
+				
+				    // Step 5 — constants
+				    AddSnapshot       = Table.AddColumn(AddSubsidiary,   "Snapshot Date",      each #date(2025, 12, 31), type date),  // TODO: confirm
+				    AddType           = Table.AddColumn(AddSnapshot,     "Type",               each "Forecast",          type text),
+				    AddContractType   = Table.AddColumn(AddType,         "Contract Type",      each "In Contract",       type text),
+				    AddAccountCode    = Table.AddColumn(AddContractType, "Account Code",       each 40011,               Int64.Type),  // Construction revenue — TODO confirm
+				    AddTLK            = Table.AddColumn(AddAccountCode,  "TransactionLineKey", each null,                type text),
+				
+				    Final = Table.SelectColumns(AddTLK,
+				        {"Date", "Project Code", "Account Code", "Subsidiary",
+				         "Type", "Contract Type", "Snapshot Date", "Amount", "TransactionLineKey"}),
+				
+				    // Keep only months after the cutover date
+				    FilteredByCutover = Table.SelectRows(Final,
+				        each [Date] > _CutoverDate)
+				in
+				    FilteredByCutover
+
+	annotation PBI_NavigationStepName = Navigation
+
+	annotation PBI_ResultType = Table
+

@@ -1,0 +1,182 @@
+table stg_SubcontractorForecast
+	lineageTag: 564cc2c5-4b70-4833-b03a-bf19f72e8af1
+
+	column 'Netsuite N/C'
+		dataType: int64
+		formatString: 0
+		lineageTag: 6597f849-9ddc-4e5a-8243-74f2152653ce
+		summarizeBy: sum
+		sourceColumn: Netsuite N/C
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Project Code'
+		dataType: string
+		lineageTag: 96e6272a-4575-4164-acd0-f9fd8d710dda
+		summarizeBy: none
+		sourceColumn: Project Code
+
+		annotation SummarizationSetBy = Automatic
+
+	column Department
+		dataType: string
+		lineageTag: 853e7dcc-9f7f-4382-9e80-c2027ebc0387
+		summarizeBy: none
+		sourceColumn: Department
+
+		annotation SummarizationSetBy = Automatic
+
+	column Location
+		dataType: string
+		lineageTag: 6782fd4c-bc67-4d24-96ad-53096cf364cb
+		summarizeBy: none
+		sourceColumn: Location
+
+		annotation SummarizationSetBy = Automatic
+
+	column 31/01/2026
+		dataType: double
+		lineageTag: de56775b-3c95-4d23-8669-d5ce1d64d8cf
+		summarizeBy: sum
+		sourceColumn: 31/01/2026
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column 28/02/2026
+		dataType: double
+		lineageTag: 9360e78a-94e7-49ee-95ac-b2638bfabd9f
+		summarizeBy: sum
+		sourceColumn: 28/02/2026
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column 31/03/2026
+		dataType: double
+		lineageTag: 83fea4c8-ed9b-471c-acf5-1fa5acf8b761
+		summarizeBy: sum
+		sourceColumn: 31/03/2026
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column 30/04/2026
+		dataType: double
+		lineageTag: a3073e08-9528-4460-aac6-bbf4cef156ee
+		summarizeBy: sum
+		sourceColumn: 30/04/2026
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column 31/05/2026
+		dataType: double
+		lineageTag: 7f0207ae-76e5-4dd2-805c-18c451e35acc
+		summarizeBy: sum
+		sourceColumn: 31/05/2026
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column 30/06/2026
+		dataType: double
+		lineageTag: 81a08d00-bd27-4e75-adc6-234bc3c87f12
+		summarizeBy: sum
+		sourceColumn: 30/06/2026
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column 31/07/2026
+		dataType: double
+		lineageTag: dcd172c8-0a8c-4d6e-b21a-f01b79bd8893
+		summarizeBy: sum
+		sourceColumn: 31/07/2026
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column 31/08/2026
+		dataType: double
+		lineageTag: 50dd44f3-01be-4a78-aa41-1de4a8db323c
+		summarizeBy: sum
+		sourceColumn: 31/08/2026
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column 30/09/2026
+		dataType: double
+		lineageTag: 4075a518-0e75-4816-8eea-296a460dae15
+		summarizeBy: sum
+		sourceColumn: 30/09/2026
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column 31/10/2026
+		dataType: double
+		lineageTag: a0fb9336-215f-4e1d-9300-44a13ed8d0e3
+		summarizeBy: sum
+		sourceColumn: 31/10/2026
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column 30/11/2026
+		dataType: double
+		lineageTag: 357223fb-81ed-464b-b53f-3bc6c9176c66
+		summarizeBy: sum
+		sourceColumn: 30/11/2026
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column 31/12/2026
+		dataType: double
+		lineageTag: 81c93718-e2f5-40d5-82ff-b4d705936e4c
+		summarizeBy: sum
+		sourceColumn: 31/12/2026
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column Column17
+		dataType: string
+		lineageTag: 9a5d37e7-8663-4e47-965f-468eccc23acf
+		summarizeBy: none
+		sourceColumn: Column17
+
+		annotation SummarizationSetBy = Automatic
+
+	partition stg_SubcontractorForecast = m
+		mode: import
+		source =
+				let
+				    Source = SharePoint.Files("https://eqmanserv.sharepoint.com/sites/EMS_FPA", [ApiVersion = 15]),
+				    #"Subcontractor forecast xlsx_https://eqmanserv sharepoint com/sites/EMS_FPA/Shared Documents/Profitability/Data/" = Source{[Name="Subcontractor forecast.xlsx",#"Folder Path"="https://eqmanserv.sharepoint.com/sites/EMS_FPA/Shared Documents/Profitability/Data/"]}[Content],
+				    #"Imported Excel Workbook" = Excel.Workbook(#"Subcontractor forecast xlsx_https://eqmanserv sharepoint com/sites/EMS_FPA/Shared Documents/Profitability/Data/"),
+				    Sheet1_Sheet = #"Imported Excel Workbook"{[Item="Sheet1",Kind="Sheet"]}[Data],
+				    #"Removed Top Rows" = Table.Skip(Sheet1_Sheet,2),
+				    #"Promoted Headers" = Table.PromoteHeaders(#"Removed Top Rows", [PromoteAllScalars=true]),
+				    #"Changed Type" = Table.TransformColumnTypes(#"Promoted Headers",{{"Netsuite N/C", Int64.Type}, {"Project Code", type text}, {"Department", type text}, {"Location", type text}, {"31/01/2026", type number}, {"28/02/2026", type number}, {"31/03/2026", type number}, {"30/04/2026", type number}, {"31/05/2026", type number}, {"30/06/2026", type number}, {"31/07/2026", type number}, {"31/08/2026", type number}, {"30/09/2026", type number}, {"31/10/2026", type number}, {"30/11/2026", type number}, {"31/12/2026", type number}, {"Column17", type any}})
+				in
+				    #"Changed Type"
+
+	annotation PBI_NavigationStepName = Navigation
+
+	annotation PBI_ResultType = Table
+

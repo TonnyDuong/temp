@@ -1,0 +1,63 @@
+table 'stg_Staff Costs Summary'
+	lineageTag: 2c6d4d2b-1421-4d0b-a87c-48531e364a12
+
+	column 'Employee #'
+		dataType: string
+		lineageTag: 3839327c-c67a-4a81-827d-92422247390d
+		summarizeBy: none
+		sourceColumn: Employee #
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Time@work Reference'
+		dataType: string
+		lineageTag: a0298b80-763f-4b18-8b94-f9064f96cce5
+		summarizeBy: none
+		sourceColumn: Time@work Reference
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Last Name, First Name'
+		dataType: string
+		lineageTag: ba8bce45-18b1-4986-92e8-03b21b2fbf2d
+		summarizeBy: none
+		sourceColumn: Last Name, First Name
+
+		annotation SummarizationSetBy = Automatic
+
+	column 2025
+		dataType: int64
+		formatString: 0
+		lineageTag: 2fbf784d-cf2f-4137-bb6d-7f38c4c78fb8
+		summarizeBy: sum
+		sourceColumn: 2025
+
+		annotation SummarizationSetBy = Automatic
+
+	column 2026
+		dataType: double
+		lineageTag: 0db537a3-8e16-4c5c-bcb0-85a4462daf2d
+		summarizeBy: sum
+		sourceColumn: 2026
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	partition 'stg_Staff Costs Summary' = m
+		mode: import
+		source =
+				let
+				    Source = SharePoint.Files("https://eqmanserv.sharepoint.com/sites/EMS_FPA", [ApiVersion = 15]),
+				    #"Staff Costs Summary xlsx_https://eqmanserv sharepoint com/sites/EMS_FPA/Shared Documents/Profitability/Data/" = Source{[Name="Staff Costs Summary.xlsx",#"Folder Path"="https://eqmanserv.sharepoint.com/sites/EMS_FPA/Shared Documents/Profitability/Data/"]}[Content],
+				    #"Imported Excel Workbook" = Excel.Workbook(#"Staff Costs Summary xlsx_https://eqmanserv sharepoint com/sites/EMS_FPA/Shared Documents/Profitability/Data/"),
+				    Sheet1_Sheet = #"Imported Excel Workbook"{[Item="Sheet1",Kind="Sheet"]}[Data],
+				    #"Promoted Headers" = Table.PromoteHeaders(Sheet1_Sheet, [PromoteAllScalars=true]),
+				    #"Changed Type" = Table.TransformColumnTypes(#"Promoted Headers",{{"Employee #", type text}, {"Time@work Reference", type text}, {"Last Name, First Name", type text}, {"2025", Int64.Type}, {"2026", type number}})
+				in
+				    #"Changed Type"
+
+	annotation PBI_NavigationStepName = Navigation
+
+	annotation PBI_ResultType = Table
+

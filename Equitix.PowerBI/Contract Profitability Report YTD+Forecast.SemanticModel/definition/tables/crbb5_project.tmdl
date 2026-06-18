@@ -1,0 +1,1021 @@
+table crbb5_project
+	lineageTag: 842538ff-4c71-4cae-a366-64cf19656ab1
+
+	column Project
+		dataType: string
+		lineageTag: d65e214c-9b80-4c5c-b5e7-df5981ecd979
+		summarizeBy: none
+		sourceColumn: crbb5_projectid
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Created On'
+		dataType: dateTime
+		formatString: General Date
+		lineageTag: b0efae48-e96f-4384-93ff-bce8e5b42972
+		summarizeBy: none
+		sourceColumn: createdon
+
+		variation Variation
+			isDefault
+			relationship: faad59ee-df24-4f87-b538-2de44ea40b83
+			defaultHierarchy: LocalDateTable_5b068e6f-c153-4172-ac0e-d81819045e57.'Date Hierarchy'
+
+		annotation SummarizationSetBy = Automatic
+
+	column createdby
+		dataType: string
+		lineageTag: 43ec92d5-218f-4190-8cb1-9051b8ccaf74
+		summarizeBy: none
+		sourceColumn: createdby
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Modified On'
+		dataType: dateTime
+		formatString: General Date
+		lineageTag: cc50711c-4376-48ca-992a-e0613ecfd762
+		summarizeBy: none
+		sourceColumn: modifiedon
+
+		variation Variation
+			isDefault
+			relationship: 2da4416c-b2f5-4253-9444-791e0798b7fb
+			defaultHierarchy: LocalDateTable_fbe1c11c-8272-416b-8d34-8760fa82328d.'Date Hierarchy'
+
+		annotation SummarizationSetBy = Automatic
+
+	column modifiedby
+		dataType: string
+		lineageTag: 5285a209-c07b-4a4c-946d-414027427f4a
+		summarizeBy: none
+		sourceColumn: modifiedby
+
+		annotation SummarizationSetBy = Automatic
+
+	column createdonbehalfby
+		dataType: string
+		lineageTag: e15e3b20-22fe-46a7-bee4-0aa0802606fe
+		summarizeBy: none
+		sourceColumn: createdonbehalfby
+
+		annotation SummarizationSetBy = Automatic
+
+	column modifiedonbehalfby
+		dataType: string
+		lineageTag: a1fa418b-db06-4765-bcd4-bf60e10f59ab
+		summarizeBy: none
+		sourceColumn: modifiedonbehalfby
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Created By'
+		dataType: string
+		lineageTag: 6454641d-4b87-4d20-b1ca-b2af73985e60
+		summarizeBy: none
+		sourceColumn: createdbyname
+
+		annotation SummarizationSetBy = Automatic
+
+	column createdbyyominame
+		dataType: string
+		lineageTag: b337a2f4-db2e-45f7-a5bd-1c61df2f8e51
+		summarizeBy: none
+		sourceColumn: createdbyyominame
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Created By (Delegate)'
+		dataType: string
+		lineageTag: 6aa1e889-4f1a-4fb1-9cac-0170960d985f
+		summarizeBy: none
+		sourceColumn: createdonbehalfbyname
+
+		annotation SummarizationSetBy = Automatic
+
+	column createdonbehalfbyyominame
+		dataType: string
+		lineageTag: b35fe3ed-498c-49dc-b4e1-9de37cc5b9c4
+		summarizeBy: none
+		sourceColumn: createdonbehalfbyyominame
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Modified By'
+		dataType: string
+		lineageTag: 7fa5bd8e-3172-4e5b-b5a7-834f4ad7d7df
+		summarizeBy: none
+		sourceColumn: modifiedbyname
+
+		annotation SummarizationSetBy = Automatic
+
+	column modifiedbyyominame
+		dataType: string
+		lineageTag: 6038303d-95bb-4daf-872a-498c0ee80939
+		summarizeBy: none
+		sourceColumn: modifiedbyyominame
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Modified By (Delegate)'
+		dataType: string
+		lineageTag: 69f55b26-70a5-4bf5-8033-31cba8a44c1c
+		summarizeBy: none
+		sourceColumn: modifiedonbehalfbyname
+
+		annotation SummarizationSetBy = Automatic
+
+	column modifiedonbehalfbyyominame
+		dataType: string
+		lineageTag: b53c0b43-6a46-40ff-8313-fe9fb2e4954c
+		summarizeBy: none
+		sourceColumn: modifiedonbehalfbyyominame
+
+		annotation SummarizationSetBy = Automatic
+
+	column ownerid
+		dataType: string
+		lineageTag: c03a885b-3842-4f54-a353-6703e9df313b
+		summarizeBy: none
+		sourceColumn: ownerid
+
+		annotation SummarizationSetBy = Automatic
+
+	column Owner
+		dataType: string
+		lineageTag: 73fb4653-3484-4b3f-bfbd-9aff9f4f89c8
+		summarizeBy: none
+		sourceColumn: owneridname
+
+		annotation SummarizationSetBy = Automatic
+
+	column owneridyominame
+		dataType: string
+		lineageTag: 0938159d-a919-40aa-a09d-ea58ee249739
+		summarizeBy: none
+		sourceColumn: owneridyominame
+
+		annotation SummarizationSetBy = Automatic
+
+	column owningbusinessunit
+		dataType: string
+		lineageTag: ebad416a-d9cd-4fbc-be99-da2b5a76a194
+		summarizeBy: none
+		sourceColumn: owningbusinessunit
+
+		annotation SummarizationSetBy = Automatic
+
+	column owninguser
+		dataType: string
+		lineageTag: 04f13a61-7a83-4a1e-a8ae-8cee7c7ac44e
+		summarizeBy: none
+		sourceColumn: owninguser
+
+		annotation SummarizationSetBy = Automatic
+
+	column owningteam
+		dataType: string
+		lineageTag: 43cb476d-4557-4e66-93da-0409b79d2e85
+		summarizeBy: none
+		sourceColumn: owningteam
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Owning Business Unit'
+		dataType: string
+		lineageTag: 4a99fcd3-348f-49e2-9f95-1647b1833ef7
+		summarizeBy: none
+		sourceColumn: owningbusinessunitname
+
+		annotation SummarizationSetBy = Automatic
+
+	column Status
+		dataType: int64
+		formatString: 0
+		lineageTag: 35588df4-7171-4310-b051-311b041b35ce
+		summarizeBy: sum
+		sourceColumn: statecode
+
+		annotation SummarizationSetBy = Automatic
+
+	column statecodename
+		dataType: string
+		lineageTag: 7fb9dd67-b6ec-45a8-975a-23dc0261f83c
+		summarizeBy: none
+		sourceColumn: statecodename
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Status Reason'
+		dataType: int64
+		formatString: 0
+		lineageTag: bd431260-11bb-4784-9eae-741bf0c1c1bc
+		summarizeBy: sum
+		sourceColumn: statuscode
+
+		annotation SummarizationSetBy = Automatic
+
+	column statuscodename
+		dataType: string
+		lineageTag: 34149f74-b89d-4b5e-8ef3-0cdc76705b64
+		summarizeBy: none
+		sourceColumn: statuscodename
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Email Address'
+		dataType: string
+		lineageTag: 80f62421-e5f5-41f1-abb5-bc0cb2d97378
+		summarizeBy: none
+		sourceColumn: emailaddress
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Import Sequence Number'
+		dataType: int64
+		formatString: 0
+		lineageTag: a704dfb9-0537-4454-9ce7-cb0b4b37cf49
+		summarizeBy: sum
+		sourceColumn: importsequencenumber
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Record Created On'
+		dataType: dateTime
+		formatString: General Date
+		lineageTag: 282ad434-1390-49e0-8e13-eabf9966e071
+		summarizeBy: none
+		sourceColumn: overriddencreatedon
+
+		variation Variation
+			isDefault
+			relationship: c6057a51-30da-42fb-bb85-df56a16f1668
+			defaultHierarchy: LocalDateTable_d8c92c88-6668-4fb5-8552-facba8f734b7.'Date Hierarchy'
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Time Zone Rule Version Number'
+		dataType: int64
+		formatString: 0
+		lineageTag: a7d98c14-52ab-4954-9e77-5b8369794bec
+		summarizeBy: sum
+		sourceColumn: timezoneruleversionnumber
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'UTC Conversion Time Zone Code'
+		dataType: int64
+		formatString: 0
+		lineageTag: abbf403c-cb8b-4b0a-b020-e80786298411
+		summarizeBy: count
+		sourceColumn: utcconversiontimezonecode
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Project Code'
+		dataType: string
+		lineageTag: fab2b9d2-f159-41ac-8338-4e6f918286e2
+		summarizeBy: none
+		sourceColumn: crbb5_projectcode
+
+		annotation SummarizationSetBy = Automatic
+
+	column crbb5_contract
+		dataType: string
+		lineageTag: 3ff19ce4-6f70-4f4a-a91a-46d55a267b07
+		summarizeBy: none
+		sourceColumn: crbb5_contract
+
+		annotation SummarizationSetBy = Automatic
+
+	column Contract
+		dataType: string
+		lineageTag: 3a0afa5a-657c-458e-beb5-f5c26b50ac7a
+		summarizeBy: none
+		sourceColumn: crbb5_contractname
+
+		annotation SummarizationSetBy = Automatic
+
+	column crbb5_subsidiary
+		dataType: int64
+		formatString: 0
+		lineageTag: 7bf94c52-c13b-4651-b39b-d2983c8d9f20
+		summarizeBy: sum
+		sourceColumn: crbb5_subsidiary
+
+		annotation SummarizationSetBy = Automatic
+
+	column Subsidiary
+		dataType: string
+		lineageTag: f4d6f369-bbe2-4f9a-b7b9-754348ef8d69
+		summarizeBy: none
+		sourceColumn: crbb5_subsidiaryname
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Project Name'
+		dataType: string
+		lineageTag: 5ba8c761-ba67-4f40-9367-c2cdb2605c4b
+		summarizeBy: none
+		sourceColumn: crbb5_projectname
+
+		annotation SummarizationSetBy = Automatic
+
+	column crbb5_projecttype
+		dataType: int64
+		formatString: 0
+		lineageTag: 65c624c5-cdc4-4ee0-bcea-0d2a477cdddf
+		summarizeBy: sum
+		sourceColumn: crbb5_projecttype
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Project Type'
+		dataType: string
+		lineageTag: 77c62ecc-3d5b-4b5c-9633-1aa1029c455f
+		summarizeBy: none
+		sourceColumn: crbb5_projecttypename
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Project Commencement Date'
+		dataType: dateTime
+		formatString: General Date
+		lineageTag: 88f3fd7f-9b14-4470-ba89-3529853d8f9b
+		summarizeBy: none
+		sourceColumn: crbb5_servicecommencementdate
+
+		variation Variation
+			isDefault
+			relationship: ea54ea05-3908-498e-8e62-02ee589edc53
+			defaultHierarchy: LocalDateTable_fd355fb3-a0bd-4244-a837-0b917caaa18c.'Date Hierarchy'
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Service Termination Date'
+		dataType: dateTime
+		formatString: General Date
+		lineageTag: 30ba8a1f-24a1-4249-8e1f-7455b11c4c2f
+		summarizeBy: none
+		sourceColumn: crbb5_serviceterminationdate
+
+		variation Variation
+			isDefault
+			relationship: 7575f1e0-959a-417b-b793-958e100fe722
+			defaultHierarchy: LocalDateTable_709de77b-ea0d-4d57-984f-e6a69b5e505d.'Date Hierarchy'
+
+		annotation SummarizationSetBy = Automatic
+
+	column Notes
+		dataType: string
+		lineageTag: 99598fcb-452c-447a-b852-e1de37b2b74c
+		summarizeBy: none
+		sourceColumn: crbb5_notes
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Project Termination Date'
+		dataType: dateTime
+		formatString: General Date
+		lineageTag: 4c483c1a-1b20-4b4d-b015-d326f86bb34e
+		summarizeBy: none
+		sourceColumn: crbb5_projectterminationdate
+
+		variation Variation
+			isDefault
+			relationship: 0412f69e-67c2-45f7-92a4-73938af2fac1
+			defaultHierarchy: LocalDateTable_71aa891a-1c7c-4096-8dcf-1f72a5bfe432.'Date Hierarchy'
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Project Fee'
+		dataType: double
+		lineageTag: 50a6d72d-eff4-4392-8ec9-f0cbb3185be4
+		summarizeBy: sum
+		sourceColumn: crbb5_projectfee
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column crbb5_revenueprofile
+		dataType: int64
+		formatString: 0
+		lineageTag: 97c1f435-248c-4a3a-8d1a-9662ba803aee
+		summarizeBy: sum
+		sourceColumn: crbb5_revenueprofile
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Revenue Profile'
+		dataType: string
+		lineageTag: 2570e6db-0b70-4853-bb82-a7df63f90477
+		summarizeBy: none
+		sourceColumn: crbb5_revenueprofilename
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Project Fees'
+		dataType: decimal
+		formatString: "£"#,0.###############;-"£"#,0.###############;"£"#,0.###############
+		lineageTag: 5c22dd3a-fc88-482c-8f01-1beae843dfdb
+		summarizeBy: sum
+		sourceColumn: crbb5_projectfees
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"currencyCulture":"en-GB"}
+
+	column transactioncurrencyid
+		dataType: string
+		lineageTag: 284fe6ed-2015-41db-90ef-4f63a5cd11ea
+		summarizeBy: none
+		sourceColumn: transactioncurrencyid
+
+		annotation SummarizationSetBy = Automatic
+
+	column Currency
+		dataType: string
+		lineageTag: dfbba5d9-5b2c-4278-acf3-74d8ada1f2d7
+		summarizeBy: none
+		sourceColumn: transactioncurrencyidname
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Exchange Rate'
+		dataType: double
+		lineageTag: 31746688-53c5-4118-a099-3fbf09fdaf5f
+		summarizeBy: sum
+		sourceColumn: exchangerate
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column 'Project Fees (Base)'
+		dataType: decimal
+		formatString: "£"#,0.###############;-"£"#,0.###############;"£"#,0.###############
+		lineageTag: efb078ca-7cc6-47bc-b4aa-5461f58cc932
+		summarizeBy: sum
+		sourceColumn: crbb5_projectfees_base
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"currencyCulture":"en-GB"}
+
+	column Goal
+		dataType: string
+		lineageTag: 24a20e81-3e4e-4176-8b94-6a2ba1ba1563
+		summarizeBy: none
+		sourceColumn: crbb5_goal
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Billing Fee Total'
+		dataType: decimal
+		formatString: "£"#,0.###############;-"£"#,0.###############;"£"#,0.###############
+		lineageTag: 0bad812e-2fbb-4cbe-8368-2c42861a486c
+		summarizeBy: sum
+		sourceColumn: crbb5_billingfeetotal
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"currencyCulture":"en-GB"}
+
+	column 'Billing Fee Total (Base)'
+		dataType: decimal
+		formatString: "£"#,0.###############;-"£"#,0.###############;"£"#,0.###############
+		lineageTag: 572009cf-58f5-4a35-9712-033526d147e8
+		summarizeBy: sum
+		sourceColumn: crbb5_billingfeetotal_base
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"currencyCulture":"en-GB"}
+
+	column 'Billing Fee Total (Last Updated On)'
+		dataType: dateTime
+		formatString: General Date
+		lineageTag: 7396456b-7c4d-4ac1-a213-8b83b5804cf6
+		summarizeBy: none
+		sourceColumn: crbb5_billingfeetotal_date
+
+		variation Variation
+			isDefault
+			relationship: 2a1e4407-01cf-4528-a03b-2ff9b72e6ef4
+			defaultHierarchy: LocalDateTable_e69a82de-8911-405d-b5c4-35a8f382b9d1.'Date Hierarchy'
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Billing Fee Total (State)'
+		dataType: int64
+		formatString: 0
+		lineageTag: 0bffac0a-ab9b-4dd7-9eef-ef64221b37c2
+		summarizeBy: sum
+		sourceColumn: crbb5_billingfeetotal_state
+
+		annotation SummarizationSetBy = Automatic
+
+	column crbb5_projectstage
+		dataType: int64
+		formatString: 0
+		lineageTag: b1b67d25-9d1a-41aa-a57b-f483f4f8f0c8
+		summarizeBy: sum
+		sourceColumn: crbb5_projectstage
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Project Stage'
+		dataType: string
+		lineageTag: d4806a2c-f4cb-4f86-974e-24d0970dbbb7
+		summarizeBy: none
+		sourceColumn: crbb5_projectstagename
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Billing Annual Fee Total'
+		dataType: double
+		lineageTag: 07bdad9d-90e4-412e-8941-62d2a3d6b8c9
+		summarizeBy: sum
+		sourceColumn: crbb5_billingannualfeetotal
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column 'Billing Annual Fee Total (Last Updated On)'
+		dataType: dateTime
+		formatString: General Date
+		lineageTag: 5c2ccebe-6d7b-4a2c-b890-6f043ea49869
+		summarizeBy: none
+		sourceColumn: crbb5_billingannualfeetotal_date
+
+		variation Variation
+			isDefault
+			relationship: 8c4b343f-0020-4d23-ab5b-cf4e62f065aa
+			defaultHierarchy: LocalDateTable_1c858679-7097-4dae-a942-8d43e830f770.'Date Hierarchy'
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Billing Annual Fee Total (State)'
+		dataType: int64
+		formatString: 0
+		lineageTag: ef570681-615d-45b0-b7cd-835a7707d573
+		summarizeBy: sum
+		sourceColumn: crbb5_billingannualfeetotal_state
+
+		annotation SummarizationSetBy = Automatic
+
+	column crbb5_supersectorcontract
+		dataType: string
+		lineageTag: d0e82015-e9f9-414a-9cb9-047b7f1e056a
+		summarizeBy: none
+		sourceColumn: crbb5_supersectorcontract
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Supersector (Contract'
+		dataType: string
+		lineageTag: fbb99d37-e663-40c2-a292-7930a2e230c0
+		summarizeBy: none
+		sourceColumn: crbb5_supersectorcontractname
+
+		annotation SummarizationSetBy = Automatic
+
+	column crbb5_jedoxforecasted
+		dataType: boolean
+		formatString: """TRUE"";""TRUE"";""FALSE"""
+		lineageTag: 4566eb7c-2aca-4aba-984d-46e3e4a5a438
+		summarizeBy: none
+		sourceColumn: crbb5_jedoxforecasted
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Jedox Forecasted'
+		dataType: string
+		lineageTag: b8f0bb22-fbde-4dd5-bfa9-9264ed47d58e
+		summarizeBy: none
+		sourceColumn: crbb5_jedoxforecastedname
+
+		annotation SummarizationSetBy = Automatic
+
+	column crbb5_jedoxbaseline
+		dataType: boolean
+		formatString: """TRUE"";""TRUE"";""FALSE"""
+		lineageTag: ec5e9b61-d5fa-4af3-b13b-48b6f766a6ab
+		summarizeBy: none
+		sourceColumn: crbb5_jedoxbaseline
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Jedox Baseline'
+		dataType: string
+		lineageTag: b1710331-0f8c-4a14-8e37-e69f5c09157c
+		summarizeBy: none
+		sourceColumn: crbb5_jedoxbaselinename
+
+		annotation SummarizationSetBy = Automatic
+
+	column crbb5_jedoxplanned
+		dataType: boolean
+		formatString: """TRUE"";""TRUE"";""FALSE"""
+		lineageTag: 662956a5-6a6e-46f9-b49f-23b6bcb2fe38
+		summarizeBy: none
+		sourceColumn: crbb5_jedoxplanned
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Jedox Planned'
+		dataType: string
+		lineageTag: 09b0cfaf-5367-46fb-ad1a-ae2659fe780d
+		summarizeBy: none
+		sourceColumn: crbb5_jedoxplannedname
+
+		annotation SummarizationSetBy = Automatic
+
+	column crbb5_projectstagecalculated
+		dataType: int64
+		formatString: 0
+		lineageTag: 65e2c580-9daf-4b60-8f9b-74c28e8c79ed
+		summarizeBy: sum
+		sourceColumn: crbb5_projectstagecalculated
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Project Stage 2'
+		dataType: string
+		lineageTag: 2a88bdb4-bddb-4379-b52c-6f670a4e6e45
+		summarizeBy: none
+		sourceColumn: crbb5_projectstagecalculatedname
+
+		annotation SummarizationSetBy = Automatic
+
+	column crbb5_billingprofile
+		dataType: int64
+		formatString: 0
+		lineageTag: ff75f86d-bff1-4a44-aec0-5bbb16a2abb0
+		summarizeBy: sum
+		sourceColumn: crbb5_billingprofile
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Billing Profile'
+		dataType: string
+		lineageTag: 3301a9fb-5614-45fd-8540-7c31155ebffd
+		summarizeBy: none
+		sourceColumn: crbb5_billingprofilename
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Project Service'
+		dataType: string
+		lineageTag: 8095709f-8148-4550-a5b9-6daa68790545
+		summarizeBy: none
+		sourceColumn: crbb5_projectservice
+
+		annotation SummarizationSetBy = Automatic
+
+	column Deliverables
+		dataType: int64
+		formatString: 0
+		lineageTag: 6c74ebe5-1a86-46b8-ae60-389661c190b3
+		summarizeBy: sum
+		sourceColumn: crbb5_deliverables
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Deliverables (Last Updated On)'
+		dataType: dateTime
+		formatString: General Date
+		lineageTag: 856c0592-c2d9-48ce-842a-b0daf51b4326
+		summarizeBy: none
+		sourceColumn: crbb5_deliverables_date
+
+		variation Variation
+			isDefault
+			relationship: 041cde73-c7bb-4202-b144-9a1dfdcfccf4
+			defaultHierarchy: LocalDateTable_467f1fdd-158f-44f1-bbd6-d772e6b8a82b.'Date Hierarchy'
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Deliverables (State)'
+		dataType: int64
+		formatString: 0
+		lineageTag: 11f47a81-64a1-4c69-8992-b6be37042f77
+		summarizeBy: sum
+		sourceColumn: crbb5_deliverables_state
+
+		annotation SummarizationSetBy = Automatic
+
+	column crbb5_ratescard
+		dataType: string
+		lineageTag: bf62301e-dcf7-473c-8b37-3d2c057ab91b
+		summarizeBy: none
+		sourceColumn: crbb5_ratescard
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Rates Card'
+		dataType: string
+		lineageTag: be677ad1-1835-4e2f-b381-60b69ced26e7
+		summarizeBy: none
+		sourceColumn: crbb5_ratescardname
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Baseline Revenue'
+		dataType: double
+		lineageTag: 43b69da2-801f-4045-bb4b-f83ce42f5fab
+		summarizeBy: sum
+		sourceColumn: crbb5_baselinerevenue
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column crbb5_jedoxpending
+		dataType: boolean
+		formatString: """TRUE"";""TRUE"";""FALSE"""
+		lineageTag: 6455543d-0cbe-4aa2-beda-1d7f71291a7f
+		summarizeBy: none
+		sourceColumn: crbb5_jedoxpending
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Jedox Pending'
+		dataType: string
+		lineageTag: 74855348-0daa-45bc-ad91-6130fc1b0511
+		summarizeBy: none
+		sourceColumn: crbb5_jedoxpendingname
+
+		annotation SummarizationSetBy = Automatic
+
+	column '% Revenue Finance'
+		dataType: double
+		lineageTag: e8054694-6b79-4e68-a9b2-ef72bda8d3ba
+		summarizeBy: sum
+		sourceColumn: crbb5_revenuefinance
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column '% Revenue Ops'
+		dataType: double
+		lineageTag: e135dd6e-e263-4e04-bedb-b6634a6e8bc5
+		summarizeBy: sum
+		sourceColumn: crbb5_revenueops
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column crbb5_profitabilityhealth
+		dataType: int64
+		formatString: 0
+		lineageTag: fb229dba-6b85-4b47-9df3-8bfea46640a9
+		summarizeBy: sum
+		sourceColumn: crbb5_profitabilityhealth
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Profitability Health'
+		dataType: string
+		lineageTag: 5a781e7c-13d8-4560-a697-87f757cc62a2
+		summarizeBy: none
+		sourceColumn: crbb5_profitabilityhealthname
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Baseline Fees'
+		dataType: decimal
+		formatString: "£"#,0.###############;-"£"#,0.###############;"£"#,0.###############
+		lineageTag: c81d934c-c749-4164-b233-24a5d8057268
+		summarizeBy: sum
+		sourceColumn: crbb5_baselinefees
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"currencyCulture":"en-GB"}
+
+	column 'Baseline Fees (Base)'
+		dataType: decimal
+		formatString: "£"#,0.###############;-"£"#,0.###############;"£"#,0.###############
+		lineageTag: 454a19dc-831b-44dd-8cb8-6215559a8348
+		summarizeBy: sum
+		sourceColumn: crbb5_baselinefees_base
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"currencyCulture":"en-GB"}
+
+	column crbb5_removejedoxbaseline
+		dataType: boolean
+		formatString: """TRUE"";""TRUE"";""FALSE"""
+		lineageTag: bfb3ddf2-ff97-44ac-a6fe-49b7ebe89768
+		summarizeBy: none
+		sourceColumn: crbb5_removejedoxbaseline
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Remove Jedox Baseline'
+		dataType: string
+		lineageTag: 7e29ce35-62f7-45d4-8516-abc87bc35661
+		summarizeBy: none
+		sourceColumn: crbb5_removejedoxbaselinename
+
+		annotation SummarizationSetBy = Automatic
+
+	column crbb5_approved
+		dataType: boolean
+		formatString: """TRUE"";""TRUE"";""FALSE"""
+		lineageTag: 1a36cf63-7b31-4f45-9ab9-790bd90e6823
+		summarizeBy: none
+		sourceColumn: crbb5_approved
+
+		annotation SummarizationSetBy = Automatic
+
+	column Forecast
+		dataType: string
+		lineageTag: 34f9c33b-a930-4419-be62-a26ead116891
+		summarizeBy: none
+		sourceColumn: crbb5_approvedname
+
+		annotation SummarizationSetBy = Automatic
+
+	column Client
+		dataType: string
+		lineageTag: 7cd4657b-8dda-473f-b8be-e4b44b5eb528
+		summarizeBy: none
+		sourceColumn: crbb5_client
+
+		annotation SummarizationSetBy = Automatic
+
+	column crbb5_planned
+		dataType: boolean
+		formatString: """TRUE"";""TRUE"";""FALSE"""
+		lineageTag: f22c66fe-3228-4906-a3e2-219fca97f63d
+		summarizeBy: none
+		sourceColumn: crbb5_planned
+
+		annotation SummarizationSetBy = Automatic
+
+	column Planned
+		dataType: string
+		lineageTag: fb9d1727-f259-4430-83a1-21f14b1a9a99
+		summarizeBy: none
+		sourceColumn: crbb5_plannedname
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Revenue Type'
+		dataType: string
+		lineageTag: 7787e2e9-1207-43e7-8751-6515c12bd7e5
+		summarizeBy: none
+		sourceColumn: crbb5_revenuetype
+
+		annotation SummarizationSetBy = Automatic
+
+	column crbb5_sensitive
+		dataType: boolean
+		formatString: """TRUE"";""TRUE"";""FALSE"""
+		lineageTag: 548297c3-b073-4a06-b4dd-dd185c0edd9f
+		summarizeBy: none
+		sourceColumn: crbb5_sensitive
+
+		annotation SummarizationSetBy = Automatic
+
+	column Sensitive
+		dataType: string
+		lineageTag: 2c12dfb2-763e-482f-8b5f-06323fc27b34
+		summarizeBy: none
+		sourceColumn: crbb5_sensitivename
+
+		annotation SummarizationSetBy = Automatic
+
+	column crbb5_timesheetsrequirenotes
+		dataType: boolean
+		formatString: """TRUE"";""TRUE"";""FALSE"""
+		lineageTag: 090614f2-61eb-479b-86e5-f0a79ca4c173
+		summarizeBy: none
+		sourceColumn: crbb5_timesheetsrequirenotes
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Timesheets require notes (variations / passover)'
+		dataType: string
+		lineageTag: c068793a-7fc0-41ec-b0ae-805dd3bd1602
+		summarizeBy: none
+		sourceColumn: crbb5_timesheetsrequirenotesname
+
+		annotation SummarizationSetBy = Automatic
+
+	column crbb5_approval
+		dataType: string
+		lineageTag: b9384b49-86a7-4d0e-9438-0e693a4478f8
+		summarizeBy: none
+		sourceColumn: crbb5_approval
+
+		annotation SummarizationSetBy = Automatic
+
+	column crbb5_approver
+		dataType: string
+		lineageTag: 16582a1d-57e6-4018-8467-9162ffb624e5
+		summarizeBy: none
+		sourceColumn: crbb5_approver
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Project Rejected Date'
+		dataType: dateTime
+		formatString: General Date
+		lineageTag: 4d3a0498-293a-4942-9791-d9199b677d00
+		summarizeBy: none
+		sourceColumn: crbb5_projectrejecteddate
+
+		variation Variation
+			isDefault
+			relationship: c95119ff-c58b-40d9-a0a7-031b0e78b691
+			defaultHierarchy: LocalDateTable_6c7756d0-b84b-4734-b818-d7a0718b92b7.'Date Hierarchy'
+
+		annotation SummarizationSetBy = Automatic
+
+	column Approval
+		dataType: string
+		lineageTag: 3ad2f7e9-91b8-48c0-bfc9-26058cac71e5
+		summarizeBy: none
+		sourceColumn: crbb5_approvalname
+
+		annotation SummarizationSetBy = Automatic
+
+	column Approver
+		dataType: string
+		lineageTag: e9b2d331-0c16-4ddb-be66-458841d2aa05
+		summarizeBy: none
+		sourceColumn: crbb5_approvername
+
+		annotation SummarizationSetBy = Automatic
+
+	column crbb5_approveryominame
+		dataType: string
+		lineageTag: cae76337-8e32-42c1-8d84-cfd29073e9ae
+		summarizeBy: none
+		sourceColumn: crbb5_approveryominame
+
+		annotation SummarizationSetBy = Automatic
+
+	column crbb5_netsuitestatus
+		dataType: int64
+		formatString: 0
+		lineageTag: fc9732f4-0f76-4469-8e48-33d1581e581d
+		summarizeBy: sum
+		sourceColumn: crbb5_netsuitestatus
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'NetSuite Status'
+		dataType: string
+		lineageTag: 466628e9-e307-473c-836d-ba437126035b
+		summarizeBy: none
+		sourceColumn: crbb5_netsuitestatusname
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'NetSuite Inactive Calculated'
+		dataType: string
+		lineageTag: 7af530d5-7e78-4246-b5c2-edfeedc87f21
+		summarizeBy: none
+		sourceColumn: crbb5_netsuiteinactivecalculated
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'NetSuite Subsidiary Calculated'
+		dataType: string
+		lineageTag: 606cc94e-3d81-4621-9403-b899da949550
+		summarizeBy: none
+		sourceColumn: crbb5_netsuitesubsidiarycalculated
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Project Display'
+		dataType: string
+		lineageTag: bdf69099-7040-4ea5-8e7e-a961678bc6e7
+		summarizeBy: none
+		sourceColumn: Project Display
+
+		annotation SummarizationSetBy = Automatic
+
+	partition crbb5_project = m
+		mode: import
+		source =
+				let
+				    Source = CommonDataService.Database("emservices.crm11.dynamics.com"),
+				    dbo_crbb5_project = Source{[Schema="dbo",Item="crbb5_project"]}[Data],
+				    #"Added Custom" = Table.AddColumn(dbo_crbb5_project, "Project Display", each [crbb5_projectcode] & " - " & [crbb5_projectname])
+				in
+				    #"Added Custom"
+
+	annotation PBI_ResultType = Table
+
+	annotation PBI_NavigationStepName = Navigation
+

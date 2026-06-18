@@ -1,0 +1,103 @@
+table 'stg_EMS Fixed Fee Forecast_Actuals'
+	lineageTag: b4c1191e-4148-4a72-a94a-6227f4090d8a
+
+	column 'Transaction Ref.'
+		dataType: string
+		lineageTag: 12c60efe-bf68-41df-ab7c-c5e7392b373a
+		summarizeBy: none
+		sourceColumn: Transaction Ref.
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Transaction Date'
+		dataType: dateTime
+		formatString: Long Date
+		lineageTag: 51ffb5fa-c5d6-4dc6-8015-4f7d860b27ea
+		summarizeBy: none
+		sourceColumn: Transaction Date
+
+		variation Variation
+			isDefault
+			relationship: ca0c2458-add8-4cb2-a901-ae8a3cb618ba
+			defaultHierarchy: LocalDateTable_deaec2aa-efc5-4ff3-a16a-e447da01d94b.'Date Hierarchy'
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation UnderlyingDateTimeDataType = Date
+
+	column 'Period End Date'
+		dataType: dateTime
+		formatString: Long Date
+		lineageTag: d0ba83e3-e040-416f-ace3-291c520fbbcd
+		summarizeBy: none
+		sourceColumn: Period End Date
+
+		variation Variation
+			isDefault
+			relationship: b6bbe9f1-d4cb-4f3d-b92c-347170dd0911
+			defaultHierarchy: LocalDateTable_423122e6-95b5-4708-921a-a1b87016baa8.'Date Hierarchy'
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation UnderlyingDateTimeDataType = Date
+
+	column 'Account No.'
+		dataType: int64
+		formatString: 0
+		lineageTag: 8667e619-045f-449a-b41a-c3685c6a6f5a
+		summarizeBy: sum
+		sourceColumn: Account No.
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Account Name'
+		dataType: string
+		lineageTag: 0a4cd9ce-716d-4d8d-8892-6a1e429bbfa0
+		summarizeBy: none
+		sourceColumn: Account Name
+
+		annotation SummarizationSetBy = Automatic
+
+	column Memo
+		dataType: string
+		lineageTag: cd430fef-74a8-40d0-b60c-43489bf5e41a
+		summarizeBy: none
+		sourceColumn: Memo
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Class: Class External ID'
+		dataType: string
+		lineageTag: 6ed63e05-1792-4c2d-848a-40867524ac14
+		summarizeBy: none
+		sourceColumn: Class: Class External ID
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Sum of Amount'
+		dataType: double
+		lineageTag: afd1b857-8431-4310-a74c-3d5ea4f49d90
+		summarizeBy: sum
+		sourceColumn: Sum of Amount
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	partition 'stg_EMS Fixed Fee Forecast_Actuals' = m
+		mode: import
+		source =
+				let
+				    Source = SharePoint.Files("https://eqmanserv.sharepoint.com/sites/EMS_FPA", [ApiVersion = 15]),
+				    #"EMS Fixed Fee Forecast xlsx_https://eqmanserv sharepoint com/sites/EMS_FPA/Shared Documents/Profitability/Data/" = Source{[Name="EMS Fixed Fee Forecast.xlsx",#"Folder Path"="https://eqmanserv.sharepoint.com/sites/EMS_FPA/Shared Documents/Profitability/Data/"]}[Content],
+				    #"Imported Excel Workbook" = Excel.Workbook(#"EMS Fixed Fee Forecast xlsx_https://eqmanserv sharepoint com/sites/EMS_FPA/Shared Documents/Profitability/Data/"),
+				    Actuals_Sheet = #"Imported Excel Workbook"{[Item="Actuals",Kind="Sheet"]}[Data],
+				    #"Promoted Headers" = Table.PromoteHeaders(Actuals_Sheet, [PromoteAllScalars=true]),
+				    #"Changed Type" = Table.TransformColumnTypes(#"Promoted Headers",{{"Transaction Ref.", type text}, {"Transaction Date", type date}, {"Period End Date", type date}, {"Account No.", Int64.Type}, {"Account Name", type text}, {"Memo", type text}, {"Class: Class External ID", type text}, {"Sum of Amount", type number}})
+				in
+				    #"Changed Type"
+
+	annotation PBI_NavigationStepName = Navigation
+
+	annotation PBI_ResultType = Table
+

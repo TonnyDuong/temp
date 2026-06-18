@@ -1,0 +1,443 @@
+table dogma_timesheetperiod
+	lineageTag: 7499e536-111b-41b9-b2f0-4b94c1d41222
+
+	column 'Timesheet Period'
+		dataType: string
+		lineageTag: c43db035-1593-47bb-b4c8-84e37fc3b393
+		summarizeBy: none
+		sourceColumn: dogma_timesheetperiodid
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Created On'
+		dataType: dateTime
+		formatString: General Date
+		lineageTag: 552487fc-8e67-42c7-96a7-ec68dc9aab8a
+		summarizeBy: none
+		sourceColumn: createdon
+
+		variation Variation
+			isDefault
+			relationship: 272e5024-a95b-46ed-92c8-08970df91b9f
+			defaultHierarchy: LocalDateTable_adc432e6-3621-4269-88f4-33ddc5dd01ba.'Date Hierarchy'
+
+		annotation SummarizationSetBy = Automatic
+
+	column createdby
+		dataType: string
+		lineageTag: 63914b65-781f-4875-bf93-ac334da450a6
+		summarizeBy: none
+		sourceColumn: createdby
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Modified On'
+		dataType: dateTime
+		formatString: General Date
+		lineageTag: d0270a2d-ab0a-4ab0-a86f-00fef1f18895
+		summarizeBy: none
+		sourceColumn: modifiedon
+
+		variation Variation
+			isDefault
+			relationship: 30039220-683f-438e-bfc4-0c70bbf6f1c0
+			defaultHierarchy: LocalDateTable_f1e25086-a8f6-443e-b35e-823114b3db8b.'Date Hierarchy'
+
+		annotation SummarizationSetBy = Automatic
+
+	column modifiedby
+		dataType: string
+		lineageTag: 41d87241-0394-4d77-b7a4-22a9874e8344
+		summarizeBy: none
+		sourceColumn: modifiedby
+
+		annotation SummarizationSetBy = Automatic
+
+	column createdonbehalfby
+		dataType: string
+		lineageTag: 34eae704-4643-45cf-b418-687bd666178a
+		summarizeBy: none
+		sourceColumn: createdonbehalfby
+
+		annotation SummarizationSetBy = Automatic
+
+	column modifiedonbehalfby
+		dataType: string
+		lineageTag: 528361ec-4ff4-4b15-810f-ba137ad15b48
+		summarizeBy: none
+		sourceColumn: modifiedonbehalfby
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Created By'
+		dataType: string
+		lineageTag: 242f3df1-cfe3-4b42-9bec-eeaffd0a25ab
+		summarizeBy: none
+		sourceColumn: createdbyname
+
+		annotation SummarizationSetBy = Automatic
+
+	column createdbyyominame
+		dataType: string
+		lineageTag: 507d59ac-efda-4070-8ba1-a0f3ff0872cf
+		summarizeBy: none
+		sourceColumn: createdbyyominame
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Created By (Delegate)'
+		dataType: string
+		lineageTag: 3b662e01-6408-407b-8d14-2c8c3f1ac425
+		summarizeBy: none
+		sourceColumn: createdonbehalfbyname
+
+		annotation SummarizationSetBy = Automatic
+
+	column createdonbehalfbyyominame
+		dataType: string
+		lineageTag: f9af8928-a873-4a4a-9468-d67253d0fa6e
+		summarizeBy: none
+		sourceColumn: createdonbehalfbyyominame
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Modified By'
+		dataType: string
+		lineageTag: ab48a647-1d68-45c2-aada-7e0105d45f84
+		summarizeBy: none
+		sourceColumn: modifiedbyname
+
+		annotation SummarizationSetBy = Automatic
+
+	column modifiedbyyominame
+		dataType: string
+		lineageTag: 98ad5de1-126c-4c37-8974-3e41f5282e14
+		summarizeBy: none
+		sourceColumn: modifiedbyyominame
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Modified By (Delegate)'
+		dataType: string
+		lineageTag: 27dfd41a-f604-49c6-9f60-f7317dd64300
+		summarizeBy: none
+		sourceColumn: modifiedonbehalfbyname
+
+		annotation SummarizationSetBy = Automatic
+
+	column modifiedonbehalfbyyominame
+		dataType: string
+		lineageTag: 8aaa33ba-10d2-44e1-a04f-8b1235414e36
+		summarizeBy: none
+		sourceColumn: modifiedonbehalfbyyominame
+
+		annotation SummarizationSetBy = Automatic
+
+	column ownerid
+		dataType: string
+		lineageTag: faf729ed-6971-4246-8c92-f45ab22466c3
+		summarizeBy: none
+		sourceColumn: ownerid
+
+		annotation SummarizationSetBy = Automatic
+
+	column Owner
+		dataType: string
+		lineageTag: 63c938ea-1f89-4fbc-8186-2c6b23d1bd50
+		summarizeBy: none
+		sourceColumn: owneridname
+
+		annotation SummarizationSetBy = Automatic
+
+	column owneridyominame
+		dataType: string
+		lineageTag: ab8e7336-32c9-4ec0-8331-30378ebe330e
+		summarizeBy: none
+		sourceColumn: owneridyominame
+
+		annotation SummarizationSetBy = Automatic
+
+	column owningbusinessunit
+		dataType: string
+		lineageTag: 1f932236-2674-4906-ba34-b95048ce9856
+		summarizeBy: none
+		sourceColumn: owningbusinessunit
+
+		annotation SummarizationSetBy = Automatic
+
+	column owninguser
+		dataType: string
+		lineageTag: ceef50be-bbff-46c5-9dc8-6f77b0c3c9a0
+		summarizeBy: none
+		sourceColumn: owninguser
+
+		annotation SummarizationSetBy = Automatic
+
+	column owningteam
+		dataType: string
+		lineageTag: 77ceb6b9-b0c6-4b06-a5b9-5a77428e8ac0
+		summarizeBy: none
+		sourceColumn: owningteam
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Owning Business Unit'
+		dataType: string
+		lineageTag: 8439c51d-8072-46ff-bae8-b512c6131b08
+		summarizeBy: none
+		sourceColumn: owningbusinessunitname
+
+		annotation SummarizationSetBy = Automatic
+
+	column Status
+		dataType: int64
+		formatString: 0
+		lineageTag: 2c9ede15-2928-4819-bf10-7afe4fdd0b54
+		summarizeBy: sum
+		sourceColumn: statecode
+
+		annotation SummarizationSetBy = Automatic
+
+	column statecodename
+		dataType: string
+		lineageTag: e3d83cb5-61e9-4c49-b392-baff57a111dc
+		summarizeBy: none
+		sourceColumn: statecodename
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Status Reason'
+		dataType: int64
+		formatString: 0
+		lineageTag: 158ab665-63f8-4e03-a608-eb0f50b3cbe9
+		summarizeBy: sum
+		sourceColumn: statuscode
+
+		annotation SummarizationSetBy = Automatic
+
+	column statuscodename
+		dataType: string
+		lineageTag: 1810b7a7-9b8c-4fe3-ab4a-e8fb742cf98c
+		summarizeBy: none
+		sourceColumn: statuscodename
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Import Sequence Number'
+		dataType: int64
+		formatString: 0
+		lineageTag: 7ed1f320-f5f8-4997-a57b-8099f474a557
+		summarizeBy: sum
+		sourceColumn: importsequencenumber
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Record Created On'
+		dataType: dateTime
+		formatString: General Date
+		lineageTag: 8b96ae26-03f6-48c2-b089-5eaa751de0e3
+		summarizeBy: none
+		sourceColumn: overriddencreatedon
+
+		variation Variation
+			isDefault
+			relationship: b34a567e-96e0-4c1b-8bc0-0f2f6b625a52
+			defaultHierarchy: LocalDateTable_5a743fdf-8a66-46a0-9f5f-08184f309550.'Date Hierarchy'
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Time Zone Rule Version Number'
+		dataType: int64
+		formatString: 0
+		lineageTag: 473feba7-94fe-4422-87b7-a8873e84363e
+		summarizeBy: sum
+		sourceColumn: timezoneruleversionnumber
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'UTC Conversion Time Zone Code'
+		dataType: int64
+		formatString: 0
+		lineageTag: b29c43f8-46d9-43de-857d-c5a8ac4215a2
+		summarizeBy: count
+		sourceColumn: utcconversiontimezonecode
+
+		annotation SummarizationSetBy = Automatic
+
+	column Name
+		dataType: string
+		lineageTag: a2377795-a4a4-4eb4-b3f8-0065e4681012
+		summarizeBy: none
+		sourceColumn: dogma_name
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Approval Date'
+		dataType: dateTime
+		formatString: General Date
+		lineageTag: 88983d31-481f-4f1e-9397-73cff41b3f38
+		summarizeBy: none
+		sourceColumn: dogma_approvaldate
+
+		variation Variation
+			isDefault
+			relationship: 09234da6-e89f-44d2-9531-e8a16387d286
+			defaultHierarchy: LocalDateTable_3e6aa5b9-bb9b-46dd-8207-ad5705ce4083.'Date Hierarchy'
+
+		annotation SummarizationSetBy = Automatic
+
+	column dogma_approver
+		dataType: string
+		lineageTag: df55c6ab-4eff-4c13-b2ad-949f6705e7d2
+		summarizeBy: none
+		sourceColumn: dogma_approver
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'First Rejection Date'
+		dataType: dateTime
+		formatString: General Date
+		lineageTag: 70d46195-d4e5-4c67-9145-c8df2c6ef1ff
+		summarizeBy: none
+		sourceColumn: dogma_firstrejectiondate
+
+		variation Variation
+			isDefault
+			relationship: 7ecc406c-a31c-4432-ad2d-1c2806c46063
+			defaultHierarchy: LocalDateTable_65293f6b-5290-4406-804f-cb21d33cf715.'Date Hierarchy'
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Last Rejection Date'
+		dataType: dateTime
+		formatString: General Date
+		lineageTag: 4f9a430c-256a-4bbc-86e2-26787842c9e9
+		summarizeBy: none
+		sourceColumn: dogma_lastrejectiondate
+
+		variation Variation
+			isDefault
+			relationship: 5c04fd58-a1c7-43cc-98ff-2e76804078c5
+			defaultHierarchy: LocalDateTable_9e7d5a62-4f47-453b-b507-8c708394853c.'Date Hierarchy'
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Number of Rejections'
+		dataType: int64
+		formatString: 0
+		lineageTag: c75d415d-1565-4256-bf25-0607d48ed115
+		summarizeBy: sum
+		sourceColumn: dogma_numberofrejections
+
+		annotation SummarizationSetBy = Automatic
+
+	column dogma_overdue
+		dataType: boolean
+		formatString: """TRUE"";""TRUE"";""FALSE"""
+		lineageTag: 60c5fb6f-6922-412e-9ab7-0e6f1636dd30
+		summarizeBy: none
+		sourceColumn: dogma_overdue
+
+		annotation SummarizationSetBy = Automatic
+
+	column Overdue
+		dataType: string
+		lineageTag: f81c0fd6-4493-48b6-b13d-57e45c7813a8
+		summarizeBy: none
+		sourceColumn: dogma_overduename
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Period End Date'
+		dataType: dateTime
+		formatString: General Date
+		lineageTag: 6d5c0583-30ff-4c90-8a63-c47600067489
+		summarizeBy: none
+		sourceColumn: dogma_periodenddate
+
+		variation Variation
+			isDefault
+			relationship: 4e18fe87-9eba-475a-af2a-f8fec70e8034
+			defaultHierarchy: LocalDateTable_343afc95-fbc4-40c8-8a55-1a8254bd8722.'Date Hierarchy'
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Period Start Date'
+		dataType: dateTime
+		formatString: General Date
+		lineageTag: 9ddd7571-ed4f-40e0-a2e1-58d469b33993
+		summarizeBy: none
+		sourceColumn: dogma_periodstartdate
+
+		variation Variation
+			isDefault
+			relationship: 5a29b276-eaf2-45a5-87ab-f16870b3121c
+			defaultHierarchy: LocalDateTable_9c25b4c5-1e25-4111-85f4-73c033b0e772.'Date Hierarchy'
+
+		annotation SummarizationSetBy = Automatic
+
+	column Response
+		dataType: string
+		lineageTag: 7d27f08c-9782-4ca3-bce0-c37c45e2fb6f
+		summarizeBy: none
+		sourceColumn: dogma_response
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Submission Date'
+		dataType: dateTime
+		formatString: General Date
+		lineageTag: b66d25b8-ce8f-4857-8188-b1b5f612ae27
+		summarizeBy: none
+		sourceColumn: dogma_submissiondate
+
+		variation Variation
+			isDefault
+			relationship: dc2ffd83-cd46-46a0-9c57-c5df55ccabc6
+			defaultHierarchy: LocalDateTable_10b8811a-3249-42f9-9c65-c8a62a8e686a.'Date Hierarchy'
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Submission Notes'
+		dataType: string
+		lineageTag: cabf8837-afc5-4878-b91a-c21986030d3e
+		summarizeBy: none
+		sourceColumn: dogma_submissionnotes
+
+		annotation SummarizationSetBy = Automatic
+
+	column Approver
+		dataType: string
+		lineageTag: a9de35e4-0315-4b7b-b18b-c18ed64f5b19
+		summarizeBy: none
+		sourceColumn: dogma_approvername
+
+		annotation SummarizationSetBy = Automatic
+
+	column dogma_approveryominame
+		dataType: string
+		lineageTag: 116928de-272f-4f4f-a284-0ba9eee160e6
+		summarizeBy: none
+		sourceColumn: dogma_approveryominame
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Billing Period'
+		dataType: string
+		lineageTag: 4ac2098f-a183-4845-9a52-edce7675e32a
+		summarizeBy: none
+		sourceColumn: dogma_billingperiod
+
+		annotation SummarizationSetBy = Automatic
+
+	partition dogma_timesheetperiod = m
+		mode: import
+		source =
+				let
+				    Source = CommonDataService.Database("emservices.crm11.dynamics.com"),
+				    dbo_dogma_timesheetperiod = Source{[Schema="dbo",Item="dogma_timesheetperiod"]}[Data]
+				in
+				    dbo_dogma_timesheetperiod
+
+	annotation PBI_ResultType = Table
+

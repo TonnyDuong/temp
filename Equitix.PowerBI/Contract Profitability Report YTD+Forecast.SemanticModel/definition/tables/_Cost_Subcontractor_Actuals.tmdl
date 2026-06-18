@@ -1,0 +1,153 @@
+table _Cost_Subcontractor_Actuals
+	lineageTag: 5b97ca9b-c2e7-4658-b2fb-105449c2b1b7
+
+	column Date
+		dataType: dateTime
+		formatString: Long Date
+		lineageTag: c7d1a92e-5786-4964-ac56-4d344e0793f8
+		summarizeBy: none
+		sourceColumn: Date
+
+		variation Variation
+			isDefault
+			relationship: 689b29bc-f185-46e1-8838-9e57a89c9ab9
+			defaultHierarchy: LocalDateTable_374bc2dc-a96d-48fc-9d1d-acb0e4c388c6.'Date Hierarchy'
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation UnderlyingDateTimeDataType = Date
+
+	column 'Project Code'
+		dataType: string
+		lineageTag: de4821f6-539f-4da0-b5c2-071f78c4ab02
+		summarizeBy: none
+		sourceColumn: Project Code
+
+		annotation SummarizationSetBy = Automatic
+
+	column TimeWorkReference
+		dataType: string
+		lineageTag: dd51c31f-5485-4ef2-80a5-e12bf0c8cb93
+		summarizeBy: none
+		sourceColumn: TimeWorkReference
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Account Code'
+		dataType: int64
+		formatString: 0
+		lineageTag: 734cb835-8814-4155-ae4c-ddea1c434529
+		summarizeBy: count
+		sourceColumn: Account Code
+
+		annotation SummarizationSetBy = Automatic
+
+	column Category
+		dataType: string
+		lineageTag: 64afb427-b536-45cc-a854-5f94b2c28889
+		summarizeBy: none
+		sourceColumn: Category
+
+		annotation SummarizationSetBy = Automatic
+
+	column Type
+		dataType: string
+		lineageTag: ab64b928-2b1f-4a1a-8235-a2138ef3a122
+		summarizeBy: none
+		sourceColumn: Type
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Snapshot Date'
+		dataType: dateTime
+		formatString: Long Date
+		lineageTag: 2e371c61-bad7-4e45-bd21-1aa7a7e64146
+		summarizeBy: none
+		sourceColumn: Snapshot Date
+
+		variation Variation
+			isDefault
+			relationship: 6a17d5fb-2252-473a-9cf4-d8a28908d1da
+			defaultHierarchy: LocalDateTable_3be4e141-24e6-4b73-a2c8-cba76c77b5c4.'Date Hierarchy'
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation UnderlyingDateTimeDataType = Date
+
+	column Amount
+		dataType: double
+		formatString: "£"#,0.00;-"£"#,0.00;"£"#,0.00
+		lineageTag: d63afbcf-2b72-441e-9a8a-0a8dc96be9fb
+		summarizeBy: sum
+		sourceColumn: Amount
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"currencyCulture":"en-GB"}
+
+	partition _Cost_Subcontractor_Actuals = m
+		mode: import
+		source =
+				// =====================================================================
+				// _Cost_Subcontractor_Actuals  (helper — load disabled)
+				// ---------------------------------------------------------------------
+				// Purpose:      Subcontractor cost actuals from NetSuite GL.
+				// Grain:        One row per NetSuite expense line where Account Code in
+				//               {60201, 60203}.
+				// Dependencies: stg_FinanceOutput FY26_FY2026
+				// Load:         DISABLED.
+				// ---------------------------------------------------------------------
+				// Account codes (CONFIRMED by Chris, 29 May meeting):
+				//   60201, 60202, 60203  →  Subcontractor (consultancy/agency, not on
+				//                            BambooHR or timesheets).
+				//   607*                 →  EXCLUDED (handled in _Cost_Other_Actuals — these
+				//                            workers ARE on timesheets, so the cost is
+				//                            already counted via fact_Timesheet).
+				// =====================================================================
+				let
+				    Source = #"stg_FinanceOutput FY26_FY2026",
+				
+				    SubcontractorOnly = Table.SelectRows(Source, each
+				        List.Contains({60201, 60202, 60203}, [#"Account No."])),
+				
+				    FilledLocation = Table.ReplaceValue(
+				        SubcontractorOnly,
+				        each [#"Location: Full Name"],
+				        each (
+				            if [#"Location: Full Name"] <> null and [#"Location: Full Name"] <> ""
+				                then [#"Location: Full Name"]
+				            else if Text.EndsWith([#"Subsidiary: Full Name"] ?? "", "ESS")
+				                then "Italy"
+				            else
+				                "UK"
+				        ),
+				        Replacer.ReplaceValue,
+				        {"Location: Full Name"}
+				    ),
+				
+				    AddCategory = Table.AddColumn(FilledLocation, "Category", each "Subcontractor", type text),
+				    AddType     = Table.AddColumn(AddCategory,    "Type",     each "Actual",        type text),
+				    AddSnapshot = Table.AddColumn(AddType,        "Snapshot Date", each null,       type date),
+				    AddTWR      = Table.AddColumn(AddSnapshot,    "TimeWorkReference", each null,   type text),
+				
+				    Renamed = Table.RenameColumns(AddTWR, {
+				        {"Period End Date",          "Date"},
+				        {"Account No.",              "Account Code"},
+				        {"Sum of Amount",            "Amount"},
+				        {"Class: Class External ID", "Project Code"}   // GL has no literal Project Code; Class External ID holds it
+				    }),
+				
+				    Final = Table.SelectColumns(Renamed,
+				        {"Date", "Project Code", "TimeWorkReference", "Account Code",
+				         "Category", "Type", "Snapshot Date", "Amount"}),
+				
+				          // Keep only months on or before the cutover date
+				    FilteredByCutover = Table.SelectRows(Final,
+				        each [Date] <= _CutoverDate)
+				in
+				    FilteredByCutover
+
+	annotation PBI_NavigationStepName = Navigation
+
+	annotation PBI_ResultType = Table
+

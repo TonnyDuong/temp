@@ -1,0 +1,167 @@
+table _Cost_Other_Actuals
+	lineageTag: fb18a855-bf4f-4277-9171-f6b74dd4a6a4
+
+	column Date
+		dataType: dateTime
+		formatString: Long Date
+		lineageTag: b87e40da-7c7c-4638-bd52-40d13106f376
+		summarizeBy: none
+		sourceColumn: Date
+
+		variation Variation
+			isDefault
+			relationship: 044ff221-824d-4486-804b-d87623bf5410
+			defaultHierarchy: LocalDateTable_c971e831-5746-4f7d-8047-8c18a9df5387.'Date Hierarchy'
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation UnderlyingDateTimeDataType = Date
+
+	column 'Project Code'
+		dataType: string
+		lineageTag: 40a0142c-16f1-451a-b926-c2e59fe8b11c
+		summarizeBy: none
+		sourceColumn: Project Code
+
+		annotation SummarizationSetBy = Automatic
+
+	column TimeWorkReference
+		dataType: string
+		lineageTag: 4982fdfb-8aef-49ad-90f8-778e87087854
+		summarizeBy: none
+		sourceColumn: TimeWorkReference
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Account Code'
+		dataType: int64
+		formatString: 0
+		lineageTag: 9429e282-d123-49e1-acf3-5b77f9646263
+		summarizeBy: count
+		sourceColumn: Account Code
+
+		annotation SummarizationSetBy = Automatic
+
+	column Category
+		dataType: string
+		lineageTag: 865fe2c0-1e42-49ea-a9e5-b5a59b96a72c
+		summarizeBy: none
+		sourceColumn: Category
+
+		annotation SummarizationSetBy = Automatic
+
+	column Type
+		dataType: string
+		lineageTag: 4c3e204a-a3b7-4046-9863-09e2ac05f4d7
+		summarizeBy: none
+		sourceColumn: Type
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Snapshot Date'
+		dataType: dateTime
+		formatString: Long Date
+		lineageTag: 25965697-f000-4e6e-8c61-a4d9b5056849
+		summarizeBy: none
+		sourceColumn: Snapshot Date
+
+		variation Variation
+			isDefault
+			relationship: f75a0d1b-3089-44aa-bb2b-cbc0eaf10dcd
+			defaultHierarchy: LocalDateTable_ae9f2f9c-2536-4eaa-9692-2f19b86c90c5.'Date Hierarchy'
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation UnderlyingDateTimeDataType = Date
+
+	column Amount
+		dataType: double
+		lineageTag: 2f3597fa-6885-444e-a7d8-447f4c420fa3
+		summarizeBy: sum
+		sourceColumn: Amount
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	partition _Cost_Other_Actuals = m
+		mode: import
+		source =
+				// =====================================================================
+				// _Cost_Other_Actuals  (helper — load disabled)
+				// ---------------------------------------------------------------------
+				// Purpose:      Non-subcontractor expense actuals from NetSuite GL.
+				//               Captures everything booked to an Expense account that
+				//               is NOT subcontractor (60201/60203) and NOT the temp-staff
+				//               account (those staff book timesheets — double-count risk).
+				// Grain:        One row per NetSuite expense line.
+				// Dependencies: stg_FinanceOutput FY26_FY2026, dim_Accounts_Live
+				// Load:         DISABLED.
+				// ---------------------------------------------------------------------
+				// Exclusions (CONFIRMED by Chris, 29 May meeting):
+				//   60201 / 60202 / 60203  → routed to _Cost_Subcontractor_Actuals.
+				//   607*  (any account starting 607) → temp staff / consultancy fees
+				//          whose workers ARE on timesheets. Including them here would
+				//          double-count, so they are dropped entirely.
+				// =====================================================================
+				let
+				    Source = #"stg_FinanceOutput FY26_FY2026",
+				
+				    // Step 1 — join account type so we can filter to Expense only
+				    MergedAccountType = Table.NestedJoin(
+				        Source, {"Account No."},
+				        #"dim_Accounts_Live", {"Account Code"},
+				        "Account_Lookup", JoinKind.LeftOuter
+				    ),
+				    ExpandAccountType = Table.ExpandTableColumn(MergedAccountType, "Account_Lookup",
+				        {"Account Type"}, {"Account Type"}),
+				
+				    // Step 2 — keep Expense rows that are NOT subcontractor (60201/02/03)
+				    //          and NOT temp-staff (any 607*xx code, already in timesheets)
+				    ExpensesOnly = Table.SelectRows(ExpandAccountType, each
+				        [Account Type] = "Expense"
+				        and not List.Contains({60201, 60202, 60203}, [#"Account No."])
+				        and not ([#"Account No."] >= 607000 and [#"Account No."] < 608000)
+				    ),
+				
+				    FilledLocation = Table.ReplaceValue(
+				        ExpensesOnly,
+				        each [#"Location: Full Name"],
+				        each (
+				            if [#"Location: Full Name"] <> null and [#"Location: Full Name"] <> ""
+				                then [#"Location: Full Name"]
+				            else if Text.EndsWith([#"Subsidiary: Full Name"] ?? "", "ESS")
+				                then "Italy"
+				            else
+				                "UK"
+				        ),
+				        Replacer.ReplaceValue,
+				        {"Location: Full Name"}
+				    ),
+				
+				    AddCategory = Table.AddColumn(FilledLocation, "Category", each "Other Cost", type text),
+				    AddType     = Table.AddColumn(AddCategory,    "Type",     each "Actual",     type text),
+				    AddSnapshot = Table.AddColumn(AddType,        "Snapshot Date", each null,    type date),
+				    AddTWR      = Table.AddColumn(AddSnapshot,    "TimeWorkReference", each null, type text),
+				
+				    Renamed = Table.RenameColumns(AddTWR, {
+				        {"Period End Date",          "Date"},
+				        {"Account No.",              "Account Code"},
+				        {"Sum of Amount",            "Amount"},
+				        {"Class: Class External ID", "Project Code"}   // GL has no literal Project Code; Class External ID holds it
+				    }),
+				
+				    Final = Table.SelectColumns(Renamed,
+				        {"Date", "Project Code", "TimeWorkReference", "Account Code",
+				         "Category", "Type", "Snapshot Date", "Amount"}),
+				
+				    // Keep only months on or before the cutover date
+				    FilteredByCutover = Table.SelectRows(Final,
+				        each [Date] <= _CutoverDate)
+				in
+				    FilteredByCutover
+
+	annotation PBI_NavigationStepName = Navigation
+
+	annotation PBI_ResultType = Table
+

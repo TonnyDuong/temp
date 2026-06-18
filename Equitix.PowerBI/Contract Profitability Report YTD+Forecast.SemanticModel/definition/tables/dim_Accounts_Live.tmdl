@@ -1,0 +1,162 @@
+table dim_Accounts_Live
+	lineageTag: 120427b9-95b2-453c-ae07-fe50f10f5955
+
+	column 'Account Code'
+		dataType: string
+		lineageTag: 2128779f-a695-42af-b549-636fb70ca3eb
+		summarizeBy: none
+		sourceColumn: Account Code
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Account Name'
+		dataType: string
+		lineageTag: 9a9505c4-a9e1-4c3a-91f2-be133cc033ce
+		summarizeBy: none
+		sourceColumn: Account Name
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Account Type'
+		dataType: string
+		lineageTag: 92711838-a554-4cd2-99a3-d26b46fab645
+		summarizeBy: none
+		sourceColumn: Account Type
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Balance Sheet'
+		dataType: string
+		lineageTag: 898ec5dc-c4ce-4fbd-82c6-5db1d61674e2
+		summarizeBy: none
+		sourceColumn: Balance Sheet
+
+		annotation SummarizationSetBy = Automatic
+
+	column Mapping
+		dataType: string
+		lineageTag: ae987f67-98e8-4a67-933d-66d715d2f316
+		summarizeBy: none
+		sourceColumn: Mapping
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Contract Type'
+		dataType: string
+		lineageTag: fbb74cf7-b518-489d-854c-ddfb7fb186ea
+		summarizeBy: none
+		sourceColumn: Contract Type
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Cost Category'
+		dataType: string
+		lineageTag: 6cf7f1d0-67fe-41e8-a58f-fbf7546e6c97
+		summarizeBy: none
+		sourceColumn: Cost Category
+
+		annotation SummarizationSetBy = Automatic
+
+	partition dim_Accounts_Live = m
+		mode: import
+		source = ```
+				// =====================================================================
+				// dim_Accounts_Live
+				// ---------------------------------------------------------------------
+				// Purpose:      Account dimension with Contract Type and Cost Category
+				//               classification columns.
+				// Grain:        One row per Account Code.
+				// Dependencies: stg_FinanceOutput FY26_CoA
+				// Load:         enabled.
+				// ---------------------------------------------------------------------
+				// Account code classifications (CONFIRMED by Chris, 29 May meeting):
+				//   Contract Type:
+				//     40010 / 40011 / 40012  →  In Contract
+				//     40014                  →  Out of Contract
+				//     (HARP currently posts to 40011 Construction; switches to 40010
+				//      Operational after its 9-year construction phase ends.)
+				//
+				//   Cost Category:
+				//     60201 / 60202 / 60203          →  Subcontractor (consultancy / agency
+				//                                       costs NOT in BambooHR or timesheets).
+				//     Other Expense accounts          →  Other Cost.
+				//     Accounts starting 607*          →  EXCLUDED (temp staff / consultancy
+				//                                       fees who ARE in timesheets — including
+				//                                       them as cost would double-count).
+				//     Income accounts                 →  (not a cost).
+				//
+				// "Staff" cost category does NOT appear here — it's stamped directly on
+				// timesheet-derived rows in fact_Cost_Live (which have no Account Code).
+				// ---------------------------------------------------------------------
+				// TYPE NOTE: the source `Nominal Code` is TEXT (the CoA screenshot shows
+				// the ABC icon). But fact_Revenue_Live and fact_Cost_Live carry
+				// `Account Code` as Int64 (NetSuite `Account No.` is numeric, and the
+				// forecast helpers set 40014 etc. as Int64). Power BI relationships are
+				// type-strict — if this dim's Account Code stays text the relationship
+				// dim_Accounts_Live[Account Code] → fact_*[Account Code] will not build.
+				// Step 2 below CASTS to Int64 so the relationship works and the rest of
+				// the comparisons can use unquoted integers.
+				// =====================================================================
+				// =====================================================================
+				// dim_Accounts_Live
+				// ---------------------------------------------------------------------
+				// Purpose:      Account dimension with Contract Type and Cost Category
+				//               classification columns.
+				// Grain:        One row per Account Code.
+				// Dependencies: stg_FinanceOutput FY26_CoA
+				// Load:         enabled.
+				// ---------------------------------------------------------------------
+				// Account code classifications (confirmed by Chris):
+				//   Contract Type:
+				//     40010 / 40011 / 40012  →  In Contract
+				//     40014                  →  Out of Contract
+				//
+				//   Cost Category:
+				//     60201 / 60203          →  Subcontractor
+				//     other Expense accounts →  Other Cost
+				//     Income accounts        →  (not a cost)
+				//
+				// "Staff" cost category does NOT appear here — it's stamped directly on
+				// timesheet-derived rows in fact_Cost_Live (which have no Account Code).
+				// =====================================================================
+				let
+				    Source = #"stg_FinanceOutput FY26_CoA",
+				
+				    // Step 1 — Nominal Code IS the Account Code; rename for consistency.
+				    Renamed = Table.RenameColumns(Source, {{"Nominal Code", "Account Code"}}),
+				
+				//Step 2
+				//Typed= Table.TransformColumnTypes(Renamed, {{"Account Code", Int64.Type}}),
+				
+				    AccountCodeAsText= Table.TransformColumnTypes(
+				        Renamed,
+				        {{"Account Code", type text}}
+				    ),
+				
+				    // Step 2 — Contract Type
+				    AddContractType = Table.AddColumn(AccountCodeAsText, "Contract Type", each
+				        if [Account Code] = "40010" then "In Contract"
+				        else if [Account Code] = "40011" then "In Contract"
+				        else if [Account Code] = "40012" then "In Contract"
+				        else if [Account Code] = "40014" then "Out of Contract"
+				        else null,
+				        type text),
+				
+				    // Step 3 — Cost Category
+				    AddCostCategory = Table.AddColumn(AddContractType, "Cost Category", each
+				     if List.Contains({60201, 60202, 60203}, [Account Code])  then "Subcontractor"
+				     else if Text.StartsWith([Account Code], "607") then "(exclude -- on timesheets"
+				        
+				        else if [Account Type] = "Expense" then "Other Cost"
+				        else if [Account Type] = "Income"  then "(not a cost)"
+				        else if [Account Type] = "Other Income" then "(not a cost)"
+				        else null,
+				        type text)
+				in
+				    AddCostCategory
+				```
+
+	annotation PBI_NavigationStepName = Navigation
+
+	annotation PBI_ResultType = Table
+
