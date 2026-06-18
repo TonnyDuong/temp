@@ -88,12 +88,12 @@ let
         {"crbb5_supersectorchoicename", "crbb5_portfolio", "crbb5_msareference", "crbb5_concessionexpiry", "crbb5_contractstatus"},
         {"Sector", "Portfolio", "MSA Reference", "Concession Expiry", "Contract Status"}
     ),
-    // Step 2b — IsInScope flag. TRUE if the contract status is in Chris's
+     // Step 2b — IsInScope flag. TRUE if the contract status is in Chris's
     //           confirmed list for the profitability report. From his
     //           02 Jun 2026 email: "Live, Mobilised and Terminated. These 3
     //           stages all indicate a Live (or previously Live) contract."
     //           Pipeline (and any other status) is excluded.
-    AddIsInScope = Table.AddColumn(Expanded, "IsInScope",
+    AddIsInScope = Table.AddColumn(Expanded, "IsInScope",        
         each List.Contains({"Live", "Mobilised", "Mobilized", "Terminated"}, [Contract Status] ?? ""),
         type logical),
 
@@ -119,6 +119,7 @@ let
     // Step 5 — merged "<Project Code> - <Project Name>" label for report rows
     AddProjectDisplay = Table.AddColumn(AddContractPhase, "Project Display",
         each Text.From([Project Code]) & " - " & Text.From([Project Name]),
-        type text)
+        type text),
+    #"Filtered Rows" = Table.SelectRows(AddProjectDisplay, each ([Sector] <> null))
 in
-    AddProjectDisplay
+    #"Filtered Rows"

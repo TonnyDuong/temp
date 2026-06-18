@@ -95,7 +95,7 @@ let
         {"crbb5_country", "crbb5_contracthours"},
         {"Country", "ContractHours"}),
 
-    // Step 5 — default blank Country to UK; default missing ContractHours
+     // Step 5 — default blank Country to UK; default missing ContractHours
     //          to the country full-time standard (37.5 UK/IE, 40 Italy)
     FilledCountry = Table.ReplaceValue(
         ExpandCountry,
@@ -104,7 +104,7 @@ let
         Replacer.ReplaceValue,
         {"Country"}
     ),
-    AddFullTimeHours = Table.AddColumn(FilledCountry, "FullTimeHours",
+     AddFullTimeHours = Table.AddColumn(FilledCountry, "FullTimeHours",
         each if [Country] = "Italy" then 40.0 else 37.5,
         type number),
     FilledContractHours = Table.ReplaceValue(
