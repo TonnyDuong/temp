@@ -1,0 +1,339 @@
+table 'stg_EMS Fixed Fee Forecast_31Dec2025'
+	lineageTag: 94c5ddcc-a27c-4640-9137-e25491a71d62
+
+	column Item
+		dataType: string
+		lineageTag: 46c76533-f450-4c13-9359-0ba6711dc871
+		summarizeBy: none
+		sourceColumn: Item
+
+		annotation SummarizationSetBy = Automatic
+
+	column Project
+		dataType: string
+		lineageTag: b387e703-9a87-4de5-bab8-e6251bce2687
+		summarizeBy: none
+		sourceColumn: Project
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Project Name (Project) (Project)'
+		dataType: string
+		lineageTag: 8ced9812-47f2-4d59-963e-44cfa5850622
+		summarizeBy: none
+		sourceColumn: Project Name (Project) (Project)
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Billing Method'
+		dataType: string
+		lineageTag: 27851ea6-8606-463d-9f7b-ff86c019acc6
+		summarizeBy: none
+		sourceColumn: Billing Method
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Base annual fee'
+		dataType: double
+		lineageTag: 1a2ef956-0f4b-4c8d-a882-e83dba6c8efc
+		summarizeBy: sum
+		sourceColumn: Base annual fee
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column 'Current Annual Fee'
+		dataType: double
+		lineageTag: ad084279-5a18-410a-bde3-edcd6c625643
+		summarizeBy: sum
+		sourceColumn: Current Annual Fee
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column Currency
+		dataType: string
+		lineageTag: c040f958-6069-428f-921c-541fff04d0cc
+		summarizeBy: none
+		sourceColumn: Currency
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Billing frequency p.a.'
+		dataType: int64
+		formatString: 0
+		lineageTag: 8b0e933e-47fe-4d14-ab52-f3be28839209
+		summarizeBy: sum
+		sourceColumn: Billing frequency p.a.
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Index Uplift Date'
+		dataType: double
+		lineageTag: 6ae2cf0f-1da2-4a12-8d48-aa12ab7092e3
+		summarizeBy: sum
+		sourceColumn: Index Uplift Date
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column 'Index Month'
+		dataType: int64
+		formatString: 0
+		lineageTag: a1cb05c9-e139-4cb8-90ce-61b61ae8f398
+		summarizeBy: sum
+		sourceColumn: Index Month
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Index Day of Month'
+		dataType: int64
+		formatString: 0
+		lineageTag: fdc9de57-9abf-489b-bc6c-1012da86e4af
+		summarizeBy: sum
+		sourceColumn: Index Day of Month
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Subsidiary (Project) (Project)'
+		dataType: string
+		lineageTag: 41099eaa-ff66-4660-bd69-c2888c865dfe
+		summarizeBy: none
+		sourceColumn: Subsidiary (Project) (Project)
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Billing Start Date'
+		dataType: dateTime
+		formatString: Long Date
+		lineageTag: 5b4eef4a-1853-4466-83bf-1847e4c2d485
+		summarizeBy: none
+		sourceColumn: Billing Start Date
+
+		variation Variation
+			isDefault
+			relationship: d2ccf140-b8b7-4f19-8b70-16a919568401
+			defaultHierarchy: LocalDateTable_fa422f60-c853-4308-a0fa-c19d56dfefde.'Date Hierarchy'
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation UnderlyingDateTimeDataType = Date
+
+	column 'Billing End Date'
+		dataType: dateTime
+		formatString: Long Date
+		lineageTag: 0d772cdc-39d8-411a-aa7e-136ef32faefd
+		summarizeBy: none
+		sourceColumn: Billing End Date
+
+		variation Variation
+			isDefault
+			relationship: 95d16380-777d-4909-ac6c-0c0e5582d3bf
+			defaultHierarchy: LocalDateTable_80d30f69-a7cf-4b18-be89-f34235984740.'Date Hierarchy'
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation UnderlyingDateTimeDataType = Date
+
+	column 'Billing Reference'
+		dataType: string
+		lineageTag: e877efaa-2ac1-4f37-adf7-bad8571dc451
+		summarizeBy: none
+		sourceColumn: Billing Reference
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Index this month ?'
+		dataType: string
+		lineageTag: f94d5377-340d-4bb7-9269-08b7c8731610
+		summarizeBy: none
+		sourceColumn: Index this month ?
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Base Index'
+		dataType: string
+		lineageTag: 2143cb7e-a344-41f5-a3ba-2d294a2b4370
+		summarizeBy: none
+		sourceColumn: Base Index
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Current Index'
+		dataType: string
+		lineageTag: e3ac0adc-f4ad-442e-87ed-b9d079c50d03
+		summarizeBy: none
+		sourceColumn: Current Index
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Inedxation Basis'
+		dataType: string
+		lineageTag: 6834c26a-ec06-487c-9524-5c589cd574f1
+		summarizeBy: none
+		sourceColumn: Inedxation Basis
+
+		annotation SummarizationSetBy = Automatic
+
+	column Exchange
+		dataType: double
+		lineageTag: 78286cae-9f5a-41df-af0d-09cf0b76e4e6
+		summarizeBy: sum
+		sourceColumn: Exchange
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column 'Monthly Fee'
+		dataType: double
+		lineageTag: 36ffe3a6-d397-4029-a985-8d907dd838ce
+		summarizeBy: sum
+		sourceColumn: Monthly Fee
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column 31/01/2026
+		dataType: double
+		lineageTag: 2307fd0d-fe55-4cd5-80af-1e654078e3c2
+		summarizeBy: sum
+		sourceColumn: 31/01/2026
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column 28/02/2026
+		dataType: double
+		lineageTag: c02474a0-8794-4558-9eff-2078c10a2b17
+		summarizeBy: sum
+		sourceColumn: 28/02/2026
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column 31/03/2026
+		dataType: double
+		lineageTag: 37089617-f85d-488d-bab1-6d33a363de2f
+		summarizeBy: sum
+		sourceColumn: 31/03/2026
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column 30/04/2026
+		dataType: double
+		lineageTag: 9926dc24-c0bc-4c51-b49d-81e15db0620c
+		summarizeBy: sum
+		sourceColumn: 30/04/2026
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column 31/05/2026
+		dataType: double
+		lineageTag: ea2db425-4b3d-4250-a7ec-0f91410d79e2
+		summarizeBy: sum
+		sourceColumn: 31/05/2026
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column 30/06/2026
+		dataType: double
+		lineageTag: 1e24a32e-9aef-4657-abf6-0b56ee03857e
+		summarizeBy: sum
+		sourceColumn: 30/06/2026
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column 31/07/2026
+		dataType: double
+		lineageTag: f06fa305-d877-4660-8f15-16881b97fc0e
+		summarizeBy: sum
+		sourceColumn: 31/07/2026
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column 31/08/2026
+		dataType: double
+		lineageTag: c7dcc110-8dcf-401f-bdf9-d43a8697a298
+		summarizeBy: sum
+		sourceColumn: 31/08/2026
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column 30/09/2026
+		dataType: double
+		lineageTag: ba0e493c-0bf1-419a-af5a-f5746b56018c
+		summarizeBy: sum
+		sourceColumn: 30/09/2026
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column 31/10/2026
+		dataType: double
+		lineageTag: bf0e7e51-3bb9-4bd1-a2b4-03503999ef9b
+		summarizeBy: sum
+		sourceColumn: 31/10/2026
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column 30/11/2026
+		dataType: double
+		lineageTag: 11c4ceed-ddf5-4cef-b12e-871097e20f2e
+		summarizeBy: sum
+		sourceColumn: 30/11/2026
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column 31/12/2026
+		dataType: double
+		lineageTag: 7b9d8865-d9f8-4260-b4bd-5cc08c08cc5c
+		summarizeBy: sum
+		sourceColumn: 31/12/2026
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	partition 'stg_EMS Fixed Fee Forecast_31Dec2025' = m
+		mode: import
+		source =
+				let
+				    Source = SharePoint.Files("https://eqmanserv.sharepoint.com/sites/EMS_FPA", [ApiVersion = 15]),
+				    #"EMS Fixed Fee Forecast xlsx_https://eqmanserv sharepoint com/sites/EMS_FPA/Shared Documents/Profitability/Data/" = Source{[Name="EMS Fixed Fee Forecast.xlsx",#"Folder Path"="https://eqmanserv.sharepoint.com/sites/EMS_FPA/Shared Documents/Profitability/Data/"]}[Content],
+				    #"Imported Excel Workbook" = Excel.Workbook(#"EMS Fixed Fee Forecast xlsx_https://eqmanserv sharepoint com/sites/EMS_FPA/Shared Documents/Profitability/Data/"),
+				    #"Filtered Rows" = Table.SelectRows(#"Imported Excel Workbook", each ([Kind] <> "DefinedName")),
+				    #"31 12 2025_Sheet" = #"Filtered Rows"{[Item="31.12.2025",Kind="Sheet"]}[Data],
+				    #"Promoted Headers" = Table.PromoteHeaders(#"31 12 2025_Sheet", [PromoteAllScalars=true]),
+				    #"Changed Type" = Table.TransformColumnTypes(#"Promoted Headers",{{"Item", type text}, {"Project", type text}, {"Project Name (Project) (Project)", type text}, {"Billing Method", type text}, {"Base annual fee", type number}, {"Current Annual Fee", type number}, {"Currency", type text}, {"Billing frequency p.a.", Int64.Type}, {"Index Uplift Date", type number}, {"Index Month", Int64.Type}, {"Index Day of Month", Int64.Type}, {"Subsidiary (Project) (Project)", type text}, {"Billing Start Date", type date}, {"Billing End Date", type date}, {"Billing Reference", type text}, {"Index this month ?", type text}, {"Base Index", type text}, {"Current Index", type text}, {"Inedxation Basis", type text}, {"Exchange", type number}, {"Monthly Fee", type number}, {"31/01/2026", type number}, {"28/02/2026", type number}, {"31/03/2026", type number}, {"30/04/2026", type number}, {"31/05/2026", type number}, {"30/06/2026", type number}, {"31/07/2026", type number}, {"31/08/2026", type number}, {"30/09/2026", type number}, {"31/10/2026", type number}, {"30/11/2026", type number}, {"31/12/2026", type number}}),
+				    #"Filtered Rows1" = Table.SelectRows(#"Changed Type", each true)
+				in
+				    #"Filtered Rows1"
+
+	annotation PBI_NavigationStepName = Navigation
+
+	annotation PBI_ResultType = Table
+

@@ -1,0 +1,206 @@
+table stg_AdditionalServicesForecast
+	lineageTag: e7e8e52c-1c3d-4d24-ae94-db03ec97334a
+
+	column Supersector
+		dataType: string
+		lineageTag: 6315c4b0-d5d3-4cb5-baf6-51c44535fa6b
+		summarizeBy: none
+		sourceColumn: Supersector
+
+		annotation SummarizationSetBy = Automatic
+
+	column Sector
+		dataType: string
+		lineageTag: 87582b9e-b613-48d9-937a-8a0132d92eb4
+		summarizeBy: none
+		sourceColumn: Sector
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Upstream Reports'
+		dataType: string
+		lineageTag: bef7c33c-d22e-43ac-a266-4e7cb3212a74
+		summarizeBy: none
+		sourceColumn: Upstream Reports
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Project Code'
+		dataType: string
+		lineageTag: 5ab3716f-bf84-4870-a985-ca836ac6ce4c
+		summarizeBy: none
+		sourceColumn: Project Code
+
+		annotation SummarizationSetBy = Automatic
+
+	column Department
+		dataType: string
+		lineageTag: 0146f674-67e7-46bb-84c0-8ed797bcfb30
+		summarizeBy: none
+		sourceColumn: Department
+
+		annotation SummarizationSetBy = Automatic
+
+	column Location
+		dataType: string
+		lineageTag: 03b0302b-7d53-457e-8150-df8a19270a2a
+		summarizeBy: none
+		sourceColumn: Location
+
+		annotation SummarizationSetBy = Automatic
+
+	column 31/01/2026
+		dataType: double
+		lineageTag: f477a68c-2891-4485-9829-6ce34bf8ed2a
+		summarizeBy: sum
+		sourceColumn: 31/01/2026
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column 28/02/2026
+		dataType: double
+		lineageTag: ea7b8613-42df-4a14-95c3-d72404440afa
+		summarizeBy: sum
+		sourceColumn: 28/02/2026
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column 31/03/2026
+		dataType: double
+		lineageTag: f01ed8f0-5d04-41bd-91db-3eaae5b225a7
+		summarizeBy: sum
+		sourceColumn: 31/03/2026
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column 30/04/2026
+		dataType: double
+		lineageTag: 7e02b7a6-92d6-4888-8a93-d9772e15b263
+		summarizeBy: sum
+		sourceColumn: 30/04/2026
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column 31/05/2026
+		dataType: double
+		lineageTag: d1a1f6bf-bd51-4b1b-84cb-45cae8866745
+		summarizeBy: sum
+		sourceColumn: 31/05/2026
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column 30/06/2026
+		dataType: double
+		lineageTag: dec7b683-4612-4c36-815b-704997d06925
+		summarizeBy: sum
+		sourceColumn: 30/06/2026
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column 31/07/2026
+		dataType: double
+		lineageTag: 144fbca2-7e44-412b-b528-d6c58fed7f9a
+		summarizeBy: sum
+		sourceColumn: 31/07/2026
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column 31/08/2026
+		dataType: double
+		lineageTag: 03859d5c-e659-45d0-b35f-4f0361e009a6
+		summarizeBy: sum
+		sourceColumn: 31/08/2026
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column 30/09/2026
+		dataType: double
+		lineageTag: 744143dc-8f53-4a52-b052-e4fb8089799c
+		summarizeBy: sum
+		sourceColumn: 30/09/2026
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column 31/10/2026
+		dataType: double
+		lineageTag: a508e973-08fa-4cd5-8afb-960771fd4f87
+		summarizeBy: sum
+		sourceColumn: 31/10/2026
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column 30/11/2026
+		dataType: double
+		lineageTag: a41ed768-111e-4f43-8185-fc7a360fb128
+		summarizeBy: sum
+		sourceColumn: 30/11/2026
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column 31/12/2026
+		dataType: double
+		lineageTag: 0c7b4be2-352e-4a95-9e66-e77bb9919149
+		summarizeBy: sum
+		sourceColumn: 31/12/2026
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column Column19
+		dataType: string
+		lineageTag: 0ef772e0-2bd3-41dc-b723-cbb210a66794
+		summarizeBy: none
+		sourceColumn: Column19
+
+		annotation SummarizationSetBy = Automatic
+
+	column Column20
+		dataType: string
+		lineageTag: 05114a06-3c23-4eec-9c37-a906cdb02d64
+		summarizeBy: none
+		sourceColumn: Column20
+
+		annotation SummarizationSetBy = Automatic
+
+	partition stg_AdditionalServicesForecast = m
+		mode: import
+		source =
+				let
+				    Source = SharePoint.Files("https://eqmanserv.sharepoint.com/sites/EMS_FPA", [ApiVersion = 15]),
+				    #"Additional Services Forecast xlsx_https://eqmanserv sharepoint com/sites/EMS_FPA/Shared Documents/Profitability/Data/" = Source{[Name="Additional Services Forecast.xlsx",#"Folder Path"="https://eqmanserv.sharepoint.com/sites/EMS_FPA/Shared Documents/Profitability/Data/"]}[Content],
+				    #"Imported Excel Workbook" = Excel.Workbook(#"Additional Services Forecast xlsx_https://eqmanserv sharepoint com/sites/EMS_FPA/Shared Documents/Profitability/Data/"),
+				    #"AdditionalServices Forecast_Sheet" = #"Imported Excel Workbook"{[Item="AdditionalServices Forecast",Kind="Sheet"]}[Data],
+				    #"Removed Top Rows" = Table.Skip(#"AdditionalServices Forecast_Sheet",4),
+				    #"Promoted Headers" = Table.PromoteHeaders(#"Removed Top Rows", [PromoteAllScalars=true]),
+				    #"Changed Type" = Table.TransformColumnTypes(#"Promoted Headers",{{"Supersector", type text}, {"Sector", type text}, {"Upstream Reports", type text}, {"Project Code", type text}, {"Department", type text}, {"Location", type text}, {"31/01/2026", type number}, {"28/02/2026", type number}, {"31/03/2026", type number}, {"30/04/2026", type number}, {"31/05/2026", type number}, {"30/06/2026", type number}, {"31/07/2026", type number}, {"31/08/2026", type number}, {"30/09/2026", type number}, {"31/10/2026", type number}, {"30/11/2026", type number}, {"31/12/2026", type number}, {"Column19", type any}, {"Column20", type any}}),
+				    #"Removed Bottom Rows" = Table.RemoveLastN(#"Changed Type",1)
+				in
+				    #"Removed Bottom Rows"
+
+	annotation PBI_NavigationStepName = Navigation
+
+	annotation PBI_ResultType = Table
+

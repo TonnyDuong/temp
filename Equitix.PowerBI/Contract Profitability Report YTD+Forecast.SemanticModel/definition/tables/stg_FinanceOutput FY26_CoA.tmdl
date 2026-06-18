@@ -1,0 +1,63 @@
+table 'stg_FinanceOutput FY26_CoA'
+	lineageTag: 37bfce05-4083-46b6-a1eb-224dfc22d2de
+
+	column 'Nominal Code'
+		dataType: string
+		lineageTag: aa875280-7e8b-468f-822a-02c202904f80
+		summarizeBy: none
+		sourceColumn: Nominal Code
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Account Name'
+		dataType: string
+		lineageTag: cc8284e2-3a7f-4832-8264-f359d9bf6bae
+		summarizeBy: none
+		sourceColumn: Account Name
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Account Type'
+		dataType: string
+		lineageTag: 2f680e35-f048-4893-ab7c-8d50ac3abe3c
+		summarizeBy: none
+		sourceColumn: Account Type
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Balance Sheet'
+		dataType: string
+		lineageTag: 623db096-02cc-4627-bf96-2db9b2e48e5f
+		summarizeBy: none
+		sourceColumn: Balance Sheet
+
+		annotation SummarizationSetBy = Automatic
+
+	column Mapping
+		dataType: string
+		lineageTag: a9989b57-3336-4f4d-ae13-55ec7c4138e1
+		summarizeBy: none
+		sourceColumn: Mapping
+
+		annotation SummarizationSetBy = Automatic
+
+	partition 'stg_FinanceOutput FY26_CoA' = m
+		mode: import
+		source =
+				let
+				    Source = SharePoint.Files("https://eqmanserv.sharepoint.com/sites/EMS_FPA", [ApiVersion = 15]),
+				    #"FinanceOutput FY26 xlsx_https://eqmanserv sharepoint com/sites/EMS_FPA/Shared Documents/Profitability/Data/" = Source{[Name="FinanceOutput FY26.xlsx",#"Folder Path"="https://eqmanserv.sharepoint.com/sites/EMS_FPA/Shared Documents/Profitability/Data/"]}[Content],
+				    #"Imported Excel Workbook" = Excel.Workbook(#"FinanceOutput FY26 xlsx_https://eqmanserv sharepoint com/sites/EMS_FPA/Shared Documents/Profitability/Data/"),
+				    #"Filtered Rows" = Table.SelectRows(#"Imported Excel Workbook", each ([Kind] = "Sheet")),
+				    CoA_Sheet = #"Filtered Rows"{[Item="CoA",Kind="Sheet"]}[Data],
+				    #"Removed Top Rows" = Table.Skip(CoA_Sheet,2),
+				    #"Promoted Headers" = Table.PromoteHeaders(#"Removed Top Rows", [PromoteAllScalars=true]),
+				    #"Changed Type" = Table.TransformColumnTypes(#"Promoted Headers",{{"Nominal Code", type text}, {"Account Name", type text}, {"Account Type", type text}, {"Balance Sheet", type text}, {"Mapping", type text}}),
+				    #"Removed Errors" = Table.RemoveRowsWithErrors(#"Changed Type", {"Nominal Code"})
+				in
+				    #"Removed Errors"
+
+	annotation PBI_NavigationStepName = Navigation
+
+	annotation PBI_ResultType = Table
+

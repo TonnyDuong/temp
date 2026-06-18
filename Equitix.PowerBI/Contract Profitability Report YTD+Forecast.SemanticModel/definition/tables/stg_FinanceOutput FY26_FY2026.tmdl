@@ -1,0 +1,217 @@
+table 'stg_FinanceOutput FY26_FY2026'
+	lineageTag: ab0dc19f-4dda-4a3e-acfd-490ec5643d3d
+
+	column 'Transaction Line ID'
+		dataType: int64
+		formatString: 0
+		lineageTag: 6a3f3b95-4081-420e-aab5-b563facb0840
+		summarizeBy: count
+		sourceColumn: Transaction Line ID
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Transaction Ref.'
+		dataType: string
+		lineageTag: 0f753bb9-25a0-4c26-9fb4-1e53c48c061b
+		summarizeBy: none
+		sourceColumn: Transaction Ref.
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Transaction Date'
+		dataType: dateTime
+		formatString: Long Date
+		lineageTag: bf797371-869d-4efe-8caa-591834e96fe3
+		summarizeBy: none
+		sourceColumn: Transaction Date
+
+		variation Variation
+			isDefault
+			relationship: 5f1d5b99-9eb2-4e44-aea0-8ec088260f9d
+			defaultHierarchy: LocalDateTable_592b5146-6d22-462b-8b8f-6a92b9cadc2b.'Date Hierarchy'
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation UnderlyingDateTimeDataType = Date
+
+	column 'Period End Date'
+		dataType: dateTime
+		formatString: Long Date
+		lineageTag: cea0fcf5-8eb7-400b-b106-03cd04c8997e
+		summarizeBy: none
+		sourceColumn: Period End Date
+
+		variation Variation
+			isDefault
+			relationship: 7adeb463-eb87-4274-8583-b77da66ed161
+			defaultHierarchy: LocalDateTable_325ce9c9-8e69-49a5-a63a-d8e2c39e7d6d.'Date Hierarchy'
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation UnderlyingDateTimeDataType = Date
+
+	column 'Account No.'
+		dataType: int64
+		formatString: 0
+		lineageTag: 5373c855-6870-4650-9e4a-4d5707b259cd
+		summarizeBy: sum
+		sourceColumn: Account No.
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Account Name'
+		dataType: string
+		lineageTag: 93287cdd-5ee6-4535-95e9-e084b60beac5
+		summarizeBy: none
+		sourceColumn: Account Name
+
+		annotation SummarizationSetBy = Automatic
+
+	column Memo
+		dataType: string
+		lineageTag: f2ec9d6b-3a98-43a0-955e-cba2ca3b484a
+		summarizeBy: none
+		sourceColumn: Memo
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Customer: Full Name'
+		dataType: string
+		lineageTag: e9c89193-447b-4ffc-a5d0-78fbf0bc4aad
+		summarizeBy: none
+		sourceColumn: Customer: Full Name
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Vendor: Full Name'
+		dataType: string
+		lineageTag: adb59ffc-3700-4f22-9776-33ac566822de
+		summarizeBy: none
+		sourceColumn: Vendor: Full Name
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Class: Class ID'
+		dataType: string
+		lineageTag: 177fae19-a15d-42aa-ad1d-e202392df589
+		summarizeBy: none
+		sourceColumn: Class: Class ID
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Class: Class External ID'
+		dataType: string
+		lineageTag: e158f843-41e5-46aa-8224-6a74857f8ad1
+		summarizeBy: none
+		sourceColumn: Class: Class External ID
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Class: Full Name'
+		dataType: string
+		lineageTag: 0abfb8f5-666c-4353-b152-b20fe13bd0ba
+		summarizeBy: none
+		sourceColumn: Class: Full Name
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Location: Location ID'
+		dataType: string
+		lineageTag: 3ea8cd24-6630-4126-ba6c-f6ff1fff9984
+		summarizeBy: none
+		sourceColumn: Location: Location ID
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Location: Full Name'
+		dataType: string
+		lineageTag: e5875522-5962-4dd0-aec3-2d379dea69b4
+		summarizeBy: none
+		sourceColumn: Location: Full Name
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Department: Department ID'
+		dataType: string
+		lineageTag: 127f0fc1-48ef-435b-88e1-d8de91220c6f
+		summarizeBy: none
+		sourceColumn: Department: Department ID
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Department: Full Name'
+		dataType: string
+		lineageTag: 92dda4fc-2133-4474-96b9-99844647edd2
+		summarizeBy: none
+		sourceColumn: Department: Full Name
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Subsidiary: Full Name'
+		dataType: string
+		lineageTag: f8c085ed-3fc2-4da0-ac1e-23a121a0dda1
+		summarizeBy: none
+		sourceColumn: Subsidiary: Full Name
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Employee: Employee External ID'
+		dataType: string
+		lineageTag: f0b06cc0-0e95-49e8-9eb3-90fe55473850
+		summarizeBy: none
+		sourceColumn: Employee: Employee External ID
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Employee: First Name'
+		dataType: string
+		lineageTag: 86a6b17a-287b-450c-8556-493bc5acd809
+		summarizeBy: none
+		sourceColumn: Employee: First Name
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Employee: Last Name'
+		dataType: string
+		lineageTag: 0db2fe01-ce5d-4c0f-9a93-95043dedcc63
+		summarizeBy: none
+		sourceColumn: Employee: Last Name
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Sum of Amount'
+		dataType: double
+		lineageTag: d2d017bf-9afb-40c2-be7e-1e2ee93e8b67
+		summarizeBy: sum
+		sourceColumn: Sum of Amount
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column 'Transaction: Transaction ID'
+		dataType: string
+		lineageTag: 5697b06f-e4b6-4c45-9981-7778507ce0d8
+		summarizeBy: none
+		sourceColumn: Transaction: Transaction ID
+
+		annotation SummarizationSetBy = Automatic
+
+	partition 'stg_FinanceOutput FY26_FY2026' = m
+		mode: import
+		source =
+				let
+				    Source = SharePoint.Files("https://eqmanserv.sharepoint.com/sites/EMS_FPA", [ApiVersion = 15]),
+				    #"FinanceOutput FY26 xlsx_https://eqmanserv sharepoint com/sites/EMS_FPA/Shared Documents/Profitability/Data/" = Source{[Name="FinanceOutput FY26.xlsx",#"Folder Path"="https://eqmanserv.sharepoint.com/sites/EMS_FPA/Shared Documents/Profitability/Data/"]}[Content],
+				    #"Imported Excel Workbook" = Excel.Workbook(#"FinanceOutput FY26 xlsx_https://eqmanserv sharepoint com/sites/EMS_FPA/Shared Documents/Profitability/Data/"),
+				    FY2026_Sheet = #"Imported Excel Workbook"{[Item="FY2026",Kind="Sheet"]}[Data],
+				    #"Removed Top Rows" = Table.Skip(FY2026_Sheet,3),
+				    #"Promoted Headers" = Table.PromoteHeaders(#"Removed Top Rows", [PromoteAllScalars=true]),
+				    #"Changed Type" = Table.TransformColumnTypes(#"Promoted Headers",{{"Transaction Line ID", Int64.Type}, {"Transaction Ref.", type text}, {"Transaction Date", type date}, {"Period End Date", type date}, {"Account No.", Int64.Type}, {"Account Name", type text}, {"Memo", type text}, {"Customer: Full Name", type text}, {"Vendor: Full Name", type text}, {"Class: Class ID", type any}, {"Class: Class External ID", type text}, {"Class: Full Name", type text}, {"Location: Location ID", type any}, {"Location: Full Name", type text}, {"Department: Department ID", type any}, {"Department: Full Name", type text}, {"Subsidiary: Full Name", type text}, {"Employee: Employee External ID", type text}, {"Employee: First Name", type text}, {"Employee: Last Name", type text}, {"Sum of Amount", type number}})
+				in
+				    #"Changed Type"
+
+	annotation PBI_NavigationStepName = Navigation
+
+	annotation PBI_ResultType = Table
+
