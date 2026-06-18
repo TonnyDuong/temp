@@ -1,0 +1,177 @@
+model Model
+	culture: en-GB
+	defaultPowerBIDataSourceVersion: powerBI_V3
+	sourceQueryCulture: en-GB
+	dataAccessOptions
+		legacyRedirects
+		returnErrorValuesAsNull
+
+annotation __PBI_TimeIntelligenceEnabled = 1
+
+annotation PBI_QueryOrder = ["stg_FinanceOutput FY26_CoA","stg_FinanceOutput FY26_FY2026","stg_Staff Costs Summary","stg_EMS Fixed Fee Forecast_31Dec2025","stg_EMS Fixed Fee Forecast_Actuals","stg_EMS Fixed Fee Forecast_Contracts1","stg_EMS Fixed Fee Forecast_Project HARP","crbb5_contractregister","dogma_timesheet","crbb5_project","Equitix_Measures","crbb5_billingschedule","crbb5_bamboohr","dogma_timesheetheader","dogma_timesheetperiod","crbb5_jedoxallocation","dim_Date_Live","dim_Accounts_Live","dim_Employee_Live","dim_ForecastSnapshot_Live","dim_ForecastVersion_Live","dim_Project_Live","dim_StaffCosts_Live","dim_Transaction_Live","fact_Cost_Live","fact_Revenue_Live","fact_Timesheet_Live","_Cost_Other_Actuals","_Cost_Staff_Actuals","_Cost_Subcontractor_Actuals","_Cost_Subcontractor_Forecast","_Revenue_Actuals","_Revenue_Forecast_31Dec2025","_Revenue_Forecast_HARP","_Revenue_Forecast_OOC","_Cost_Staff_Forecast","FetchAllColumns","stg_AdditionalServicesForecast","stg_SubcontractorForecast","dim_HolidayPolicy_Live","_CutoverDate"]
+
+annotation PBI_RemovedChildren = [{"remoteItemId":{"foreignKeyRelationship":{"fromTableLocalLineageTag":"3bcdcf52-d5e9-48f0-9488-32e012cecaed","fromColumnLocalLineageTag":"306cd08b-0842-4837-8a7c-1f6ffa98ed82","toTableLocalLineageTag":"842538ff-4c71-4cae-a366-64cf19656ab1","toColumnLocalLineageTag":"d65e214c-9b80-4c5c-b5e7-df5981ecd979"}},"objectType":"Relationship"},{"remoteItemId":{"foreignKeyRelationship":{"fromTableLocalLineageTag":"3bcdcf52-d5e9-48f0-9488-32e012cecaed","fromColumnLocalLineageTag":"ea78a245-597d-4a32-b549-45552e8918a6","toTableLocalLineageTag":"842538ff-4c71-4cae-a366-64cf19656ab1","toColumnLocalLineageTag":"d65e214c-9b80-4c5c-b5e7-df5981ecd979"}},"objectType":"Relationship"},{"remoteItemId":{"foreignKeyRelationship":{"fromTableLocalLineageTag":"842538ff-4c71-4cae-a366-64cf19656ab1","fromColumnLocalLineageTag":"3ff19ce4-6f70-4f4a-a91a-46d55a267b07","toTableLocalLineageTag":"84a5f36a-d92e-4a12-8da4-89d8618c4295","toColumnLocalLineageTag":"6f8389f9-1004-49e4-9524-3a91a5e4f36e"}},"objectType":"Relationship"},{"remoteItemId":{"foreignKeyRelationship":{"fromTableLocalLineageTag":"00baef7c-f46b-41ce-9c65-6842fe876593","fromColumnLocalLineageTag":"9dd35309-8033-4d83-a2ae-1870d3b0d8ca","toTableLocalLineageTag":"7499e536-111b-41b9-b2f0-4b94c1d41222","toColumnLocalLineageTag":"c43db035-1593-47bb-b4c8-84e37fc3b393"}},"objectType":"Relationship"},{"remoteItemId":{"foreignKeyRelationship":{"fromTableLocalLineageTag":"e3ffe060-1137-40df-89b9-4e0b2b0cd5e5","fromColumnLocalLineageTag":"737d3780-534a-4622-8cd7-65c298e78e44","toTableLocalLineageTag":"2e89abe6-5113-45a2-99e5-21f4ca8c38d4","toColumnLocalLineageTag":"b1ea3e77-0a21-4df9-863d-a387c623320d"}},"objectType":"Relationship"}]
+
+annotation PBI_ProTooling = ["DevMode"]
+
+ref table 'stg_FinanceOutput FY26_CoA'
+ref table 'stg_FinanceOutput FY26_FY2026'
+ref table DateTableTemplate_ea0cecaa-e735-434f-aef1-b035d822a822
+ref table LocalDateTable_592b5146-6d22-462b-8b8f-6a92b9cadc2b
+ref table LocalDateTable_325ce9c9-8e69-49a5-a63a-d8e2c39e7d6d
+ref table 'stg_Staff Costs Summary'
+ref table 'stg_EMS Fixed Fee Forecast_31Dec2025'
+ref table LocalDateTable_fa422f60-c853-4308-a0fa-c19d56dfefde
+ref table LocalDateTable_80d30f69-a7cf-4b18-be89-f34235984740
+ref table 'stg_EMS Fixed Fee Forecast_Actuals'
+ref table LocalDateTable_deaec2aa-efc5-4ff3-a16a-e447da01d94b
+ref table LocalDateTable_423122e6-95b5-4708-921a-a1b87016baa8
+ref table 'stg_EMS Fixed Fee Forecast_Contracts1'
+ref table LocalDateTable_7fba4335-b697-4af2-96da-1e969882501c
+ref table LocalDateTable_f2e06565-4def-4dd7-869a-9b2306595e31
+ref table LocalDateTable_24d0df16-1775-4a10-8c84-53cfc12659a1
+ref table 'stg_EMS Fixed Fee Forecast_Project HARP'
+ref table LocalDateTable_0554a8d8-1933-4b86-9d9c-fd1e4a820a6a
+ref table LocalDateTable_597ce1e2-86ce-4418-9eaf-9c7a6bad433e
+ref table LocalDateTable_cfa55f52-c139-48d7-a6b8-febad4cb63f1
+ref table crbb5_contractregister
+ref table LocalDateTable_3fbbe913-40ee-4b2f-b105-3e3d5431262d
+ref table LocalDateTable_734669f8-11a4-4d2c-9aef-aa6539be976e
+ref table LocalDateTable_5520d565-24f9-4831-8be2-601fb2db2356
+ref table LocalDateTable_25bba294-088d-459c-8936-acda89e62179
+ref table LocalDateTable_5cf7ce48-8287-48ef-b236-dc7b1f2afba3
+ref table LocalDateTable_b6e2a64e-eb74-4e6a-af6d-5970cb6eb3e6
+ref table LocalDateTable_afb2507d-3632-4455-baa4-87a2d96859c0
+ref table LocalDateTable_535f720a-2b57-424e-ab2a-895e015c7ca6
+ref table LocalDateTable_5f0ac23f-6d25-4ba3-a258-bed158ee84a7
+ref table LocalDateTable_34955bdb-dbd6-443c-b393-2bc671fffb5a
+ref table LocalDateTable_98ab4e54-3434-4cb9-ace0-fd5914953e95
+ref table LocalDateTable_96a2823c-d1f9-4c9b-8f9d-66219a2d27d6
+ref table LocalDateTable_1bb8f4c7-f938-4b1b-850b-a624c2c3b917
+ref table LocalDateTable_e0787064-ee8f-4c1f-8c90-5d418219d378
+ref table LocalDateTable_bab9c6e9-97ff-4b3d-8329-33d2d712b173
+ref table LocalDateTable_0d358291-1095-485c-947d-90973f62bf4f
+ref table LocalDateTable_251b3782-d84c-4b68-bcc7-f5220128f490
+ref table LocalDateTable_b9d8ee6d-d6b3-4589-ad8e-789417c2f68e
+ref table LocalDateTable_a4d69dbb-02c0-4a18-bec7-2dbf84886313
+ref table LocalDateTable_5fb6b5bf-7f0b-481f-ad38-1898442062de
+ref table LocalDateTable_963a270f-536a-494b-b41c-1120af919f25
+ref table LocalDateTable_6c41669f-fb2b-4f45-85ab-43d59b39215b
+ref table LocalDateTable_03a434e3-5913-4065-ae64-ec2da48f9c1a
+ref table LocalDateTable_4b85ebf0-f9ac-49e5-af46-f13bd58eacb6
+ref table LocalDateTable_b850b5be-1378-4953-932a-2ebe596e0458
+ref table LocalDateTable_35a3a61a-1b93-4b15-8b8c-455101bd7659
+ref table LocalDateTable_4211f584-6562-44b5-9b5c-05524fa1c6c5
+ref table LocalDateTable_9562a5ab-1420-4545-ba08-a6dc8d09dcd3
+ref table LocalDateTable_7ec9af5d-bb75-494b-8519-fff1842c7538
+ref table LocalDateTable_ab8b13a5-5b59-41cc-94db-d3616837680e
+ref table LocalDateTable_1f81f902-8cf8-4e19-a099-60d027599d19
+ref table LocalDateTable_e5394b35-b49f-4350-8502-87dd08d80e88
+ref table dogma_timesheet
+ref table LocalDateTable_624e579f-7a68-4f4b-93fc-8e95fb7e9daa
+ref table LocalDateTable_0f9aca6f-9f65-4024-ac46-d2edcdbbdc77
+ref table LocalDateTable_ad549916-ca28-494e-845d-35ac92ce02a1
+ref table LocalDateTable_9e3c3fdd-257e-4c1c-8e54-7dc101b1e271
+ref table crbb5_project
+ref table LocalDateTable_5b068e6f-c153-4172-ac0e-d81819045e57
+ref table LocalDateTable_fbe1c11c-8272-416b-8d34-8760fa82328d
+ref table LocalDateTable_d8c92c88-6668-4fb5-8552-facba8f734b7
+ref table LocalDateTable_fd355fb3-a0bd-4244-a837-0b917caaa18c
+ref table LocalDateTable_709de77b-ea0d-4d57-984f-e6a69b5e505d
+ref table LocalDateTable_71aa891a-1c7c-4096-8dcf-1f72a5bfe432
+ref table LocalDateTable_e69a82de-8911-405d-b5c4-35a8f382b9d1
+ref table LocalDateTable_1c858679-7097-4dae-a942-8d43e830f770
+ref table LocalDateTable_467f1fdd-158f-44f1-bbd6-d772e6b8a82b
+ref table LocalDateTable_6c7756d0-b84b-4734-b818-d7a0718b92b7
+ref table Equitix_Measures
+ref table crbb5_billingschedule
+ref table LocalDateTable_2d43a6f5-cff5-48e2-9c7f-f2401593bf33
+ref table LocalDateTable_52ace62f-9419-4565-a3b6-dca1380f971b
+ref table LocalDateTable_f9548c27-e169-4c29-9513-1afa959d87cc
+ref table LocalDateTable_dddb7632-ff80-4ba2-809f-b16570184ae7
+ref table LocalDateTable_acc1a69e-9bc0-4af0-8940-66efa1804941
+ref table LocalDateTable_48a198af-47f3-475a-876f-93ef1c6006bd
+ref table LocalDateTable_5f6a7a5e-fe2f-4002-a683-ab5ed2d04240
+ref table LocalDateTable_061c8a6e-a14f-4fae-a9ec-eb6401a9e92f
+ref table crbb5_bamboohr
+ref table LocalDateTable_441f0fc3-effd-4a90-a43c-f90138d098f1
+ref table LocalDateTable_4558a91d-a354-45ac-93ba-03dd27b07852
+ref table LocalDateTable_fff9eced-1e9a-4609-9269-926b488bfcda
+ref table LocalDateTable_34d446f8-d6a0-46e9-b128-9d542bb6a7b2
+ref table LocalDateTable_c1f7abc1-e299-4c3c-8092-5437efaa1e68
+ref table LocalDateTable_683c0a47-89de-4329-aa71-47d2bc4de264
+ref table LocalDateTable_0eea7b62-4d68-44ab-969a-aab465b8536b
+ref table LocalDateTable_e2a744fa-c0ff-4f30-be6e-e182cd189675
+ref table LocalDateTable_865f2bdb-efe1-44c9-9aea-57090d851898
+ref table dogma_timesheetheader
+ref table LocalDateTable_ddd2f97f-632c-46c5-ab9e-8143b55d74a4
+ref table LocalDateTable_fca98f4b-662b-426f-a4af-f2a54282296a
+ref table LocalDateTable_a96afc69-575d-4f25-a414-f017fd68cc39
+ref table LocalDateTable_2a337a2b-8d08-4c8b-953f-dd056fa6b2ca
+ref table LocalDateTable_893dfc2a-6bb2-440f-af70-de8c3026090a
+ref table LocalDateTable_ba0db804-7d56-4324-9344-f4c77eb42b8d
+ref table dogma_timesheetperiod
+ref table LocalDateTable_adc432e6-3621-4269-88f4-33ddc5dd01ba
+ref table LocalDateTable_f1e25086-a8f6-443e-b35e-823114b3db8b
+ref table LocalDateTable_5a743fdf-8a66-46a0-9f5f-08184f309550
+ref table LocalDateTable_3e6aa5b9-bb9b-46dd-8207-ad5705ce4083
+ref table LocalDateTable_65293f6b-5290-4406-804f-cb21d33cf715
+ref table LocalDateTable_9e7d5a62-4f47-453b-b507-8c708394853c
+ref table LocalDateTable_343afc95-fbc4-40c8-8a55-1a8254bd8722
+ref table LocalDateTable_9c25b4c5-1e25-4111-85f4-73c033b0e772
+ref table LocalDateTable_10b8811a-3249-42f9-9c65-c8a62a8e686a
+ref table crbb5_jedoxallocation
+ref table LocalDateTable_37441a28-0211-46ae-93c5-7eaa1179fc5b
+ref table LocalDateTable_77fb3dd3-85d5-45a7-9911-34c0250282c7
+ref table LocalDateTable_19f447b1-818f-4261-9090-325ec5ffc8bb
+ref table LocalDateTable_4afac8c5-221d-4636-8e84-42001bf14d51
+ref table dim_Date_Live
+ref table LocalDateTable_e5e369a6-3d23-4254-9c4a-7ff621eb8c28
+ref table dim_Accounts_Live
+ref table dim_Employee_Live
+ref table LocalDateTable_0cb2de53-11bc-4e2d-ac54-4a386fce1615
+ref table LocalDateTable_7bc52024-e982-408e-a47f-e7e455e5bc5b
+ref table dim_ForecastSnapshot_Live
+ref table LocalDateTable_8ef9692d-5881-43c5-93c1-bcf9c67d660e
+ref table dim_ForecastVersion_Live
+ref table dim_Project_Live
+ref table dim_StaffCosts_Live
+ref table dim_Transaction_Live
+ref table fact_Cost_Live
+ref table fact_Revenue_Live
+ref table fact_Timesheet_Live
+ref table _Cost_Other_Actuals
+ref table LocalDateTable_c971e831-5746-4f7d-8047-8c18a9df5387
+ref table LocalDateTable_ae9f2f9c-2536-4eaa-9692-2f19b86c90c5
+ref table _Cost_Staff_Actuals
+ref table LocalDateTable_b1b4b72c-2f56-4801-98ba-fdc29c271f3e
+ref table _Cost_Subcontractor_Actuals
+ref table LocalDateTable_374bc2dc-a96d-48fc-9d1d-acb0e4c388c6
+ref table LocalDateTable_3be4e141-24e6-4b73-a2c8-cba76c77b5c4
+ref table _Cost_Subcontractor_Forecast
+ref table LocalDateTable_3a5b13c1-2158-42f5-b5aa-ceb847bd24e5
+ref table LocalDateTable_aa45896c-b20a-4090-9d36-b7ac5f39f897
+ref table _Revenue_Actuals
+ref table LocalDateTable_7535232a-ed96-412b-8e00-012c9c9cacce
+ref table _Revenue_Forecast_31Dec2025
+ref table LocalDateTable_1e10714c-599c-4a3b-b7b7-cc865e1af553
+ref table LocalDateTable_4e8db392-1c9a-4b36-908c-b4482ced2020
+ref table _Revenue_Forecast_HARP
+ref table LocalDateTable_000377dc-9582-4023-971b-81db4da9fdf0
+ref table LocalDateTable_19beadb8-f1a6-4b35-9e47-c7d2f74311a5
+ref table _Revenue_Forecast_OOC
+ref table LocalDateTable_368467ac-36dc-4873-a1cb-7efb0a3a1429
+ref table LocalDateTable_5fe4ab9e-bf33-416f-af6d-e75845151d41
+ref table _Cost_Staff_Forecast
+ref table LocalDateTable_c461bafd-2483-4091-bd5c-6ef49c52c220
+ref table FetchAllColumns
+ref table stg_AdditionalServicesForecast
+ref table stg_SubcontractorForecast
+ref table LocalDateTable_2f4b43a0-881a-452b-91a2-740bde90e617
+ref table dim_HolidayPolicy_Live
+ref table _CutoverDate
+ref table LocalDateTable_08e05b4a-7c6d-4057-9432-816baae6f777
+ref table LocalDateTable_1e33ef91-951d-4b30-a276-d690d4fe60f9
+
+ref cultureInfo en-GB
+

@@ -1,0 +1,703 @@
+relationship 5f1d5b99-9eb2-4e44-aea0-8ec088260f9d
+	joinOnDateBehavior: datePartOnly
+	fromColumn: 'stg_FinanceOutput FY26_FY2026'.'Transaction Date'
+	toColumn: LocalDateTable_592b5146-6d22-462b-8b8f-6a92b9cadc2b.Date
+
+relationship 7adeb463-eb87-4274-8583-b77da66ed161
+	joinOnDateBehavior: datePartOnly
+	fromColumn: 'stg_FinanceOutput FY26_FY2026'.'Period End Date'
+	toColumn: LocalDateTable_325ce9c9-8e69-49a5-a63a-d8e2c39e7d6d.Date
+
+relationship d2ccf140-b8b7-4f19-8b70-16a919568401
+	joinOnDateBehavior: datePartOnly
+	fromColumn: 'stg_EMS Fixed Fee Forecast_31Dec2025'.'Billing Start Date'
+	toColumn: LocalDateTable_fa422f60-c853-4308-a0fa-c19d56dfefde.Date
+
+relationship 95d16380-777d-4909-ac6c-0c0e5582d3bf
+	joinOnDateBehavior: datePartOnly
+	fromColumn: 'stg_EMS Fixed Fee Forecast_31Dec2025'.'Billing End Date'
+	toColumn: LocalDateTable_80d30f69-a7cf-4b18-be89-f34235984740.Date
+
+relationship ca0c2458-add8-4cb2-a901-ae8a3cb618ba
+	joinOnDateBehavior: datePartOnly
+	fromColumn: 'stg_EMS Fixed Fee Forecast_Actuals'.'Transaction Date'
+	toColumn: LocalDateTable_deaec2aa-efc5-4ff3-a16a-e447da01d94b.Date
+
+relationship b6bbe9f1-d4cb-4f3d-b92c-347170dd0911
+	joinOnDateBehavior: datePartOnly
+	fromColumn: 'stg_EMS Fixed Fee Forecast_Actuals'.'Period End Date'
+	toColumn: LocalDateTable_423122e6-95b5-4708-921a-a1b87016baa8.Date
+
+relationship 42a1a791-4945-482a-af5e-91d4f0a1b679
+	joinOnDateBehavior: datePartOnly
+	fromColumn: 'stg_EMS Fixed Fee Forecast_Contracts1'.crbb5_billingstartdate
+	toColumn: LocalDateTable_7fba4335-b697-4af2-96da-1e969882501c.Date
+
+relationship f288510c-5078-439f-9af3-dc1c53b46099
+	joinOnDateBehavior: datePartOnly
+	fromColumn: 'stg_EMS Fixed Fee Forecast_Contracts1'.crbb5_billingenddate
+	toColumn: LocalDateTable_f2e06565-4def-4dd7-869a-9b2306595e31.Date
+
+relationship 5e7ceb49-d00d-46a4-9872-8e9a7b9c2d1e
+	joinOnDateBehavior: datePartOnly
+	fromColumn: 'stg_EMS Fixed Fee Forecast_Contracts1'.'Concession expiry'
+	toColumn: LocalDateTable_24d0df16-1775-4a10-8c84-53cfc12659a1.Date
+
+relationship 1dc215be-d3ac-4be6-bfd1-bdaad9512951
+	joinOnDateBehavior: datePartOnly
+	fromColumn: 'stg_EMS Fixed Fee Forecast_Project HARP'.crbb5_billingstartdate
+	toColumn: LocalDateTable_0554a8d8-1933-4b86-9d9c-fd1e4a820a6a.Date
+
+relationship 435bb846-d01b-426c-9325-0df0c4fcb827
+	joinOnDateBehavior: datePartOnly
+	fromColumn: 'stg_EMS Fixed Fee Forecast_Project HARP'.crbb5_billingenddate
+	toColumn: LocalDateTable_597ce1e2-86ce-4418-9eaf-9c7a6bad433e.Date
+
+relationship 6a2d1a59-90af-44b1-ad2d-b5131298cdb1
+	joinOnDateBehavior: datePartOnly
+	fromColumn: 'stg_EMS Fixed Fee Forecast_Project HARP'.'Concession expiry'
+	toColumn: LocalDateTable_cfa55f52-c139-48d7-a6b8-febad4cb63f1.Date
+
+relationship 35288fb8-59be-44a0-84ed-460e62c011ab
+	joinOnDateBehavior: datePartOnly
+	fromColumn: crbb5_contractregister.'Created On'
+	toColumn: LocalDateTable_3fbbe913-40ee-4b2f-b105-3e3d5431262d.Date
+
+relationship e577af33-9f0d-4cd7-acb4-69da17f63986
+	joinOnDateBehavior: datePartOnly
+	fromColumn: crbb5_contractregister.'Modified On'
+	toColumn: LocalDateTable_734669f8-11a4-4d2c-9aef-aa6539be976e.Date
+
+relationship 3a3b1b65-35fa-49b6-9944-0cb74caa360e
+	joinOnDateBehavior: datePartOnly
+	fromColumn: crbb5_contractregister.'Record Created On'
+	toColumn: LocalDateTable_5520d565-24f9-4831-8be2-601fb2db2356.Date
+
+relationship d0024938-595b-4ec8-93a8-0107ede4ed12
+	joinOnDateBehavior: datePartOnly
+	fromColumn: crbb5_contractregister.'Concession Expiry'
+	toColumn: LocalDateTable_25bba294-088d-459c-8936-acda89e62179.Date
+
+relationship 2613c338-9a6d-4e30-a58a-f0532a31af1b
+	joinOnDateBehavior: datePartOnly
+	fromColumn: crbb5_contractregister.Created
+	toColumn: LocalDateTable_5cf7ce48-8287-48ef-b236-dc7b1f2afba3.Date
+
+relationship 906eb655-526f-4911-9054-7efb0dbe023c
+	joinOnDateBehavior: datePartOnly
+	fromColumn: crbb5_contractregister.'Financial Close'
+	toColumn: LocalDateTable_b6e2a64e-eb74-4e6a-af6d-5970cb6eb3e6.Date
+
+relationship 090127e4-a2d2-49b1-9adb-a0705a64c9e9
+	joinOnDateBehavior: datePartOnly
+	fromColumn: crbb5_contractregister.'Next Term Ends On'
+	toColumn: LocalDateTable_afb2507d-3632-4455-baa4-87a2d96859c0.Date
+
+relationship 14cc82aa-b54b-49b2-aa8b-f6141de22e54
+	joinOnDateBehavior: datePartOnly
+	fromColumn: crbb5_contractregister.'Mobilised Date'
+	toColumn: LocalDateTable_535f720a-2b57-424e-ab2a-895e015c7ca6.Date
+
+relationship 4940357d-bc83-45d1-a0c7-ac1885a6cb18
+	joinOnDateBehavior: datePartOnly
+	fromColumn: crbb5_contractregister.Modified
+	toColumn: LocalDateTable_5f0ac23f-6d25-4ba3-a258-bed158ee84a7.Date
+
+relationship 77ad1de6-e2a0-4fce-a0f3-22d67e3176ae
+	joinOnDateBehavior: datePartOnly
+	fromColumn: crbb5_contractregister.'MSA Executed Date'
+	toColumn: LocalDateTable_34955bdb-dbd6-443c-b393-2bc671fffb5a.Date
+
+relationship dbd2c4fb-6639-44dc-876d-21dea9a1b46f
+	joinOnDateBehavior: datePartOnly
+	fromColumn: crbb5_contractregister.'Pipeline Entry Date'
+	toColumn: LocalDateTable_98ab4e54-3434-4cb9-ace0-fd5914953e95.Date
+
+relationship 509d8a7f-0f50-4119-987e-61045d5a1070
+	joinOnDateBehavior: datePartOnly
+	fromColumn: crbb5_contractregister.'Practical Completion Date'
+	toColumn: LocalDateTable_96a2823c-d1f9-4c9b-8f9d-66219a2d27d6.Date
+
+relationship cad52bca-ed1c-4844-b64c-55d5b9f76414
+	joinOnDateBehavior: datePartOnly
+	fromColumn: crbb5_contractregister.'Service Availability'
+	toColumn: LocalDateTable_1bb8f4c7-f938-4b1b-850b-a624c2c3b917.Date
+
+relationship 53b8531c-d33a-42e2-a20c-b5fa8cd659c3
+	joinOnDateBehavior: datePartOnly
+	fromColumn: crbb5_contractregister.'Service Commencement Date'
+	toColumn: LocalDateTable_e0787064-ee8f-4c1f-8c90-5d418219d378.Date
+
+relationship 1e13024a-3898-4964-8d49-716bdc085987
+	joinOnDateBehavior: datePartOnly
+	fromColumn: crbb5_contractregister.'Termination Date'
+	toColumn: LocalDateTable_bab9c6e9-97ff-4b3d-8329-33d2d712b173.Date
+
+relationship 5be9efd7-d47d-45b9-832a-8af24ef3accf
+	joinOnDateBehavior: datePartOnly
+	fromColumn: crbb5_contractregister.'Projects (Last Updated On)'
+	toColumn: LocalDateTable_0d358291-1095-485c-947d-90973f62bf4f.Date
+
+relationship bf4e951b-657e-4680-868c-bab8458dc43a
+	joinOnDateBehavior: datePartOnly
+	fromColumn: crbb5_contractregister.'Company Count (Last Updated On)'
+	toColumn: LocalDateTable_251b3782-d84c-4b68-bcc7-f5220128f490.Date
+
+relationship 3db1f281-1518-4ea4-be35-225ba54ccade
+	joinOnDateBehavior: datePartOnly
+	fromColumn: crbb5_contractregister.Now
+	toColumn: LocalDateTable_b9d8ee6d-d6b3-4589-ad8e-789417c2f68e.Date
+
+relationship 80dfdb09-43b0-4df9-91db-5041b64a3433
+	joinOnDateBehavior: datePartOnly
+	fromColumn: crbb5_contractregister.'Proposal Last Submitted '
+	toColumn: LocalDateTable_a4d69dbb-02c0-4a18-bec7-2dbf84886313.Date
+
+relationship 2e0e4619-731c-4345-b4a8-7d7a222a2dac
+	joinOnDateBehavior: datePartOnly
+	fromColumn: crbb5_contractregister.'Proposal Last Accepted'
+	toColumn: LocalDateTable_5fb6b5bf-7f0b-481f-ad38-1898442062de.Date
+
+relationship c3ab2746-304c-4046-93d4-fd53f73494ea
+	joinOnDateBehavior: datePartOnly
+	fromColumn: crbb5_contractregister.'Client Awarded Preferred Bidder'
+	toColumn: LocalDateTable_963a270f-536a-494b-b41c-1120af919f25.Date
+
+relationship e5a8e7ab-f6e7-4f23-bfc4-339482a9bb03
+	joinOnDateBehavior: datePartOnly
+	fromColumn: crbb5_contractregister.'Notice Period Starts'
+	toColumn: LocalDateTable_6c41669f-fb2b-4f45-85ab-43d59b39215b.Date
+
+relationship ddd28f1b-5a23-4d5f-937f-69d6b288f2fb
+	joinOnDateBehavior: datePartOnly
+	fromColumn: crbb5_contractregister.'Closedown Start Date'
+	toColumn: LocalDateTable_03a434e3-5913-4065-ae64-ec2da48f9c1a.Date
+
+relationship aaece621-ae26-4a11-89d0-b53fe6164942
+	joinOnDateBehavior: datePartOnly
+	fromColumn: crbb5_contractregister.'Contract First Reminder Date Sent'
+	toColumn: LocalDateTable_4b85ebf0-f9ac-49e5-af46-f13bd58eacb6.Date
+
+relationship dc15c92d-33d5-4e17-ad25-25112c96c5ef
+	joinOnDateBehavior: datePartOnly
+	fromColumn: crbb5_contractregister.'Contract Most Recent Reminder Date Sent'
+	toColumn: LocalDateTable_b850b5be-1378-4953-932a-2ebe596e0458.Date
+
+relationship ac58587b-fd52-4661-8c3d-a5b127356ef1
+	joinOnDateBehavior: datePartOnly
+	fromColumn: crbb5_contractregister.'Project Terminating Date'
+	toColumn: LocalDateTable_35a3a61a-1b93-4b15-8b8c-455101bd7659.Date
+
+relationship f0e3b2b4-15ff-491c-b424-bc6965cb8cfc
+	joinOnDateBehavior: datePartOnly
+	fromColumn: crbb5_contractregister.'Reviewed On'
+	toColumn: LocalDateTable_4211f584-6562-44b5-9b5c-05524fa1c6c5.Date
+
+relationship 539403b6-0ce5-4758-b9f2-9225ed140b49
+	joinOnDateBehavior: datePartOnly
+	fromColumn: crbb5_contractregister.'Update Notes Modified On'
+	toColumn: LocalDateTable_9562a5ab-1420-4545-ba08-a6dc8d09dcd3.Date
+
+relationship 11757c92-4227-4a98-83b8-736d684c7958
+	joinOnDateBehavior: datePartOnly
+	fromColumn: crbb5_contractregister.'Automatic Renewal Long Stop Date'
+	toColumn: LocalDateTable_7ec9af5d-bb75-494b-8519-fff1842c7538.Date
+
+relationship a1cc5558-10b4-41b0-b6e5-e02153e351ef
+	joinOnDateBehavior: datePartOnly
+	fromColumn: crbb5_contractregister.'Amount of ERM Assets (Last Updated On)'
+	toColumn: LocalDateTable_ab8b13a5-5b59-41cc-94db-d3616837680e.Date
+
+relationship d666f7eb-728c-4f9f-ae32-f4a43df7a791
+	joinOnDateBehavior: datePartOnly
+	fromColumn: crbb5_contractregister.'Next Extension Date'
+	toColumn: LocalDateTable_1f81f902-8cf8-4e19-a099-60d027599d19.Date
+
+relationship 5ac8ba15-2cf5-42c4-bf76-eba435d92f5f
+	joinOnDateBehavior: datePartOnly
+	fromColumn: crbb5_contractregister.'Notice Period Reminder'
+	toColumn: LocalDateTable_e5394b35-b49f-4350-8502-87dd08d80e88.Date
+
+relationship edcfab19-7e35-4598-a874-ad06ce1909fb
+	joinOnDateBehavior: datePartOnly
+	fromColumn: dogma_timesheet.'Created On'
+	toColumn: LocalDateTable_624e579f-7a68-4f4b-93fc-8e95fb7e9daa.Date
+
+relationship 77a4477f-5227-4916-a9e1-d4777b149ff4
+	joinOnDateBehavior: datePartOnly
+	fromColumn: dogma_timesheet.'Modified On'
+	toColumn: LocalDateTable_0f9aca6f-9f65-4024-ac46-d2edcdbbdc77.Date
+
+relationship f09e3474-bc7e-4edc-9741-ffd6bf0ed44f
+	joinOnDateBehavior: datePartOnly
+	fromColumn: dogma_timesheet.'Record Created On'
+	toColumn: LocalDateTable_ad549916-ca28-494e-845d-35ac92ce02a1.Date
+
+relationship 57eae100-894b-47fc-9fdc-f08d58738715
+	joinOnDateBehavior: datePartOnly
+	fromColumn: dogma_timesheet.Date
+	toColumn: LocalDateTable_9e3c3fdd-257e-4c1c-8e54-7dc101b1e271.Date
+
+relationship faad59ee-df24-4f87-b538-2de44ea40b83
+	joinOnDateBehavior: datePartOnly
+	fromColumn: crbb5_project.'Created On'
+	toColumn: LocalDateTable_5b068e6f-c153-4172-ac0e-d81819045e57.Date
+
+relationship 2da4416c-b2f5-4253-9444-791e0798b7fb
+	joinOnDateBehavior: datePartOnly
+	fromColumn: crbb5_project.'Modified On'
+	toColumn: LocalDateTable_fbe1c11c-8272-416b-8d34-8760fa82328d.Date
+
+relationship c6057a51-30da-42fb-bb85-df56a16f1668
+	joinOnDateBehavior: datePartOnly
+	fromColumn: crbb5_project.'Record Created On'
+	toColumn: LocalDateTable_d8c92c88-6668-4fb5-8552-facba8f734b7.Date
+
+relationship ea54ea05-3908-498e-8e62-02ee589edc53
+	joinOnDateBehavior: datePartOnly
+	fromColumn: crbb5_project.'Project Commencement Date'
+	toColumn: LocalDateTable_fd355fb3-a0bd-4244-a837-0b917caaa18c.Date
+
+relationship 7575f1e0-959a-417b-b793-958e100fe722
+	joinOnDateBehavior: datePartOnly
+	fromColumn: crbb5_project.'Service Termination Date'
+	toColumn: LocalDateTable_709de77b-ea0d-4d57-984f-e6a69b5e505d.Date
+
+relationship 0412f69e-67c2-45f7-92a4-73938af2fac1
+	joinOnDateBehavior: datePartOnly
+	fromColumn: crbb5_project.'Project Termination Date'
+	toColumn: LocalDateTable_71aa891a-1c7c-4096-8dcf-1f72a5bfe432.Date
+
+relationship 2a1e4407-01cf-4528-a03b-2ff9b72e6ef4
+	joinOnDateBehavior: datePartOnly
+	fromColumn: crbb5_project.'Billing Fee Total (Last Updated On)'
+	toColumn: LocalDateTable_e69a82de-8911-405d-b5c4-35a8f382b9d1.Date
+
+relationship 8c4b343f-0020-4d23-ab5b-cf4e62f065aa
+	joinOnDateBehavior: datePartOnly
+	fromColumn: crbb5_project.'Billing Annual Fee Total (Last Updated On)'
+	toColumn: LocalDateTable_1c858679-7097-4dae-a942-8d43e830f770.Date
+
+relationship 041cde73-c7bb-4202-b144-9a1dfdcfccf4
+	joinOnDateBehavior: datePartOnly
+	fromColumn: crbb5_project.'Deliverables (Last Updated On)'
+	toColumn: LocalDateTable_467f1fdd-158f-44f1-bbd6-d772e6b8a82b.Date
+
+relationship c95119ff-c58b-40d9-a0a7-031b0e78b691
+	joinOnDateBehavior: datePartOnly
+	fromColumn: crbb5_project.'Project Rejected Date'
+	toColumn: LocalDateTable_6c7756d0-b84b-4734-b818-d7a0718b92b7.Date
+
+relationship 5852a1dc-365e-43a6-ba51-0eefe850d19f
+	joinOnDateBehavior: datePartOnly
+	fromColumn: crbb5_billingschedule.'Created On'
+	toColumn: LocalDateTable_2d43a6f5-cff5-48e2-9c7f-f2401593bf33.Date
+
+relationship 62bd6b8b-b12c-4a08-ba52-59f70b17e3b9
+	joinOnDateBehavior: datePartOnly
+	fromColumn: crbb5_billingschedule.'Modified On'
+	toColumn: LocalDateTable_52ace62f-9419-4565-a3b6-dca1380f971b.Date
+
+relationship b53224cc-8eaf-4300-9682-06fb4a82fc8e
+	joinOnDateBehavior: datePartOnly
+	fromColumn: crbb5_billingschedule.'Record Created On'
+	toColumn: LocalDateTable_f9548c27-e169-4c29-9513-1afa959d87cc.Date
+
+relationship 38797fa5-568f-4d7e-808a-bd81bc3186a1
+	joinOnDateBehavior: datePartOnly
+	fromColumn: crbb5_billingschedule.'Billing Start Date'
+	toColumn: LocalDateTable_dddb7632-ff80-4ba2-809f-b16570184ae7.Date
+
+relationship 26cdecbc-d245-47cc-a88d-24874b839467
+	joinOnDateBehavior: datePartOnly
+	fromColumn: crbb5_billingschedule.'Billing End Date'
+	toColumn: LocalDateTable_acc1a69e-9bc0-4af0-8940-66efa1804941.Date
+
+relationship f64ca299-0596-4024-acc8-a528594855ba
+	joinOnDateBehavior: datePartOnly
+	fromColumn: crbb5_billingschedule.'Billing month zero'
+	toColumn: LocalDateTable_48a198af-47f3-475a-876f-93ef1c6006bd.Date
+
+relationship e045667a-a47d-4f50-92c3-71f494f3a7d8
+	joinOnDateBehavior: datePartOnly
+	fromColumn: crbb5_billingschedule.'Invoice next date'
+	toColumn: LocalDateTable_5f6a7a5e-fe2f-4002-a683-ab5ed2d04240.Date
+
+relationship caeb2ab4-13f6-4d41-afd3-db5525003940
+	joinOnDateBehavior: datePartOnly
+	fromColumn: crbb5_billingschedule.'Invoice last date'
+	toColumn: LocalDateTable_061c8a6e-a14f-4fae-a9ec-eb6401a9e92f.Date
+
+relationship b6a5f471-48fd-4b52-a846-5877a42dfbd3
+	joinOnDateBehavior: datePartOnly
+	fromColumn: crbb5_bamboohr.'Created On'
+	toColumn: LocalDateTable_441f0fc3-effd-4a90-a43c-f90138d098f1.Date
+
+relationship 2fba7dab-4a96-4124-a153-d20b84bf49cd
+	joinOnDateBehavior: datePartOnly
+	fromColumn: crbb5_bamboohr.'Modified On'
+	toColumn: LocalDateTable_4558a91d-a354-45ac-93ba-03dd27b07852.Date
+
+relationship 2d32fa6f-e765-4f4e-8732-29617744d9ca
+	joinOnDateBehavior: datePartOnly
+	fromColumn: crbb5_bamboohr.'Record Created On'
+	toColumn: LocalDateTable_fff9eced-1e9a-4609-9269-926b488bfcda.Date
+
+relationship f09159fe-c55e-4a1f-b341-d1a547533ace
+	joinOnDateBehavior: datePartOnly
+	fromColumn: crbb5_bamboohr.'Birth Date'
+	toColumn: LocalDateTable_34d446f8-d6a0-46e9-b128-9d542bb6a7b2.Date
+
+relationship 616736f1-235e-40f4-a2f9-fb5cf15f4da9
+	joinOnDateBehavior: datePartOnly
+	fromColumn: crbb5_bamboohr.'Employment Status: Date'
+	toColumn: LocalDateTable_c1f7abc1-e299-4c3c-8092-5437efaa1e68.Date
+
+relationship 154a2308-6845-45a8-88c4-8eed5aaae616
+	joinOnDateBehavior: datePartOnly
+	fromColumn: crbb5_bamboohr.'Hire Date'
+	toColumn: LocalDateTable_683c0a47-89de-4329-aa71-47d2bc4de264.Date
+
+relationship 0f171a42-fb2b-42fc-b03c-15b60dc99851
+	joinOnDateBehavior: datePartOnly
+	fromColumn: crbb5_bamboohr.'Notes: Date Added'
+	toColumn: LocalDateTable_0eea7b62-4d68-44ab-969a-aab465b8536b.Date
+
+relationship bc96566a-99f0-416c-a0a6-d2c93e6f397b
+	joinOnDateBehavior: datePartOnly
+	fromColumn: crbb5_bamboohr.'Original Hire Date'
+	toColumn: LocalDateTable_e2a744fa-c0ff-4f30-be6e-e182cd189675.Date
+
+relationship 96775132-b466-4b7f-a17d-29416c2bef26
+	joinOnDateBehavior: datePartOnly
+	fromColumn: crbb5_bamboohr.'Termination Date'
+	toColumn: LocalDateTable_865f2bdb-efe1-44c9-9aea-57090d851898.Date
+
+relationship 97410226-6e5b-47e9-b7d6-35bdd22ac3c2
+	joinOnDateBehavior: datePartOnly
+	fromColumn: dogma_timesheetheader.'Created On'
+	toColumn: LocalDateTable_ddd2f97f-632c-46c5-ab9e-8143b55d74a4.Date
+
+relationship c62e2b16-b60e-4f9f-9491-29378d01fc15
+	joinOnDateBehavior: datePartOnly
+	fromColumn: dogma_timesheetheader.'Modified On'
+	toColumn: LocalDateTable_fca98f4b-662b-426f-a4af-f2a54282296a.Date
+
+relationship 0abab279-80f5-4cba-bd71-4541d6533f11
+	joinOnDateBehavior: datePartOnly
+	fromColumn: dogma_timesheetheader.'Record Created On'
+	toColumn: LocalDateTable_a96afc69-575d-4f25-a414-f017fd68cc39.Date
+
+relationship ca739afb-513f-4451-8976-73d096988f39
+	joinOnDateBehavior: datePartOnly
+	fromColumn: dogma_timesheetheader.'Period End Date'
+	toColumn: LocalDateTable_2a337a2b-8d08-4c8b-953f-dd056fa6b2ca.Date
+
+relationship ad9f11b1-c97c-4a43-ad71-93db6f4043a1
+	joinOnDateBehavior: datePartOnly
+	fromColumn: dogma_timesheetheader.'Period Start Date'
+	toColumn: LocalDateTable_893dfc2a-6bb2-440f-af70-de8c3026090a.Date
+
+relationship f2b4a83e-f380-4f20-a028-2c3d022df30a
+	joinOnDateBehavior: datePartOnly
+	fromColumn: dogma_timesheetheader.'Total Hours Project (Last Updated On)'
+	toColumn: LocalDateTable_ba0db804-7d56-4324-9344-f4c77eb42b8d.Date
+
+relationship 272e5024-a95b-46ed-92c8-08970df91b9f
+	joinOnDateBehavior: datePartOnly
+	fromColumn: dogma_timesheetperiod.'Created On'
+	toColumn: LocalDateTable_adc432e6-3621-4269-88f4-33ddc5dd01ba.Date
+
+relationship 30039220-683f-438e-bfc4-0c70bbf6f1c0
+	joinOnDateBehavior: datePartOnly
+	fromColumn: dogma_timesheetperiod.'Modified On'
+	toColumn: LocalDateTable_f1e25086-a8f6-443e-b35e-823114b3db8b.Date
+
+relationship b34a567e-96e0-4c1b-8bc0-0f2f6b625a52
+	joinOnDateBehavior: datePartOnly
+	fromColumn: dogma_timesheetperiod.'Record Created On'
+	toColumn: LocalDateTable_5a743fdf-8a66-46a0-9f5f-08184f309550.Date
+
+relationship 09234da6-e89f-44d2-9531-e8a16387d286
+	joinOnDateBehavior: datePartOnly
+	fromColumn: dogma_timesheetperiod.'Approval Date'
+	toColumn: LocalDateTable_3e6aa5b9-bb9b-46dd-8207-ad5705ce4083.Date
+
+relationship 7ecc406c-a31c-4432-ad2d-1c2806c46063
+	joinOnDateBehavior: datePartOnly
+	fromColumn: dogma_timesheetperiod.'First Rejection Date'
+	toColumn: LocalDateTable_65293f6b-5290-4406-804f-cb21d33cf715.Date
+
+relationship 5c04fd58-a1c7-43cc-98ff-2e76804078c5
+	joinOnDateBehavior: datePartOnly
+	fromColumn: dogma_timesheetperiod.'Last Rejection Date'
+	toColumn: LocalDateTable_9e7d5a62-4f47-453b-b507-8c708394853c.Date
+
+relationship 4e18fe87-9eba-475a-af2a-f8fec70e8034
+	joinOnDateBehavior: datePartOnly
+	fromColumn: dogma_timesheetperiod.'Period End Date'
+	toColumn: LocalDateTable_343afc95-fbc4-40c8-8a55-1a8254bd8722.Date
+
+relationship 5a29b276-eaf2-45a5-87ab-f16870b3121c
+	joinOnDateBehavior: datePartOnly
+	fromColumn: dogma_timesheetperiod.'Period Start Date'
+	toColumn: LocalDateTable_9c25b4c5-1e25-4111-85f4-73c033b0e772.Date
+
+relationship dc2ffd83-cd46-46a0-9c57-c5df55ccabc6
+	joinOnDateBehavior: datePartOnly
+	fromColumn: dogma_timesheetperiod.'Submission Date'
+	toColumn: LocalDateTable_10b8811a-3249-42f9-9c65-c8a62a8e686a.Date
+
+relationship b7275cca-27db-4423-a050-afc7eeb1f0d3
+	joinOnDateBehavior: datePartOnly
+	fromColumn: crbb5_jedoxallocation.'Created On'
+	toColumn: LocalDateTable_37441a28-0211-46ae-93c5-7eaa1179fc5b.Date
+
+relationship 8384b1aa-9c6c-4e1e-9deb-e35141379eeb
+	joinOnDateBehavior: datePartOnly
+	fromColumn: crbb5_jedoxallocation.'Modified On'
+	toColumn: LocalDateTable_77fb3dd3-85d5-45a7-9911-34c0250282c7.Date
+
+relationship ffd20612-b51e-4886-8d61-f76016ad85fa
+	joinOnDateBehavior: datePartOnly
+	fromColumn: crbb5_jedoxallocation.'Record Created On'
+	toColumn: LocalDateTable_19f447b1-818f-4261-9090-325ec5ffc8bb.Date
+
+relationship 0f2a09fc-82e1-405e-85d5-0ae15ae3c508
+	joinOnDateBehavior: datePartOnly
+	fromColumn: crbb5_jedoxallocation.'Allocation Date'
+	toColumn: LocalDateTable_4afac8c5-221d-4636-8e84-42001bf14d51.Date
+
+relationship 9efc16ba-0317-4f9f-893d-832153259110
+	joinOnDateBehavior: datePartOnly
+	fromColumn: dim_Date_Live.Date
+	toColumn: LocalDateTable_e5e369a6-3d23-4254-9c4a-7ff621eb8c28.Date
+
+relationship a9f602a8-78ea-4e7f-b872-93d5da10bfcd
+	joinOnDateBehavior: datePartOnly
+	fromColumn: dim_Employee_Live.crbb5_hiredate
+	toColumn: LocalDateTable_0cb2de53-11bc-4e2d-ac54-4a386fce1615.Date
+
+relationship 833c1ae4-7db1-447e-9273-8842cbd6dc24
+	joinOnDateBehavior: datePartOnly
+	fromColumn: dim_Employee_Live.crbb5_terminationdate
+	toColumn: LocalDateTable_7bc52024-e982-408e-a47f-e7e455e5bc5b.Date
+
+relationship be642444-bfa7-4e11-85d3-5f6f4fd94c01
+	joinOnDateBehavior: datePartOnly
+	fromColumn: dim_ForecastSnapshot_Live.SnapshotDate
+	toColumn: LocalDateTable_8ef9692d-5881-43c5-93c1-bcf9c67d660e.Date
+
+relationship 044ff221-824d-4486-804b-d87623bf5410
+	joinOnDateBehavior: datePartOnly
+	fromColumn: _Cost_Other_Actuals.Date
+	toColumn: LocalDateTable_c971e831-5746-4f7d-8047-8c18a9df5387.Date
+
+relationship f75a0d1b-3089-44aa-bb2b-cbc0eaf10dcd
+	joinOnDateBehavior: datePartOnly
+	fromColumn: _Cost_Other_Actuals.'Snapshot Date'
+	toColumn: LocalDateTable_ae9f2f9c-2536-4eaa-9692-2f19b86c90c5.Date
+
+relationship 5035374c-6a82-4347-b6e0-9dbca3b93733
+	joinOnDateBehavior: datePartOnly
+	fromColumn: _Cost_Staff_Actuals.'Snapshot Date'
+	toColumn: LocalDateTable_b1b4b72c-2f56-4801-98ba-fdc29c271f3e.Date
+
+relationship 689b29bc-f185-46e1-8838-9e57a89c9ab9
+	joinOnDateBehavior: datePartOnly
+	fromColumn: _Cost_Subcontractor_Actuals.Date
+	toColumn: LocalDateTable_374bc2dc-a96d-48fc-9d1d-acb0e4c388c6.Date
+
+relationship 6a17d5fb-2252-473a-9cf4-d8a28908d1da
+	joinOnDateBehavior: datePartOnly
+	fromColumn: _Cost_Subcontractor_Actuals.'Snapshot Date'
+	toColumn: LocalDateTable_3be4e141-24e6-4b73-a2c8-cba76c77b5c4.Date
+
+relationship 6776b472-f7a8-4783-a261-24e0c423dba7
+	joinOnDateBehavior: datePartOnly
+	fromColumn: _Cost_Subcontractor_Forecast.Date
+	toColumn: LocalDateTable_3a5b13c1-2158-42f5-b5aa-ceb847bd24e5.Date
+
+relationship 3835378b-d81f-41d4-a7ca-aa29109e135d
+	joinOnDateBehavior: datePartOnly
+	fromColumn: _Cost_Subcontractor_Forecast.'Snapshot Date'
+	toColumn: LocalDateTable_aa45896c-b20a-4090-9d36-b7ac5f39f897.Date
+
+relationship 8c210dec-960d-4537-aa99-e47cc0e9a103
+	joinOnDateBehavior: datePartOnly
+	fromColumn: _Revenue_Actuals.'Snapshot Date'
+	toColumn: LocalDateTable_7535232a-ed96-412b-8e00-012c9c9cacce.Date
+
+relationship 175f20b7-6759-4c2e-bf0a-c0d550ed9503
+	joinOnDateBehavior: datePartOnly
+	fromColumn: _Revenue_Forecast_31Dec2025.Date
+	toColumn: LocalDateTable_1e10714c-599c-4a3b-b7b7-cc865e1af553.Date
+
+relationship d43ad62a-3da7-49eb-b203-af2be8011065
+	joinOnDateBehavior: datePartOnly
+	fromColumn: _Revenue_Forecast_31Dec2025.'Snapshot Date'
+	toColumn: LocalDateTable_4e8db392-1c9a-4b36-908c-b4482ced2020.Date
+
+relationship 5feb1f2f-3d12-47c0-ad81-a0f8b7c3edad
+	joinOnDateBehavior: datePartOnly
+	fromColumn: _Revenue_Forecast_HARP.Date
+	toColumn: LocalDateTable_000377dc-9582-4023-971b-81db4da9fdf0.Date
+
+relationship 81311f50-d032-4fd8-b764-118f5c376352
+	joinOnDateBehavior: datePartOnly
+	fromColumn: _Revenue_Forecast_HARP.'Snapshot Date'
+	toColumn: LocalDateTable_19beadb8-f1a6-4b35-9e47-c7d2f74311a5.Date
+
+relationship a3a2cab5-b9d4-4df9-a0b9-50fcc104c287
+	joinOnDateBehavior: datePartOnly
+	fromColumn: _Revenue_Forecast_OOC.Date
+	toColumn: LocalDateTable_368467ac-36dc-4873-a1cb-7efb0a3a1429.Date
+
+relationship 828bedf2-62c3-45d4-a4e6-a876baa19b7c
+	joinOnDateBehavior: datePartOnly
+	fromColumn: _Revenue_Forecast_OOC.'Snapshot Date'
+	toColumn: LocalDateTable_5fe4ab9e-bf33-416f-af6d-e75845151d41.Date
+
+relationship f87cb484-9f1c-4a43-b5ed-a98ae0b3c2c0
+	joinOnDateBehavior: datePartOnly
+	fromColumn: _Cost_Staff_Forecast.'Snapshot Date'
+	toColumn: LocalDateTable_c461bafd-2483-4091-bd5c-6ef49c52c220.Date
+
+relationship db5d6d5b-3889-2cae-e494-e8bf97500585
+	fromColumn: fact_Revenue_Live.Date
+	toColumn: dim_Date_Live.Date
+
+relationship 9c243cdd-af20-94f6-c3a9-7b34bf91ec3c
+	fromColumn: fact_Cost_Live.Date
+	toColumn: dim_Date_Live.Date
+
+relationship 0f4b1a63-96ef-30e0-54fd-5fdba4fed1c2
+	fromColumn: fact_Revenue_Live.'Project Code'
+	toColumn: dim_Project_Live.'Project Code'
+
+relationship d44a522f-41a2-4b7d-81e6-8a64bfa0cbd3
+	joinOnDateBehavior: datePartOnly
+	fromColumn: dim_Project_Live.'Concession Expiry'
+	toColumn: LocalDateTable_2f4b43a0-881a-452b-91a2-740bde90e617.Date
+
+relationship 562fcd2a-cb56-4989-1e20-85da817b7fb4
+	fromColumn: fact_Timesheet_Live.StaffKey
+	toColumn: dim_StaffCosts_Live.StaffKey
+
+relationship 90e700d1-d144-ded8-06f1-0f69a1e13a83
+	isActive: false
+	fromColumn: fact_Revenue_Live.TransactionLineKey
+	toColumn: _Revenue_Actuals.TransactionLineKey
+
+relationship e6996f9f-3076-0b8a-e9b7-c764fcbaeb76
+	fromColumn: fact_Revenue_Live.'Account Code'
+	toColumn: dim_Accounts_Live.'Account Code'
+
+relationship 82e83f41-67f2-fb6c-53e4-c9014aaa117e
+	fromColumn: fact_Revenue_Live.'Snapshot Date'
+	toColumn: dim_ForecastSnapshot_Live.SnapshotDate
+
+relationship 81d89b8c-5b33-3e39-34a2-9a370a762d5b
+	fromColumn: fact_Timesheet_Live.TimeWorkReference
+	toColumn: dim_Employee_Live.TimeWorkReference
+
+relationship 5e45a7cb-56da-2fb0-c1e1-afe6b678046c
+	fromColumn: fact_Timesheet_Live.Date
+	toColumn: dim_Date_Live.Date
+
+relationship 14e0ce13-2e10-5438-428a-94bad2ba0e89
+	fromColumn: fact_Cost_Live.TimeWorkReference
+	toColumn: dim_Employee_Live.TimeWorkReference
+
+relationship 8a595c3b-b492-f0cb-fdf5-4e7d2e783a70
+	fromColumn: fact_Cost_Live.'Account Code'
+	toColumn: dim_Accounts_Live.'Account Code'
+
+relationship f1418660-a129-debb-eef0-4922ab5fb9bb
+	fromColumn: fact_Cost_Live.'Snapshot Date'
+	toColumn: dim_ForecastSnapshot_Live.SnapshotDate
+
+relationship 289b24c6-2dee-101e-fc05-cf794399246a
+	fromColumn: fact_Timesheet_Live.'Project Code'
+	toColumn: dim_Project_Live.crbb5_projectid
+
+relationship e06a3786-9e48-cab8-72c1-457a0f673f56
+	isActive: false
+	fromColumn: fact_Cost_Live.'Project Code'
+	toColumn: dim_Project_Live.crbb5_projectid
+
+relationship 1f8d91a8-05a1-1b3a-2ba6-14ed8ae07337
+	fromColumn: _Cost_Staff_Actuals.'Project Code'
+	toColumn: dim_Project_Live.crbb5_projectid
+
+relationship 8238fc25-55fb-e299-0776-ae4a91461beb
+	fromColumn: _Cost_Staff_Forecast.'Project Code'
+	toColumn: dim_Project_Live.'Project Code'
+
+relationship a887967b-49ad-ce64-30c5-c5418f865c88
+	fromColumn: _Revenue_Forecast_31Dec2025.'Project Code'
+	toColumn: dim_Project_Live.'Project Code'
+
+relationship 319130a7-5024-eac8-b692-439a16897d34
+	fromColumn: _Revenue_Forecast_HARP.'Project Code'
+	toColumn: dim_Project_Live.'Project Code'
+
+relationship 27238da2-f5d6-2098-1238-85ca435bf143
+	fromColumn: _Revenue_Forecast_OOC.'Project Code'
+	toColumn: dim_Project_Live.'Project Code'
+
+relationship 09e0428a-310b-3b27-fa02-75336a5b5c2d
+	fromColumn: _Cost_Subcontractor_Actuals.'Project Code'
+	toColumn: dim_Project_Live.'Project Code'
+
+relationship 90e34df9-c95b-ddd2-12e7-cff77b3a4620
+	fromColumn: _Cost_Subcontractor_Forecast.'Project Code'
+	toColumn: dim_Project_Live.'Project Code'
+
+relationship AutoDetected_5d5315df-4388-4912-a467-0e720f5e7355
+	fromColumn: dim_StaffCosts_Live.Year
+	toColumn: dim_HolidayPolicy_Live.Year
+
+relationship AutoDetected_e361bf94-1a3a-4bab-9252-6c1b97988d98
+	isActive: false
+	fromColumn: fact_Timesheet_Live.Year
+	toColumn: dim_HolidayPolicy_Live.Year
+
+relationship 6cb5edb6-5bb2-4561-9826-80ac53a1b76f
+	joinOnDateBehavior: datePartOnly
+	fromColumn: _CutoverDate._CutoverDate
+	toColumn: LocalDateTable_08e05b4a-7c6d-4057-9432-816baae6f777.Date
+
+relationship AutoDetected_3f9011b0-9d87-4274-8c58-a97a6137d63d
+	fromColumn: fact_Cost_Live.StaffKey
+	toColumn: dim_StaffCosts_Live.StaffKey
+
+relationship AutoDetected_d155bf01-de04-4de8-96fb-2a1f51286186
+	fromColumn: _Cost_Staff_Actuals.StaffKey
+	toColumn: dim_StaffCosts_Live.StaffKey
+
+relationship AutoDetected_05bbc009-c8a0-42f6-bcc1-5f39f52bbb7c
+	fromColumn: _Cost_Staff_Forecast.StaffKey
+	toColumn: dim_StaffCosts_Live.StaffKey
+
+relationship f5b83b12-e5f5-954c-8652-cfce99dd1daa
+	fromColumn: _Cost_Staff_Forecast.Date
+	toColumn: dim_Date_Live.Date
+
+relationship f4e38d3f-6eff-50fb-6dbc-73a9c5efb59b
+	fromColumn: _Cost_Staff_Actuals.Date
+	toColumn: dim_Date_Live.Date
+
+relationship 39e8df3f-bfbd-4b8c-b4ff-6a915782b4c0
+	joinOnDateBehavior: datePartOnly
+	fromColumn: _Revenue_Actuals.Date
+	toColumn: LocalDateTable_1e33ef91-951d-4b30-a276-d690d4fe60f9.Date
+
+relationship AutoDetected_5bac9971-30ee-4112-b959-dbac595e06e6
+	fromColumn: _Revenue_Actuals.'Project Code'
+	toColumn: crbb5_project.'Project Code'
+
+relationship AutoDetected_dd426b4e-59a7-48a0-9e2e-7350c4ab9ce6
+	fromColumn: _Revenue_Actuals.'Project Code'
+	toColumn: dim_Project_Live.'Project Code'
+
