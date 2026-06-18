@@ -1,0 +1,806 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.10.0/schema.json",
+  "name": "d440dce1d810825a2208",
+  "position": {
+    "x": 32,
+    "y": 432,
+    "z": 3000,
+    "height": 464.00000000000006,
+    "width": 1568,
+    "tabOrder": 3000
+  },
+  "visual": {
+    "visualType": "pivotTable",
+    "query": {
+      "queryState": {
+        "Rows": {
+          "projections": [
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "dim_Project_Live"
+                    }
+                  },
+                  "Property": "Sector"
+                }
+              },
+              "queryRef": "dim_Project_Live.Sector",
+              "nativeQueryRef": "Sector",
+              "active": true
+            },
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "dim_Project_Live"
+                    }
+                  },
+                  "Property": "Project Display"
+                }
+              },
+              "queryRef": "dim_Project_Live.Project Display",
+              "nativeQueryRef": "Project Display",
+              "active": false
+            }
+          ]
+        },
+        "Values": {
+          "projections": [
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Equitix_Measures"
+                    }
+                  },
+                  "Property": "Revenue Act In-Contract"
+                }
+              },
+              "queryRef": "Equitix_Measures.Revenue Act In-Contract",
+              "nativeQueryRef": "Revenue Act In-Contract"
+            },
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Equitix_Measures"
+                    }
+                  },
+                  "Property": "Revenue Act Oo-Contract"
+                }
+              },
+              "queryRef": "Equitix_Measures.Revenue Act Oo-Contract",
+              "nativeQueryRef": "Revenue Act Oo-Contract"
+            },
+            {
+              "field": {
+                "Aggregation": {
+                  "Expression": {
+                    "Column": {
+                      "Expression": {
+                        "SourceRef": {
+                          "Entity": "_Revenue_Forecast_31Dec2025"
+                        }
+                      },
+                      "Property": "Amount"
+                    }
+                  },
+                  "Function": 0
+                }
+              },
+              "queryRef": "Sum(_Revenue_Forecast_31Dec2025.Amount)",
+              "nativeQueryRef": "Revenue Forecast for 2025",
+              "displayName": "Revenue Forecast for 2025"
+            },
+            {
+              "field": {
+                "Aggregation": {
+                  "Expression": {
+                    "Column": {
+                      "Expression": {
+                        "SourceRef": {
+                          "Entity": "_Revenue_Forecast_HARP"
+                        }
+                      },
+                      "Property": "Amount"
+                    }
+                  },
+                  "Function": 0
+                }
+              },
+              "queryRef": "Sum(_Revenue_Forecast_HARP.Amount)",
+              "nativeQueryRef": "Revenue Forecast HARP",
+              "displayName": "Revenue Forecast HARP"
+            },
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Equitix_Measures"
+                    }
+                  },
+                  "Property": "Revenue For In-Contract"
+                }
+              },
+              "queryRef": "Equitix_Measures.Revenue For In-Contract",
+              "nativeQueryRef": "Revenue For In-Contract"
+            },
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Equitix_Measures"
+                    }
+                  },
+                  "Property": "Revenue For Oo-Contract"
+                }
+              },
+              "queryRef": "Equitix_Measures.Revenue For Oo-Contract",
+              "nativeQueryRef": "Revenue For Oo-Contract"
+            },
+            {
+              "field": {
+                "Aggregation": {
+                  "Expression": {
+                    "Column": {
+                      "Expression": {
+                        "SourceRef": {
+                          "Entity": "_Cost_Staff_Actuals"
+                        }
+                      },
+                      "Property": "Amount"
+                    }
+                  },
+                  "Function": 0
+                }
+              },
+              "queryRef": "Sum(_Cost_Staff_Actuals.Amount)",
+              "nativeQueryRef": "Staff Cost Actual",
+              "displayName": "Staff Cost Actual"
+            },
+            {
+              "field": {
+                "Aggregation": {
+                  "Expression": {
+                    "Column": {
+                      "Expression": {
+                        "SourceRef": {
+                          "Entity": "_Cost_Staff_Forecast"
+                        }
+                      },
+                      "Property": "Amount"
+                    }
+                  },
+                  "Function": 0
+                }
+              },
+              "queryRef": "Sum(_Cost_Staff_Forecast.Amount)",
+              "nativeQueryRef": "Staff Cost Forecast",
+              "displayName": "Staff Cost Forecast"
+            },
+            {
+              "field": {
+                "Aggregation": {
+                  "Expression": {
+                    "Column": {
+                      "Expression": {
+                        "SourceRef": {
+                          "Entity": "_Cost_Subcontractor_Actuals"
+                        }
+                      },
+                      "Property": "Amount"
+                    }
+                  },
+                  "Function": 0
+                }
+              },
+              "queryRef": "Sum(_Cost_Subcontractor_Actuals.Amount)",
+              "nativeQueryRef": "Subcontractor Actual",
+              "displayName": "Subcontractor Actual"
+            },
+            {
+              "field": {
+                "Aggregation": {
+                  "Expression": {
+                    "Column": {
+                      "Expression": {
+                        "SourceRef": {
+                          "Entity": "_Cost_Subcontractor_Forecast"
+                        }
+                      },
+                      "Property": "Amount"
+                    }
+                  },
+                  "Function": 0
+                }
+              },
+              "queryRef": "Sum(_Cost_Subcontractor_Forecast.Amount)",
+              "nativeQueryRef": "Subcontractor Forecast",
+              "displayName": "Subcontractor Forecast"
+            },
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Equitix_Measures"
+                    }
+                  },
+                  "Property": "Total Revenue FY"
+                }
+              },
+              "queryRef": "Equitix_Measures.Total Revenue FY",
+              "nativeQueryRef": "Total Revenue FY"
+            },
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Equitix_Measures"
+                    }
+                  },
+                  "Property": "Total Costs FY"
+                }
+              },
+              "queryRef": "Equitix_Measures.Total Costs FY",
+              "nativeQueryRef": "Total Costs FY"
+            },
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Equitix_Measures"
+                    }
+                  },
+                  "Property": "Profit FY"
+                }
+              },
+              "queryRef": "Equitix_Measures.Profit FY",
+              "nativeQueryRef": "Profit FY"
+            },
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Equitix_Measures"
+                    }
+                  },
+                  "Property": "Margin FY %"
+                }
+              },
+              "queryRef": "Equitix_Measures.Margin FY %",
+              "nativeQueryRef": "Margin FY %"
+            }
+          ]
+        }
+      },
+      "sortDefinition": {
+        "sort": [
+          {
+            "field": {
+              "Aggregation": {
+                "Expression": {
+                  "Column": {
+                    "Expression": {
+                      "SourceRef": {
+                        "Entity": "_Revenue_Forecast_31Dec2025"
+                      }
+                    },
+                    "Property": "Amount"
+                  }
+                },
+                "Function": 0
+              }
+            },
+            "direction": "Ascending"
+          }
+        ]
+      }
+    },
+    "expansionStates": [
+      {
+        "roles": [
+          "Rows"
+        ],
+        "levels": [
+          {
+            "queryRefs": [
+              "dim_Project_Live.Sector"
+            ],
+            "isCollapsed": true,
+            "identityKeys": [
+              {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "dim_Project_Live"
+                    }
+                  },
+                  "Property": "Sector"
+                }
+              }
+            ],
+            "isPinned": true
+          },
+          {
+            "queryRefs": [
+              "dim_Project_Live.Project Display"
+            ],
+            "isCollapsed": true,
+            "identityKeys": [
+              {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "dim_Project_Live"
+                    }
+                  },
+                  "Property": "Project Display"
+                }
+              }
+            ],
+            "isPinned": true
+          }
+        ],
+        "root": {
+          "children": [
+            {
+              "identityValues": [
+                {
+                  "Literal": {
+                    "Value": "'Social infrastructure'"
+                  }
+                }
+              ],
+              "children": [
+                {
+                  "identityValues": [
+                    {
+                      "Literal": {
+                        "Value": "'AFW-01 - Wigan - Contract Fixed Fees'"
+                      }
+                    }
+                  ],
+                  "isToggled": true
+                }
+              ]
+            }
+          ]
+        }
+      }
+    ],
+    "objects": {
+      "values": [
+        {
+          "properties": {
+            "fontSize": {
+              "expr": {
+                "Literal": {
+                  "Value": "16D"
+                }
+              }
+            }
+          }
+        }
+      ],
+      "rowHeaders": [
+        {
+          "properties": {
+            "fontSize": {
+              "expr": {
+                "Literal": {
+                  "Value": "16D"
+                }
+              }
+            }
+          }
+        }
+      ],
+      "columnHeaders": [
+        {
+          "properties": {
+            "fontSize": {
+              "expr": {
+                "Literal": {
+                  "Value": "16D"
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    "drillFilterOtherVisuals": true
+  },
+  "filterConfig": {
+    "filters": [
+      {
+        "name": "a020e29f510335e15bbd",
+        "field": {
+          "Column": {
+            "Expression": {
+              "SourceRef": {
+                "Entity": "dim_Project_Live"
+              }
+            },
+            "Property": "Sector"
+          }
+        },
+        "type": "Categorical",
+        "filter": {
+          "Version": 2,
+          "From": [
+            {
+              "Name": "d",
+              "Entity": "dim_Project_Live",
+              "Type": 0
+            }
+          ],
+          "Where": [
+            {
+              "Condition": {
+                "Not": {
+                  "Expression": {
+                    "In": {
+                      "Expressions": [
+                        {
+                          "Column": {
+                            "Expression": {
+                              "SourceRef": {
+                                "Source": "d"
+                              }
+                            },
+                            "Property": "Sector"
+                          }
+                        }
+                      ],
+                      "Values": [
+                        [
+                          {
+                            "Literal": {
+                              "Value": "null"
+                            }
+                          }
+                        ],
+                        [
+                          {
+                            "Literal": {
+                              "Value": "'Internal'"
+                            }
+                          }
+                        ]
+                      ]
+                    }
+                  }
+                }
+              }
+            }
+          ]
+        },
+        "objects": {
+          "general": [
+            {
+              "properties": {
+                "isInvertedSelectionMode": {
+                  "expr": {
+                    "Literal": {
+                      "Value": "true"
+                    }
+                  }
+                }
+              }
+            }
+          ]
+        }
+      },
+      {
+        "name": "27e043e25a788da8ed0a",
+        "field": {
+          "Column": {
+            "Expression": {
+              "SourceRef": {
+                "Entity": "dim_Project_Live"
+              }
+            },
+            "Property": "Project Display"
+          }
+        },
+        "type": "Categorical",
+        "filter": {
+          "Version": 2,
+          "From": [
+            {
+              "Name": "d",
+              "Entity": "dim_Project_Live",
+              "Type": 0
+            }
+          ],
+          "Where": [
+            {
+              "Condition": {
+                "Not": {
+                  "Expression": {
+                    "In": {
+                      "Expressions": [
+                        {
+                          "Column": {
+                            "Expression": {
+                              "SourceRef": {
+                                "Source": "d"
+                              }
+                            },
+                            "Property": "Project Display"
+                          }
+                        }
+                      ],
+                      "Values": [
+                        [
+                          {
+                            "Literal": {
+                              "Value": "null"
+                            }
+                          }
+                        ]
+                      ]
+                    }
+                  }
+                }
+              }
+            }
+          ]
+        },
+        "objects": {
+          "general": [
+            {
+              "properties": {
+                "isInvertedSelectionMode": {
+                  "expr": {
+                    "Literal": {
+                      "Value": "true"
+                    }
+                  }
+                }
+              }
+            }
+          ]
+        }
+      },
+      {
+        "name": "b55625b71f2eafc7be2b",
+        "field": {
+          "Measure": {
+            "Expression": {
+              "SourceRef": {
+                "Entity": "Equitix_Measures"
+              }
+            },
+            "Property": "Revenue Act In-Contract"
+          }
+        },
+        "type": "Advanced"
+      },
+      {
+        "name": "94df94772c1072c22c03",
+        "field": {
+          "Measure": {
+            "Expression": {
+              "SourceRef": {
+                "Entity": "Equitix_Measures"
+              }
+            },
+            "Property": "Revenue For Oo-Contract"
+          }
+        },
+        "type": "Advanced"
+      },
+      {
+        "name": "36e3e10221460e7eeaf7",
+        "field": {
+          "Measure": {
+            "Expression": {
+              "SourceRef": {
+                "Entity": "Equitix_Measures"
+              }
+            },
+            "Property": "Total Revenue FY"
+          }
+        },
+        "type": "Advanced"
+      },
+      {
+        "name": "858ef34095f07fceb956",
+        "field": {
+          "Measure": {
+            "Expression": {
+              "SourceRef": {
+                "Entity": "Equitix_Measures"
+              }
+            },
+            "Property": "Profit FY"
+          }
+        },
+        "type": "Advanced"
+      },
+      {
+        "name": "93ec6f2c427641822880",
+        "field": {
+          "Aggregation": {
+            "Expression": {
+              "Column": {
+                "Expression": {
+                  "SourceRef": {
+                    "Entity": "_Cost_Staff_Forecast"
+                  }
+                },
+                "Property": "Amount"
+              }
+            },
+            "Function": 0
+          }
+        },
+        "type": "Advanced"
+      },
+      {
+        "name": "e03112221fb0b6354d05",
+        "field": {
+          "Aggregation": {
+            "Expression": {
+              "Column": {
+                "Expression": {
+                  "SourceRef": {
+                    "Entity": "_Cost_Staff_Actuals"
+                  }
+                },
+                "Property": "Amount"
+              }
+            },
+            "Function": 0
+          }
+        },
+        "type": "Advanced"
+      },
+      {
+        "name": "e8e2961b57eff2651e98",
+        "field": {
+          "Aggregation": {
+            "Expression": {
+              "Column": {
+                "Expression": {
+                  "SourceRef": {
+                    "Entity": "_Cost_Subcontractor_Actuals"
+                  }
+                },
+                "Property": "Amount"
+              }
+            },
+            "Function": 0
+          }
+        },
+        "type": "Advanced"
+      },
+      {
+        "name": "2a8bf1d10acc98eeaacd",
+        "field": {
+          "Aggregation": {
+            "Expression": {
+              "Column": {
+                "Expression": {
+                  "SourceRef": {
+                    "Entity": "_Cost_Subcontractor_Forecast"
+                  }
+                },
+                "Property": "Amount"
+              }
+            },
+            "Function": 0
+          }
+        },
+        "type": "Advanced"
+      },
+      {
+        "name": "c28b4a3cd3c45a015e37",
+        "field": {
+          "Measure": {
+            "Expression": {
+              "SourceRef": {
+                "Entity": "Equitix_Measures"
+              }
+            },
+            "Property": "Total Costs FY"
+          }
+        },
+        "type": "Advanced"
+      },
+      {
+        "name": "175a509b0cc2c8f92640",
+        "field": {
+          "Aggregation": {
+            "Expression": {
+              "Column": {
+                "Expression": {
+                  "SourceRef": {
+                    "Entity": "_Revenue_Forecast_31Dec2025"
+                  }
+                },
+                "Property": "Amount"
+              }
+            },
+            "Function": 0
+          }
+        },
+        "type": "Advanced"
+      },
+      {
+        "name": "bfcb7bd35f73270f019b",
+        "field": {
+          "Aggregation": {
+            "Expression": {
+              "Column": {
+                "Expression": {
+                  "SourceRef": {
+                    "Entity": "_Revenue_Forecast_HARP"
+                  }
+                },
+                "Property": "Amount"
+              }
+            },
+            "Function": 0
+          }
+        },
+        "type": "Advanced"
+      },
+      {
+        "name": "74b6db07f5ef9b363acd",
+        "field": {
+          "Measure": {
+            "Expression": {
+              "SourceRef": {
+                "Entity": "Equitix_Measures"
+              }
+            },
+            "Property": "Revenue For In-Contract"
+          }
+        },
+        "type": "Advanced"
+      },
+      {
+        "name": "089035360da2e6b41275",
+        "field": {
+          "Measure": {
+            "Expression": {
+              "SourceRef": {
+                "Entity": "Equitix_Measures"
+              }
+            },
+            "Property": "Margin FY %"
+          }
+        },
+        "type": "Advanced"
+      },
+      {
+        "name": "262c4505cd355380da72",
+        "field": {
+          "Measure": {
+            "Expression": {
+              "SourceRef": {
+                "Entity": "Equitix_Measures"
+              }
+            },
+            "Property": "Revenue Act Oo-Contract"
+          }
+        },
+        "type": "Advanced"
+      }
+    ]
+  }
+}
