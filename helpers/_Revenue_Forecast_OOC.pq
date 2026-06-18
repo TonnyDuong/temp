@@ -37,7 +37,7 @@ let
 
     // Step 2 — parse the month-end header (US M/d/yyyy) into a real Date
     ParsedDate = Table.AddColumn(Unpivoted, "Date",
-        each Date.FromText([#"Forecast Date Text"], [Format="M/d/yyyy", Culture="en-US"]),
+        each Date.FromText([#"Forecast Date Text"], [Format="dd/MM/yyyy", Culture="en-US"]),
         type date),
     Typed = Table.TransformColumnTypes(ParsedDate, {{"Amount", Currency.Type}}),
 
@@ -51,6 +51,10 @@ let
 
     Final = Table.SelectColumns(AddTLK,
         {"Date", "Project Code", "Account Code", "Subsidiary",
-         "Type", "Contract Type", "Snapshot Date", "Amount", "TransactionLineKey"})
+         "Type", "Contract Type", "Snapshot Date", "Amount", "TransactionLineKey"}),
+
+    // Keep only months after the cutover date
+    FilteredByCutover = Table.SelectRows(Final,
+        each [Date] > _CutoverDate)
 in
-    Final
+    FilteredByCutover

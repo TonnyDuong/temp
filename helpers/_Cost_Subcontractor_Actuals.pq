@@ -49,6 +49,10 @@ let
 
     Final = Table.SelectColumns(Renamed,
         {"Date", "Project Code", "TimeWorkReference", "Account Code",
-         "Category", "Type", "Snapshot Date", "Amount"})
+         "Category", "Type", "Snapshot Date", "Amount"}),
+
+          // Keep only months on or before the cutover date
+    FilteredByCutover = Table.SelectRows(Final,
+        each [Date] <= _CutoverDate)
 in
-    Final
+    FilteredByCutover

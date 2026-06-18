@@ -22,6 +22,7 @@ let
         #"_Cost_Staff_Actuals",
         #"_Cost_Staff_Forecast",
         #"_Cost_Subcontractor_Forecast"
-    })
+    }),
+    #"Changed Type" = Table.TransformColumnTypes(Combined,{{"Date", type date}})
 in
-    Combined
+    #"Changed Type"

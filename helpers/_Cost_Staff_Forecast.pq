@@ -41,9 +41,13 @@ let
     // Step 1 — keep Forecast rows only
     ForecastOnly = Table.SelectRows(Source, each [crbb5_version] = "Forecast"),
 
+    //Step 1b
+    Deduplicated= Table.Distinct(ForecastOnly,
+    {"crbb5_hrreferencename", "crbb5_projectreferencename",  "crbb5_year" }),
+
     // Step 2 — friendly names; use the *_name lookup columns (text codes,
     //          not lookup GUIDs)
-    Renamed = Table.RenameColumns(ForecastOnly, {
+    Renamed = Table.RenameColumns(Deduplicated, {
         {"crbb5_hrreferencename",      "TimeWorkReference"},
         {"crbb5_projectreferencename", "Project Code"},
         {"crbb5_value",                "AllocationFraction"},
@@ -89,6 +93,12 @@ let
 
     Final = Table.SelectColumns(AddSnapshot,
         {"Date", "Project Code", "TimeWorkReference", "Account Code",
-         "Category", "Type", "Snapshot Date", "Amount"})
+         "Category", "Type", "Snapshot Date", "Amount"}),
+    #"Added Custom" = Table.AddColumn(Final, "StaffKey", each [TimeWorkReference] & "-" & Text.From(Date.Year([Date])), type text),
+
+// Step 7 — suppress forecast rows already covered by actuals
+    FilteredByCutover = Table.SelectRows(#"Added Custom",
+        each [Date] > _CutoverDate),
+    #"Filtered Rows" = Table.SelectRows(FilteredByCutover, each true)
 in
-    Final
+    #"Filtered Rows"

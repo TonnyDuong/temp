@@ -77,6 +77,8 @@ let
         type logical),
 
     // Step 9 — drop the helper column used for EMS 90 detection
-    Final = Table.RemoveColumns(AddIsEMS90, {"crbb5_originalprojectcode"})
+    Final = Table.RemoveColumns(AddIsEMS90, {"crbb5_originalprojectcode"}),
+    #"Added Custom" = Table.AddColumn(Final, "Custom", each [TimeWorkReference] & "-" & Text.From([Year])),
+    #"Renamed Columns" = Table.RenameColumns(#"Added Custom",{{"Custom", "StaffKey"}})
 in
-    Final
+    #"Renamed Columns"

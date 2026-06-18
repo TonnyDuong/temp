@@ -1,0 +1,48 @@
+Margin FY % = DIVIDE([Profit FY], [Total Revenue FY])
+
+*Margin YTD % = DIVIDE([Profit YTD], [Total Revenue YTD])
+
+Profit FY = [Total Revenue FY] - [Total Costs FY]
+
+*Profit YTD = [Total Revenue YTD] - [Total Costs YTD]
+
+*Revenue = SUM(fact_Revenue_Live[Amount]) * -1
+
+Revenue Act In-Contract = -CALCULATE(SUM(_Revenue_Actuals[Amount]), _Revenue_Actuals[Contract Type]="In Contract")
+
+Revenue Act Oo-Contract = -CALCULATE(SUM(_Revenue_Actuals[Amount]), _Revenue_Actuals[Contract Type]="Out of Contract")
+
+Revenue Actual = CALCULATE([Revenue], fact_Revenue_Live[Type] = "Actual")
+
+Revenue For In-Contract = (SUM(_Revenue_Forecast_31Dec2025[Amount])+SUM(_Revenue_Forecast_HARP[Amount]))
+
+Revenue For Oo-Contract = SUM(_Revenue_Forecast_OOC[Amount])
+
+*Staff Cost Forecast = 
+CALCULATE(
+    SUM(_Cost_Staff_Forecast[Amount]),
+    FILTER(dim_Project_Live, dim_Project_Live[IsInScope] = TRUE()))
+
+*System Date = "DATE: " & FORMAT(TODAY(), "dd-MM-yyyy")
+
+Total Costs FY = SUM(_Cost_Other_Actuals[Amount])
++SUM(_Cost_Staff_Actuals[Amount])
++SUM(_Cost_Staff_Forecast[Amount])
++SUM(_Cost_Subcontractor_Actuals[Amount])
++SUM(_Cost_Subcontractor_Forecast[Amount])
+
+*Total Costs YTD = SUM(_Cost_Other_Actuals[Amount])
++SUM(_Cost_Staff_Actuals[Amount])
++SUM(_Cost_Subcontractor_Actuals[Amount])
+
+Total Revenue FY = [Revenue Act In-Contract] + [Revenue Act Oo-Contract] + SUM(_Revenue_Forecast_31Dec2025[Amount]) + [Revenue For Oo-Contract]
+
+*Total Revenue YTD = [Revenue Act In-Contract] + [Revenue Act Oo-Contract]
+
+*Total Staff Cost = 
+    SUMX(
+    fact_Timesheet_Live,
+    fact_Timesheet_Live[Duration] *
+    RELATED(dim_StaffCosts_Live[StaffCostPerHour]))
+
+* = not enabled

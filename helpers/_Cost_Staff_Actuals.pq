@@ -26,6 +26,12 @@ let
 
     Final = Table.SelectColumns(AddSnapshot,
         {"Date", "Project Code", "TimeWorkReference", "Account Code",
-         "Category", "Type", "Snapshot Date", "Amount"})
+         "Category", "Type", "Snapshot Date", "Amount"}),
+    #"Added Custom" = Table.AddColumn(Final, "StaffKey", each [TimeWorkReference] & "-" & Text.From(Date.Year([Date])), type text),
+
+    // Keep only months on or before the cutover date
+    FilteredByCutover = Table.SelectRows(#"Added Custom",
+        each [Date] <= DateTime.From(_CutoverDate)),
+    #"Filtered Rows" = Table.SelectRows(FilteredByCutover, each true)
 in
-    Final
+    #"Filtered Rows"

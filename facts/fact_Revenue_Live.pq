@@ -19,6 +19,7 @@ let
         #"_Revenue_Forecast_31Dec2025",
         #"_Revenue_Forecast_HARP",
         #"_Revenue_Forecast_OOC"
-    })
+    }),
+    #"Filtered Rows" = Table.SelectRows(Combined, each true)
 in
     Combined
