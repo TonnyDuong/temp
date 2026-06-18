@@ -1,0 +1,256 @@
+table dim_Project_Live
+	lineageTag: ac9fef59-837e-4b90-9bb7-6e507ae0952d
+
+	column crbb5_projectid
+		dataType: string
+		lineageTag: 2e25a8d7-e9c7-4666-a608-c1c0428fdc27
+		summarizeBy: none
+		sourceColumn: crbb5_projectid
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Project Code'
+		dataType: string
+		lineageTag: 57699dff-7ee1-4226-892d-388e87720bbc
+		summarizeBy: none
+		sourceColumn: Project Code
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Project Name'
+		dataType: string
+		lineageTag: d2708fe2-64f2-4783-9b0f-03aecbde9353
+		summarizeBy: none
+		sourceColumn: Project Name
+
+		annotation SummarizationSetBy = Automatic
+
+	column crbb5_contract
+		dataType: string
+		lineageTag: 363bc8f1-e684-4090-8d64-fef32a946b2f
+		summarizeBy: none
+		sourceColumn: crbb5_contract
+
+		annotation SummarizationSetBy = Automatic
+
+	column Subsidiary
+		dataType: string
+		lineageTag: bf08c969-5c02-4115-b3a4-958566a8b771
+		summarizeBy: none
+		sourceColumn: Subsidiary
+
+		annotation SummarizationSetBy = Automatic
+
+	column Sector
+		dataType: string
+		lineageTag: 924dabcb-2800-4f23-abda-6b91cceb0a1c
+		summarizeBy: none
+		sourceColumn: Sector
+
+		annotation SummarizationSetBy = Automatic
+
+	column Portfolio
+		dataType: string
+		lineageTag: e49f9566-0f7a-4918-b4a3-c0be42c7b600
+		summarizeBy: none
+		sourceColumn: Portfolio
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'MSA Reference'
+		dataType: string
+		lineageTag: 82155912-25d2-4ecb-bd80-172e187e6083
+		summarizeBy: none
+		sourceColumn: MSA Reference
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Concession Expiry'
+		dataType: dateTime
+		formatString: General Date
+		lineageTag: 88e8f2b4-ca84-4f50-afe9-5952811ea7b3
+		summarizeBy: none
+		sourceColumn: Concession Expiry
+
+		variation Variation
+			isDefault
+			relationship: d44a522f-41a2-4b7d-81e6-8a64bfa0cbd3
+			defaultHierarchy: LocalDateTable_2f4b43a0-881a-452b-91a2-740bde90e617.'Date Hierarchy'
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Contract Phase'
+		dataType: string
+		lineageTag: 25875dbd-ef92-48ee-bda7-67bbefec3572
+		summarizeBy: none
+		sourceColumn: Contract Phase
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Project Type'
+		dataType: string
+		lineageTag: d11d499d-c778-46b6-a84e-920979ebf074
+		summarizeBy: none
+		sourceColumn: Project Type
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Contract Status'
+		dataType: string
+		lineageTag: 731ff5b4-812f-415d-99e4-2a7c73f62f68
+		summarizeBy: none
+		sourceColumn: Contract Status
+
+		annotation SummarizationSetBy = Automatic
+
+	column IsInScope
+		dataType: boolean
+		formatString: """TRUE"";""TRUE"";""FALSE"""
+		lineageTag: b82835b8-820f-4504-aec9-1d147bcae431
+		summarizeBy: none
+		sourceColumn: IsInScope
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Project Display'
+		dataType: string
+		lineageTag: c5238e53-15db-428b-ba82-1e5fa41c4018
+		summarizeBy: none
+		sourceColumn: Project Display
+
+		annotation SummarizationSetBy = Automatic
+
+	partition dim_Project_Live = m
+		mode: import
+		source = ```
+				// =====================================================================
+				// dim_Project_Live
+				// ---------------------------------------------------------------------
+				// Purpose:      Project dimension — absorbs contract-level attributes so
+				//               the old dim_Contracts can be retired.
+				// Grain:        One row per project.
+				// Dependencies: crbb5_project, crbb5_contractregister
+				// Load:         enabled.
+				// ---------------------------------------------------------------------
+				// Contract Phase — REVISED (29 May meeting):
+				//   The MSA-prefix rule below is INFORMATIONAL ONLY. Chris confirmed that
+				//   `EMS-IT` AND `EMSI-IT` are both LEGACY numbering from when the
+				//   contract register was first set up (briefly used, then dropped). They
+				//   do NOT indicate Italian — country is determined by SUBSIDIARY:
+				//     ESS         → Italian
+				//     EMS / BWG / BWS → UK
+				//
+				//   The canonical source for whether to include a contract in the
+				//   profitability report is the contract's STATUS — only Live / Mobilised /
+				//   Live-Stage contracts are in scope. Pipeline contracts are excluded.
+				//   `crbb5_contractstatus` is expanded below for this purpose; Chris will
+				//   send the exact list of statuses to keep.
+				//
+				//   Legacy MSA-prefix derivation (kept for informational drill-through,
+				//   not for filtering the report):
+				//     EMS-MSA*  → "Live (MSA-prefix)"
+				//     EMSI-IT*  → "Live (legacy IT prefix, still active)"
+				//     EMS-PR*   → "Pipeline"
+				//     EMS-IT*   → "Legacy"
+				//     else      → "Other"
+				// ---------------------------------------------------------------------
+				// Display rules (confirmed by Chris, 27 May check-in):
+				//   Sector          = the sector NAME (Social Infrastructure, Renewables,
+				//                     ...), NOT the numeric choice ID. The numeric
+				//                     crbb5_supersectorchoice is just a table ID and is
+				//                     not surfaced. Source the *name* column instead.
+				//   Project Display = "<Project Code> - <Project Name>" so report rows
+				//                     show the code and the full description together.
+				// ---------------------------------------------------------------------
+				// Column sources (CONFIRMED against the crbb5_contractregister column list):
+				//   Join key       = crbb5_contractregister[crbb5_contractregisterid]  (confirmed).
+				//   Sector (name)  = crbb5_supersectorchoicename                        (confirmed).
+				//   Portfolio      = crbb5_portfolio                                    (confirmed).
+				//   MSA Reference  = crbb5_msareference                                 (confirmed).
+				//   Concession Exp = crbb5_concessionexpiry                             (confirmed).
+				//   Project Type   = crbb5_project[crbb5_projecttypename] (the text name,
+				//                     e.g. Operational / Construction — NOT the numeric
+				//                     crbb5_projecttype choice ID).
+				//   Billing Method / Start / End dates are NOT on crbb5_contractregister
+				//     (they live on crbb5_billingschedule). Dropped here; add a
+				//     crbb5_billingschedule join later only if the report needs them.
+				// ---------------------------------------------------------------------
+				// Column names (CONFIRMED against the crbb5_project column list): the
+				// entity is exposed by LOGICAL name (crbb5_projectcode, crbb5_projectname,
+				// crbb5_projecttypename, crbb5_subsidiaryname), not display names. Renamed
+				// to friendly names in Step 1b. (crbb5_project also carries its own
+				// `Project Display` column; we build ours explicitly to guarantee the
+				// "<code> - <name>" format Chris asked for on 27 May.)
+				// =====================================================================
+				let
+				    Source = #"crbb5_project",
+				
+				    // Step 1 — narrow to the columns we'll use (logical names)
+				    Selected = Table.SelectColumns(Source, {
+				        "crbb5_projectid",
+				        "crbb5_projectcode",
+				        "crbb5_projectname",
+				        "crbb5_projecttypename",
+				        "crbb5_contract",
+				        "crbb5_subsidiaryname"
+				    }),
+				
+				    // Step 1b — friendly names
+				    RenamedProject = Table.RenameColumns(Selected, {
+				        {"crbb5_projectcode",     "Project Code"},
+				        {"crbb5_projectname",     "Project Name"},
+				        {"crbb5_projecttypename", "Project Type"},
+				        {"crbb5_subsidiaryname",  "Subsidiary"}
+				    }),
+				
+				    // Step 2 — merge contract register attributes via crbb5_contract GUID
+				    Merged = Table.NestedJoin(
+				        RenamedProject, {"crbb5_contract"},
+				        #"crbb5_contractregister", {"crbb5_contractregisterid"},   // confirmed key column
+				        "ContractRegister_Lookup", JoinKind.LeftOuter
+				    ),
+				    Expanded = Table.ExpandTableColumn(Merged, "ContractRegister_Lookup",
+				        {"crbb5_supersectorchoicename", "crbb5_portfolio", "crbb5_msareference", "crbb5_concessionexpiry", "crbb5_contractstatus"},
+				        {"Sector", "Portfolio", "MSA Reference", "Concession Expiry", "Contract Status"}
+				    ),
+				     // Step 2b — IsInScope flag. TRUE if the contract status is in Chris's
+				    //           confirmed list for the profitability report. From his
+				    //           02 Jun 2026 email: "Live, Mobilised and Terminated. These 3
+				    //           stages all indicate a Live (or previously Live) contract."
+				    //           Pipeline (and any other status) is excluded.
+				    AddIsInScope = Table.AddColumn(Expanded, "IsInScope",        
+				        each List.Contains({"Live", "Mobilised", "Mobilized", "Terminated"}, [Contract Status] ?? ""),
+				        type logical),
+				
+				    // Step 3 — default blank Portfolio
+				    FilledPortfolio = Table.ReplaceValue(
+				        AddIsInScope,
+				        each [Portfolio],
+				        each (if [Portfolio] = null or [Portfolio] = "" then "Unportfolioed" else [Portfolio]),
+				        Replacer.ReplaceValue,
+				        {"Portfolio"}
+				    ),
+				
+				    // Step 4 — derive Contract Phase from MSA Reference prefix
+				    AddContractPhase = Table.AddColumn(FilledPortfolio, "Contract Phase", each
+				        if [MSA Reference] = null then "Other"
+				        else if Text.StartsWith([MSA Reference], "EMS-MSA") then "Live"
+				        else if Text.StartsWith([MSA Reference], "EMSI-IT") then "Live"      // live Italian / ESS — distinct from legacy EMS-IT
+				        else if Text.StartsWith([MSA Reference], "EMS-PR")  then "Pipeline"
+				        else if Text.StartsWith([MSA Reference], "EMS-IT")  then "Legacy"
+				        else "Other",
+				        type text),
+				
+				    // Step 5 — merged "<Project Code> - <Project Name>" label for report rows
+				    AddProjectDisplay = Table.AddColumn(AddContractPhase, "Project Display",
+				        each Text.From([Project Code]) & " - " & Text.From([Project Name]),
+				        type text),
+				    #"Filtered Rows" = Table.SelectRows(AddProjectDisplay, each ([Sector] <> null))
+				in
+				    #"Filtered Rows"
+				```
+
+	annotation PBI_NavigationStepName = Navigation
+
+	annotation PBI_ResultType = Table
+

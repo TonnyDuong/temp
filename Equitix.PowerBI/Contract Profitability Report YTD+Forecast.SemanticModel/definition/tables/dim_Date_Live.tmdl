@@ -1,0 +1,138 @@
+table dim_Date_Live
+	lineageTag: 04c3404f-2ecc-4699-a56d-1f03e0b7f4b9
+
+	column Date
+		dataType: dateTime
+		formatString: Long Date
+		lineageTag: 8a5fc5c0-d668-4573-8a36-ce6ef7d1b9f7
+		summarizeBy: none
+		sourceColumn: Date
+
+		variation Variation
+			isDefault
+			relationship: 9efc16ba-0317-4f9f-893d-832153259110
+			defaultHierarchy: LocalDateTable_e5e369a6-3d23-4254-9c4a-7ff621eb8c28.'Date Hierarchy'
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation UnderlyingDateTimeDataType = Date
+
+	column Year
+		dataType: int64
+		formatString: 0
+		lineageTag: 0dd859e2-af38-4561-88af-4f16b853a835
+		summarizeBy: sum
+		sourceColumn: Year
+
+		annotation SummarizationSetBy = Automatic
+
+	column Month
+		dataType: int64
+		formatString: 0
+		lineageTag: 760d6fc8-e964-41c8-9680-9a302523e8a3
+		summarizeBy: sum
+		sourceColumn: Month
+
+		annotation SummarizationSetBy = Automatic
+
+	column MonthName
+		dataType: string
+		lineageTag: 9bb6fab8-08a0-48fe-b849-185c7587eef5
+		summarizeBy: none
+		sourceColumn: MonthName
+
+		annotation SummarizationSetBy = Automatic
+
+	column Quarter
+		dataType: int64
+		formatString: 0
+		lineageTag: 37a69645-0429-44a5-abed-909e5c1a6376
+		summarizeBy: sum
+		sourceColumn: Quarter
+
+		annotation SummarizationSetBy = Automatic
+
+	column MonthYear
+		dataType: string
+		lineageTag: 45d32d9d-72fa-47c7-ac07-6ee2fce38870
+		summarizeBy: none
+		sourceColumn: MonthYear
+
+		annotation SummarizationSetBy = Automatic
+
+	column YearMonth
+		dataType: int64
+		formatString: 0
+		lineageTag: 086444d4-9f93-480e-8b6b-f126369deb74
+		summarizeBy: sum
+		sourceColumn: YearMonth
+
+		annotation SummarizationSetBy = Automatic
+
+	column IsYTD
+		dataType: boolean
+		formatString: """TRUE"";""TRUE"";""FALSE"""
+		lineageTag: c19e0754-6f16-475b-980f-437352c6978f
+		summarizeBy: none
+		sourceColumn: IsYTD
+
+		annotation SummarizationSetBy = Automatic
+
+	column IsCurrentMonth
+		dataType: boolean
+		formatString: """TRUE"";""TRUE"";""FALSE"""
+		lineageTag: fcfde57d-e5f3-4c29-ae48-911fc791eff2
+		summarizeBy: none
+		sourceColumn: IsCurrentMonth
+
+		annotation SummarizationSetBy = Automatic
+
+	partition dim_Date_Live = m
+		mode: import
+		source =
+				// =====================================================================
+				// dim_Date_Live
+				// ---------------------------------------------------------------------
+				// Purpose:      Calendar dimension, 2024-01-01 to 2035-12-31.
+				// Grain:        One row per day (4,383 rows total).
+				// Dependencies: none.
+				// Load:         enabled.
+				// Post-load:    Mark as Date Table (Model view) → Date column.
+				// ---------------------------------------------------------------------
+				// Columns:
+				//   Date            (date)     primary key
+				//   Year            (Int64)
+				//   Month           (Int64)    1-12
+				//   MonthName       (text)     "January" etc.
+				//   Quarter         (Int64)    1-4
+				//   MonthYear       (text)     "Mar 2026"
+				//   YearMonth       (Int64)    202603 — useful for sort-by
+				//   IsYTD           (logical)  Date <= today
+				//   IsCurrentMonth  (logical)
+				// =====================================================================
+				let
+				    StartDate = #date(2024, 1, 1),
+				    EndDate   = #date(2035, 12, 31),
+				    DayCount  = Duration.Days(EndDate - StartDate) + 1,
+				    Dates     = List.Dates(StartDate, DayCount, #duration(1, 0, 0, 0)),
+				    AsTable   = Table.FromList(Dates, Splitter.SplitByNothing(), {"Date"}),
+				    Typed     = Table.TransformColumnTypes(AsTable, {{"Date", type date}}),
+				
+				    AddYear           = Table.AddColumn(Typed,            "Year",           each Date.Year([Date]),                                       Int64.Type),
+				    AddMonth          = Table.AddColumn(AddYear,          "Month",          each Date.Month([Date]),                                      Int64.Type),
+				    AddMonthName      = Table.AddColumn(AddMonth,         "MonthName",      each Date.MonthName([Date]),                                  type text),
+				    AddQuarter        = Table.AddColumn(AddMonthName,     "Quarter",        each Date.QuarterOfYear([Date]),                              Int64.Type),
+				    AddMonthYear      = Table.AddColumn(AddQuarter,       "MonthYear",      each Date.ToText([Date], "MMM yyyy"),                         type text),
+				    AddYearMonth      = Table.AddColumn(AddMonthYear,     "YearMonth",      each Date.Year([Date]) * 100 + Date.Month([Date]),            Int64.Type),
+				    AddIsYTD          = Table.AddColumn(AddYearMonth,     "IsYTD",          each [Date] <= Date.From(DateTime.LocalNow()),                type logical),
+				    AddIsCurrentMonth = Table.AddColumn(AddIsYTD,         "IsCurrentMonth",
+				        each Date.Year([Date]) = Date.Year(DateTime.LocalNow())
+				         and Date.Month([Date]) = Date.Month(DateTime.LocalNow()),
+				        type logical)
+				in
+				    AddIsCurrentMonth
+
+	annotation PBI_NavigationStepName = Navigation
+
+	annotation PBI_ResultType = Table
+

@@ -1,0 +1,76 @@
+table dim_HolidayPolicy_Live
+	lineageTag: a89a062e-0c0a-40d5-86c5-c913308f782d
+
+	column Year
+		dataType: int64
+		formatString: 0
+		lineageTag: 1cd2ebc1-4370-42a8-8e89-6139fa1d68a2
+		summarizeBy: none
+		sourceColumn: Year
+
+		annotation SummarizationSetBy = Automatic
+
+	column HolidayDays
+		dataType: double
+		lineageTag: 6974db43-14e1-427e-b71d-804b095a4802
+		summarizeBy: none
+		sourceColumn: HolidayDays
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column PublicHolidayDays
+		dataType: double
+		lineageTag: 4001b14f-5817-48f4-b17a-36537398dc75
+		summarizeBy: none
+		sourceColumn: PublicHolidayDays
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	partition dim_HolidayPolicy_Live = m
+		mode: import
+		source =
+				// =====================================================================
+				// dim_HolidayPolicy_Live
+				// ---------------------------------------------------------------------
+				// Purpose:      Per-year holiday-day allowance used by the staff-cost
+				//               forecast calculation (Chris's 02 Jun 2026 email).
+				// Grain:        One row per Year.
+				// Dependencies: none (manually maintained).
+				// Load:         enabled (hidden — used as a join source in PQ).
+				// ---------------------------------------------------------------------
+				// HolidayDays       = annual-leave entitlement assumed in the forecast.
+				//                     28 is the AVERAGE entitlement rounded across all
+				//                     staff (the tenure-based range is 26–30). Chris
+				//                     explicitly wants this configurable per year in
+				//                     case of policy change.
+				// PublicHolidayDays = UK public holidays per year (8 typical).
+				//
+				// To change the allowance for a future year, edit the row below or add
+				// a new row. The forecast helper picks the row matching the Jedox row's
+				// Year; if no match, it falls back to the latest year present.
+				// =====================================================================
+				let
+				    Source = #table(
+				        type table [
+				            Year              = Int64.Type,
+				            HolidayDays       = number,
+				            PublicHolidayDays = number
+				        ],
+				        {
+				            {2025, 28, 8},
+				            {2026, 28, 8}
+				            // Append more rows here as policy is set for future years, e.g.
+				            // ,{2027, 28, 8}
+				        }
+				    )
+				in
+				    Source
+
+	annotation PBI_NavigationStepName = Navigation
+
+	annotation PBI_ResultType = Table
+

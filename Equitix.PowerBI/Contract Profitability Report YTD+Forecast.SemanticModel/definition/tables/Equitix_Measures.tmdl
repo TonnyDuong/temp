@@ -1,0 +1,135 @@
+table Equitix_Measures
+	lineageTag: 41dbe92d-0181-4760-a37b-157ca9e2077e
+
+	measure Revenue = SUM(fact_Revenue_Live[Amount]) * -1
+		lineageTag: b7ea20b7-61be-451e-935d-95970856785b
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure 'Revenue For Oo-Contract' = SUM(_Revenue_Forecast_OOC[Amount])
+		formatString: "£"#,0.00;-"£"#,0.00;"£"#,0.00
+		lineageTag: deb58f01-be21-4451-bfe7-9e21df1caf18
+
+		annotation PBI_FormatHint = {"currencyCulture":"en-GB"}
+
+	measure 'Revenue Act In-Contract' = -CALCULATE(SUM(_Revenue_Actuals[Amount]), _Revenue_Actuals[Contract Type]="In Contract")
+		formatString: "£"#,0.00;-"£"#,0.00;"£"#,0.00
+		lineageTag: 560ce5b1-7641-434f-b88e-acaee3aff0bc
+
+		annotation PBI_FormatHint = {"currencyCulture":"en-GB"}
+
+	measure 'Revenue Act Oo-Contract' = -CALCULATE(SUM(_Revenue_Actuals[Amount]), _Revenue_Actuals[Contract Type]="Out of Contract")
+		formatString: "£"#,0.00;-"£"#,0.00;"£"#,0.00
+		lineageTag: 44847386-92bb-40e7-a076-b0a12f2dc076
+
+		annotation PBI_FormatHint = {"currencyCulture":"en-GB"}
+
+	measure 'Revenue For In-Contract' = (SUM(_Revenue_Forecast_31Dec2025[Amount])+SUM(_Revenue_Forecast_HARP[Amount]))
+		formatString: "£"#,0.00;-"£"#,0.00;"£"#,0.00
+		lineageTag: 213197db-d940-4e93-b0fd-f189a011b60f
+
+		annotation PBI_FormatHint = {"currencyCulture":"en-GB"}
+
+	measure 'Total Revenue YTD' = [Revenue Act In-Contract] + [Revenue Act Oo-Contract]
+		formatString: "£"#,0.00;-"£"#,0.00;"£"#,0.00
+		lineageTag: 249ad81c-0e9a-4236-a981-e6ab465b2828
+
+		annotation PBI_FormatHint = {"currencyCulture":"en-GB"}
+
+	measure 'Revenue Actual' = CALCULATE([Revenue], fact_Revenue_Live[Type] = "Actual")
+		lineageTag: e7c26e06-7009-4a2e-a2e5-35e3f1752e81
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure 'Profit YTD' = [Total Revenue YTD] - [Total Costs YTD]
+		formatString: "£"#,0.00;-"£"#,0.00;"£"#,0.00
+		lineageTag: 076f79d1-313e-40ea-a09c-3bfe75b2fbad
+
+		annotation PBI_FormatHint = {"currencyCulture":"en-GB"}
+
+	measure 'Margin YTD %' = DIVIDE([Profit YTD], [Total Revenue YTD])
+		formatString: 0.00%;-0.00%;0.00%
+		lineageTag: 7e3ca6bf-c5f8-45a2-ab46-10c04262a64a
+
+	measure 'Total Staff Cost' = ```
+			
+			    SUMX(
+			    fact_Timesheet_Live,
+			    fact_Timesheet_Live[Duration] *
+			    RELATED(dim_StaffCosts_Live[StaffCostPerHour]))
+			```
+		formatString: "£"#,0.00;-"£"#,0.00;"£"#,0.00
+		lineageTag: 7a3a7971-6bc3-4692-bcde-40d7af0a89af
+
+		annotation PBI_FormatHint = {"currencyCulture":"en-GB"}
+
+	measure 'Total Revenue FY' = [Revenue Act In-Contract] + [Revenue Act Oo-Contract] + SUM(_Revenue_Forecast_31Dec2025[Amount]) + [Revenue For Oo-Contract]
+		formatString: "£"#,0.00;-"£"#,0.00;"£"#,0.00
+		lineageTag: 380aefb3-996a-48b0-b6e8-934c43b3ab21
+
+		annotation PBI_FormatHint = {"currencyCulture":"en-GB"}
+
+	measure 'Profit FY' = [Total Revenue FY] - [Total Costs FY]
+		formatString: "£"#,0.00;-"£"#,0.00;"£"#,0.00
+		lineageTag: 10e5a2c0-3bb1-4277-a760-6070a3d478b4
+
+		annotation PBI_FormatHint = {"currencyCulture":"en-GB"}
+
+	measure 'Margin FY %' = DIVIDE([Profit FY], [Total Revenue FY])
+		formatString: 0.00%;-0.00%;0.00%
+		lineageTag: f370da9b-ef36-4878-b528-2def5474d91f
+
+	measure 'Total Costs YTD' =
+			SUM(_Cost_Other_Actuals[Amount])
+			+SUM(_Cost_Staff_Actuals[Amount])
+			+SUM(_Cost_Subcontractor_Actuals[Amount])
+		formatString: "£"#,0.00;-"£"#,0.00;"£"#,0.00
+		lineageTag: 8b478ee1-5d44-42c0-8c7c-be40bc2ebdfc
+
+		annotation PBI_FormatHint = {"currencyCulture":"en-GB"}
+
+	measure 'System Date' = "DATE: " & FORMAT(TODAY(), "dd-MM-yyyy")
+		lineageTag: a0119ad8-30e7-4793-b18c-6045c82556ae
+
+	measure 'Staff Cost Forecast' =
+			
+			CALCULATE(
+			    SUM(_Cost_Staff_Forecast[Amount]),
+			    FILTER(dim_Project_Live, dim_Project_Live[IsInScope] = TRUE()))
+		formatString: "£"#,0.###############;-"£"#,0.###############;"£"#,0.###############
+		lineageTag: 1166b08e-c9c0-4edd-be77-7da35c3ccb3d
+
+		annotation PBI_FormatHint = {"currencyCulture":"en-GB"}
+
+	measure 'Total Costs FY' =
+			SUM(_Cost_Other_Actuals[Amount])
+			+SUM(_Cost_Staff_Actuals[Amount])
+			+SUM(_Cost_Staff_Forecast[Amount])
+			+SUM(_Cost_Subcontractor_Actuals[Amount])
+			+SUM(_Cost_Subcontractor_Forecast[Amount])
+		formatString: "£"#,0.###############;-"£"#,0.###############;"£"#,0.###############
+		lineageTag: 5e3ee807-8eba-4b8a-ac58-f1d89fcfe30a
+
+		annotation PBI_FormatHint = {"currencyCulture":"en-GB"}
+
+	column Column1
+		dataType: string
+		lineageTag: 9065c30f-4872-4fa7-bcac-b3d6a96030fc
+		summarizeBy: none
+		sourceColumn: Column1
+
+		annotation SummarizationSetBy = Automatic
+
+	partition Equitix_Measures = m
+		mode: import
+		source =
+				let
+				    Source = Table.FromRows(Json.Document(Binary.Decompress(Binary.FromText("i44FAA==", BinaryEncoding.Base64), Compression.Deflate)), let _t = ((type nullable text) meta [Serialized.Text = true]) in type table [Column1 = _t]),
+				    #"Changed Type" = Table.TransformColumnTypes(Source,{{"Column1", type text}})
+				in
+				    #"Changed Type"
+
+	annotation PBI_ResultType = Table
+
+	annotation PBI_NavigationStepName = Navigation
+

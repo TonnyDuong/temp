@@ -1,0 +1,404 @@
+table dogma_timesheetheader
+	lineageTag: 00baef7c-f46b-41ce-9c65-6842fe876593
+
+	column 'Timesheet Header'
+		dataType: string
+		lineageTag: 942b3b43-87a1-420d-90c2-34f7ceb6bc41
+		summarizeBy: none
+		sourceColumn: dogma_timesheetheaderid
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Created On'
+		dataType: dateTime
+		formatString: General Date
+		lineageTag: bc19fd23-e295-4f6c-bd85-3044a79e67be
+		summarizeBy: none
+		sourceColumn: createdon
+
+		variation Variation
+			isDefault
+			relationship: 97410226-6e5b-47e9-b7d6-35bdd22ac3c2
+			defaultHierarchy: LocalDateTable_ddd2f97f-632c-46c5-ab9e-8143b55d74a4.'Date Hierarchy'
+
+		annotation SummarizationSetBy = Automatic
+
+	column createdby
+		dataType: string
+		lineageTag: 50bb3b9c-6ac7-4de3-b5b2-1aeedd71dec7
+		summarizeBy: none
+		sourceColumn: createdby
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Modified On'
+		dataType: dateTime
+		formatString: General Date
+		lineageTag: 476a5f43-e382-4587-a3d6-fbbe2696f913
+		summarizeBy: none
+		sourceColumn: modifiedon
+
+		variation Variation
+			isDefault
+			relationship: c62e2b16-b60e-4f9f-9491-29378d01fc15
+			defaultHierarchy: LocalDateTable_fca98f4b-662b-426f-a4af-f2a54282296a.'Date Hierarchy'
+
+		annotation SummarizationSetBy = Automatic
+
+	column modifiedby
+		dataType: string
+		lineageTag: b47c65fe-d014-4bb2-9833-f8d42c973731
+		summarizeBy: none
+		sourceColumn: modifiedby
+
+		annotation SummarizationSetBy = Automatic
+
+	column createdonbehalfby
+		dataType: string
+		lineageTag: 5b5f0f1a-d4dd-4ff9-b8fe-88534fe45307
+		summarizeBy: none
+		sourceColumn: createdonbehalfby
+
+		annotation SummarizationSetBy = Automatic
+
+	column modifiedonbehalfby
+		dataType: string
+		lineageTag: b354b895-48d9-4f14-9089-a28e6daeb94a
+		summarizeBy: none
+		sourceColumn: modifiedonbehalfby
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Created By'
+		dataType: string
+		lineageTag: 71b56407-ce31-48b5-92d1-64a39d26bc1a
+		summarizeBy: none
+		sourceColumn: createdbyname
+
+		annotation SummarizationSetBy = Automatic
+
+	column createdbyyominame
+		dataType: string
+		lineageTag: 9c80ad27-1ff4-4cbb-97f6-f4095549cf22
+		summarizeBy: none
+		sourceColumn: createdbyyominame
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Created By (Delegate)'
+		dataType: string
+		lineageTag: ae8a5146-2105-4880-b35b-9a1b416fc6eb
+		summarizeBy: none
+		sourceColumn: createdonbehalfbyname
+
+		annotation SummarizationSetBy = Automatic
+
+	column createdonbehalfbyyominame
+		dataType: string
+		lineageTag: 65b42a6e-4698-414b-809f-2b4eee8b01af
+		summarizeBy: none
+		sourceColumn: createdonbehalfbyyominame
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Modified By'
+		dataType: string
+		lineageTag: a3674856-4f14-4400-98e7-d539668bdcf7
+		summarizeBy: none
+		sourceColumn: modifiedbyname
+
+		annotation SummarizationSetBy = Automatic
+
+	column modifiedbyyominame
+		dataType: string
+		lineageTag: 0c582421-0c0f-4e97-a256-ff692eef3dc6
+		summarizeBy: none
+		sourceColumn: modifiedbyyominame
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Modified By (Delegate)'
+		dataType: string
+		lineageTag: 0a08e381-5a45-4fa6-b89e-45a6af835517
+		summarizeBy: none
+		sourceColumn: modifiedonbehalfbyname
+
+		annotation SummarizationSetBy = Automatic
+
+	column modifiedonbehalfbyyominame
+		dataType: string
+		lineageTag: edbc4508-1e3f-4f0f-ad24-025adbcc9c8d
+		summarizeBy: none
+		sourceColumn: modifiedonbehalfbyyominame
+
+		annotation SummarizationSetBy = Automatic
+
+	column ownerid
+		dataType: string
+		lineageTag: c3800078-2d95-469c-8b68-8a47d5604adf
+		summarizeBy: none
+		sourceColumn: ownerid
+
+		annotation SummarizationSetBy = Automatic
+
+	column Owner
+		dataType: string
+		lineageTag: 90ae932a-d9f4-4535-9878-d83885364cbd
+		summarizeBy: none
+		sourceColumn: owneridname
+
+		annotation SummarizationSetBy = Automatic
+
+	column owneridyominame
+		dataType: string
+		lineageTag: 5dc9ba29-32ac-400a-9bdc-5f8c185c0337
+		summarizeBy: none
+		sourceColumn: owneridyominame
+
+		annotation SummarizationSetBy = Automatic
+
+	column owningbusinessunit
+		dataType: string
+		lineageTag: 46404c75-e980-4fe2-8f5b-c2582bfa4f59
+		summarizeBy: none
+		sourceColumn: owningbusinessunit
+
+		annotation SummarizationSetBy = Automatic
+
+	column owninguser
+		dataType: string
+		lineageTag: 94096c39-1b2c-4ad8-a74a-eb7346225f98
+		summarizeBy: none
+		sourceColumn: owninguser
+
+		annotation SummarizationSetBy = Automatic
+
+	column owningteam
+		dataType: string
+		lineageTag: 93e8e2c1-9c32-4474-ae98-a1ef97a88350
+		summarizeBy: none
+		sourceColumn: owningteam
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Owning Business Unit'
+		dataType: string
+		lineageTag: 5bdd49f6-7811-45f2-9756-cd710e493c44
+		summarizeBy: none
+		sourceColumn: owningbusinessunitname
+
+		annotation SummarizationSetBy = Automatic
+
+	column Status
+		dataType: int64
+		formatString: 0
+		lineageTag: fae8de67-3cdb-48d7-ac2c-96a996112ba4
+		summarizeBy: sum
+		sourceColumn: statecode
+
+		annotation SummarizationSetBy = Automatic
+
+	column statecodename
+		dataType: string
+		lineageTag: b997af10-5f1a-4ffc-880c-2239c43598f0
+		summarizeBy: none
+		sourceColumn: statecodename
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Status Reason'
+		dataType: int64
+		formatString: 0
+		lineageTag: 9c9243d7-243c-4bdb-afb0-7b93f56474f4
+		summarizeBy: sum
+		sourceColumn: statuscode
+
+		annotation SummarizationSetBy = Automatic
+
+	column statuscodename
+		dataType: string
+		lineageTag: 859d5536-1384-426d-bdcb-2a1fd702ee0e
+		summarizeBy: none
+		sourceColumn: statuscodename
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Import Sequence Number'
+		dataType: int64
+		formatString: 0
+		lineageTag: 86c881cd-76f4-46e0-a929-3cf253089235
+		summarizeBy: sum
+		sourceColumn: importsequencenumber
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Record Created On'
+		dataType: dateTime
+		formatString: General Date
+		lineageTag: 1e5d6f22-429d-4633-bb69-9d7bed0da8d5
+		summarizeBy: none
+		sourceColumn: overriddencreatedon
+
+		variation Variation
+			isDefault
+			relationship: 0abab279-80f5-4cba-bd71-4541d6533f11
+			defaultHierarchy: LocalDateTable_a96afc69-575d-4f25-a414-f017fd68cc39.'Date Hierarchy'
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Time Zone Rule Version Number'
+		dataType: int64
+		formatString: 0
+		lineageTag: 9c393ed6-8424-4cd5-b920-387d0ac86380
+		summarizeBy: sum
+		sourceColumn: timezoneruleversionnumber
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'UTC Conversion Time Zone Code'
+		dataType: int64
+		formatString: 0
+		lineageTag: bc83070b-eb50-44bd-aa16-38e8f4b01816
+		summarizeBy: count
+		sourceColumn: utcconversiontimezonecode
+
+		annotation SummarizationSetBy = Automatic
+
+	column Name
+		dataType: string
+		lineageTag: 252801ba-92d1-4b3c-9836-37f776a0fa0a
+		summarizeBy: none
+		sourceColumn: dogma_name
+
+		annotation SummarizationSetBy = Automatic
+
+	column Notes
+		dataType: string
+		lineageTag: a8e18c28-c87d-4d82-b847-dcc2cea20e24
+		summarizeBy: none
+		sourceColumn: dogma_notes
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Period End Date'
+		dataType: dateTime
+		formatString: General Date
+		lineageTag: 2a2d2b08-b7e3-4c68-96c0-ecc00551b1d9
+		summarizeBy: none
+		sourceColumn: dogma_periodenddate
+
+		variation Variation
+			isDefault
+			relationship: ca739afb-513f-4451-8976-73d096988f39
+			defaultHierarchy: LocalDateTable_2a337a2b-8d08-4c8b-953f-dd056fa6b2ca.'Date Hierarchy'
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Period Start Date'
+		dataType: dateTime
+		formatString: General Date
+		lineageTag: 63e2e6a2-5294-4fa2-97ee-b59fddecf372
+		summarizeBy: none
+		sourceColumn: dogma_periodstartdate
+
+		variation Variation
+			isDefault
+			relationship: ad9f11b1-c97c-4a43-ad71-93db6f4043a1
+			defaultHierarchy: LocalDateTable_893dfc2a-6bb2-440f-af70-de8c3026090a.'Date Hierarchy'
+
+		annotation SummarizationSetBy = Automatic
+
+	column dogma_project
+		dataType: string
+		lineageTag: efab7fec-06a9-4016-9553-2813f860a583
+		summarizeBy: none
+		sourceColumn: dogma_project
+
+		annotation SummarizationSetBy = Automatic
+
+	column dogma_timesheetperiod
+		dataType: string
+		lineageTag: 9dd35309-8033-4d83-a2ae-1870d3b0d8ca
+		summarizeBy: none
+		sourceColumn: dogma_timesheetperiod
+
+		annotation SummarizationSetBy = Automatic
+
+	column Project
+		dataType: string
+		lineageTag: 2be63d3e-10e4-4229-a9c9-a40ee8ecdc46
+		summarizeBy: none
+		sourceColumn: dogma_projectname
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Timesheet Period'
+		dataType: string
+		lineageTag: 2cabd576-48de-41a9-b679-77fbf65567da
+		summarizeBy: none
+		sourceColumn: dogma_timesheetperiodname
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Total Hours Project'
+		dataType: double
+		lineageTag: 6f62acc6-bea0-4ace-94de-592aa088b434
+		summarizeBy: sum
+		sourceColumn: crbb5_totalhoursproject
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column 'Total Hours Project (Last Updated On)'
+		dataType: dateTime
+		formatString: General Date
+		lineageTag: 363f4a5d-b38e-4e5e-b96f-9520280f9ccd
+		summarizeBy: none
+		sourceColumn: crbb5_totalhoursproject_date
+
+		variation Variation
+			isDefault
+			relationship: f2b4a83e-f380-4f20-a028-2c3d022df30a
+			defaultHierarchy: LocalDateTable_ba0db804-7d56-4324-9344-f4c77eb42b8d.'Date Hierarchy'
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Total Hours Project (State)'
+		dataType: int64
+		formatString: 0
+		lineageTag: 47515515-3992-4fe8-aed0-14fb1dda9982
+		summarizeBy: sum
+		sourceColumn: crbb5_totalhoursproject_state
+
+		annotation SummarizationSetBy = Automatic
+
+	column crbb5_originalprojectcode
+		dataType: string
+		lineageTag: 9caa8e3a-e2cf-41ce-9c41-861969fc1f9f
+		summarizeBy: none
+		sourceColumn: crbb5_originalprojectcode
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Original Project Code'
+		dataType: string
+		lineageTag: 4241e09e-177d-4d83-a301-6d8016d9762b
+		summarizeBy: none
+		sourceColumn: crbb5_originalprojectcodename
+
+		annotation SummarizationSetBy = Automatic
+
+	partition dogma_timesheetheader = m
+		mode: import
+		source =
+				let
+				    Source = CommonDataService.Database("emservices.crm11.dynamics.com"),
+				    dbo_dogma_timesheetheader = Source{[Schema="dbo",Item="dogma_timesheetheader"]}[Data]
+				in
+				    dbo_dogma_timesheetheader
+
+	annotation PBI_NavigationStepName = Navigation
+
+	annotation PBI_ResultType = Table
+

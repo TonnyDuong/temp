@@ -1,0 +1,170 @@
+table dim_Employee_Live
+	lineageTag: 699ac260-a470-49cf-a355-f91579f097ea
+
+	column EmployeeID
+		dataType: string
+		lineageTag: df88bcf9-6df7-4a9f-b1c7-e25e58c331d2
+		summarizeBy: none
+		sourceColumn: EmployeeID
+
+		annotation SummarizationSetBy = Automatic
+
+	column EmployeeName
+		dataType: string
+		lineageTag: b31a59e4-5f36-4d0e-901d-94513bada8e7
+		summarizeBy: none
+		sourceColumn: EmployeeName
+
+		annotation SummarizationSetBy = Automatic
+
+	column TimeWorkReference
+		dataType: string
+		lineageTag: 5c0eb2fd-3300-4f06-99be-5725f62dc0c4
+		summarizeBy: none
+		sourceColumn: TimeWorkReference
+
+		annotation SummarizationSetBy = Automatic
+
+	column crbb5_country
+		dataType: string
+		lineageTag: e9711c78-1e3d-4370-a9b1-696d7344e888
+		summarizeBy: none
+		sourceColumn: crbb5_country
+
+		annotation SummarizationSetBy = Automatic
+
+	column crbb5_department
+		dataType: string
+		lineageTag: 410f6b53-6fec-4b1e-adca-8d7484a23735
+		summarizeBy: none
+		sourceColumn: crbb5_department
+
+		annotation SummarizationSetBy = Automatic
+
+	column crbb5_employmentstatus
+		dataType: string
+		lineageTag: f852df14-8be2-4c3b-944d-c0e124991671
+		summarizeBy: none
+		sourceColumn: crbb5_employmentstatus
+
+		annotation SummarizationSetBy = Automatic
+
+	column crbb5_hiredate
+		dataType: dateTime
+		formatString: General Date
+		lineageTag: 25090a85-c271-496c-8c79-a4fb5450a1a0
+		summarizeBy: none
+		sourceColumn: crbb5_hiredate
+
+		variation Variation
+			isDefault
+			relationship: a9f602a8-78ea-4e7f-b872-93d5da10bfcd
+			defaultHierarchy: LocalDateTable_0cb2de53-11bc-4e2d-ac54-4a386fce1615.'Date Hierarchy'
+
+		annotation SummarizationSetBy = Automatic
+
+	column crbb5_terminationdate
+		dataType: dateTime
+		formatString: General Date
+		lineageTag: 4381cbd3-352f-45e5-960b-fb85eea2b0a6
+		summarizeBy: none
+		sourceColumn: crbb5_terminationdate
+
+		variation Variation
+			isDefault
+			relationship: 833c1ae4-7db1-447e-9273-8842cbd6dc24
+			defaultHierarchy: LocalDateTable_7bc52024-e982-408e-a47f-e7e455e5bc5b.'Date Hierarchy'
+
+		annotation SummarizationSetBy = Automatic
+
+	column crbb5_jobtitle
+		dataType: string
+		lineageTag: 7acea603-d333-4aa4-b799-8a81511a9a85
+		summarizeBy: none
+		sourceColumn: crbb5_jobtitle
+
+		annotation SummarizationSetBy = Automatic
+
+	column Manager
+		dataType: string
+		lineageTag: 6af87373-fcdf-495e-ae7a-b7452e9d4147
+		summarizeBy: none
+		sourceColumn: Manager
+
+		annotation SummarizationSetBy = Automatic
+
+	column crbb5_budgetholder
+		dataType: string
+		lineageTag: 963ee3ed-6aa3-4938-ba8c-342b44a260c9
+		summarizeBy: none
+		sourceColumn: crbb5_budgetholder
+
+		annotation SummarizationSetBy = Automatic
+
+	column IsActive
+		dataType: boolean
+		formatString: """TRUE"";""TRUE"";""FALSE"""
+		lineageTag: 205bc5af-d586-4821-8a78-b210a1882ee7
+		summarizeBy: none
+		sourceColumn: IsActive
+
+		annotation SummarizationSetBy = Automatic
+
+	partition dim_Employee_Live = m
+		mode: import
+		source =
+				// =====================================================================
+				// dim_Employee_Live
+				// ---------------------------------------------------------------------
+				// Purpose:      Employee dimension. One row per current employee.
+				// Grain:        One row per employee.
+				// Dependencies: crbb5_bamboohr
+				// Load:         enabled.
+				// ---------------------------------------------------------------------
+				// crbb5_bamboohr is exposed by LOGICAL name (confirmed against its column
+				// list) — use crbb5_* identifiers, NOT display names.
+				// ---------------------------------------------------------------------
+				// TODO:
+				//   - Confirm the full set of valid employment-status values for IsActive.
+				//     Currently treats only "Active" as active.
+				//   - "EmployeeID" is mapped from crbb5_bamboohrid (a GUID). If the report
+				//     needs the EMPEM* employee-number style used by dim_StaffCosts /
+				//     stg_Staff Costs Summary, source it from crbb5_employee (or whichever
+				//     column holds the EMPEM* code) instead. Relationships use
+				//     TimeWorkReference, so this doesn't block the model — but the
+				//     EmployeeID display value will be a GUID until changed.
+				// =====================================================================
+				let
+				    Source = #"crbb5_bamboohr",
+				
+				    Selected = Table.SelectColumns(Source, {
+				        "crbb5_bamboohrid",
+				        "crbb5_firstnamelastname",
+				        "crbb5_timeworkreference",
+				        "crbb5_country",
+				        "crbb5_department",
+				        "crbb5_employmentstatus",
+				        "crbb5_hiredate",
+				        "crbb5_terminationdate",
+				        "crbb5_jobtitle",
+				        "crbb5_managerbackupname",
+				        "crbb5_budgetholder"
+				    }),
+				
+				    Renamed = Table.RenameColumns(Selected, {
+				        {"crbb5_bamboohrid",         "EmployeeID"},
+				        {"crbb5_firstnamelastname",  "EmployeeName"},
+				        {"crbb5_timeworkreference",  "TimeWorkReference"},
+				        {"crbb5_managerbackupname",  "Manager"}
+				    }),
+				
+				    AddIsActive = Table.AddColumn(Renamed, "IsActive",
+				        each [crbb5_employmentstatus] = "Active",
+				        type logical)
+				in
+				    AddIsActive
+
+	annotation PBI_NavigationStepName = Navigation
+
+	annotation PBI_ResultType = Table
+

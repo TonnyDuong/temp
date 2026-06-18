@@ -1,0 +1,454 @@
+table dogma_timesheet
+	lineageTag: 3bcdcf52-d5e9-48f0-9488-32e012cecaed
+
+	column Timesheet
+		dataType: string
+		lineageTag: d5e7ac47-c7c9-4da4-898e-ff21c2f7d7db
+		summarizeBy: none
+		sourceColumn: dogma_timesheetid
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Created On'
+		dataType: dateTime
+		formatString: General Date
+		lineageTag: a02498a7-2d0f-492a-a97b-d9842c2e1177
+		summarizeBy: none
+		sourceColumn: createdon
+
+		variation Variation
+			isDefault
+			relationship: edcfab19-7e35-4598-a874-ad06ce1909fb
+			defaultHierarchy: LocalDateTable_624e579f-7a68-4f4b-93fc-8e95fb7e9daa.'Date Hierarchy'
+
+		annotation SummarizationSetBy = Automatic
+
+	column createdby
+		dataType: string
+		lineageTag: 603ae8ac-2514-44dc-8647-e5638e60fe5e
+		summarizeBy: none
+		sourceColumn: createdby
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Modified On'
+		dataType: dateTime
+		formatString: General Date
+		lineageTag: 906c05af-5ccf-47c8-951c-01bde6f3cf8a
+		summarizeBy: none
+		sourceColumn: modifiedon
+
+		variation Variation
+			isDefault
+			relationship: 77a4477f-5227-4916-a9e1-d4777b149ff4
+			defaultHierarchy: LocalDateTable_0f9aca6f-9f65-4024-ac46-d2edcdbbdc77.'Date Hierarchy'
+
+		annotation SummarizationSetBy = Automatic
+
+	column modifiedby
+		dataType: string
+		lineageTag: afd0f212-01dd-4ded-b659-751b8e40b16b
+		summarizeBy: none
+		sourceColumn: modifiedby
+
+		annotation SummarizationSetBy = Automatic
+
+	column createdonbehalfby
+		dataType: string
+		lineageTag: a1c96ca7-f9ad-4087-bcca-b40db7540a09
+		summarizeBy: none
+		sourceColumn: createdonbehalfby
+
+		annotation SummarizationSetBy = Automatic
+
+	column modifiedonbehalfby
+		dataType: string
+		lineageTag: ed927de4-73d1-41dd-a060-3fa93b3c054a
+		summarizeBy: none
+		sourceColumn: modifiedonbehalfby
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Created By'
+		dataType: string
+		lineageTag: f89d2ca8-ec9a-42f7-9956-3953340665bd
+		summarizeBy: none
+		sourceColumn: createdbyname
+
+		annotation SummarizationSetBy = Automatic
+
+	column createdbyyominame
+		dataType: string
+		lineageTag: b487b58e-7ba9-467f-8b07-89ac64eb4568
+		summarizeBy: none
+		sourceColumn: createdbyyominame
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Created By (Delegate)'
+		dataType: string
+		lineageTag: 8fe20603-d2b5-482a-8ede-d69d64339dcd
+		summarizeBy: none
+		sourceColumn: createdonbehalfbyname
+
+		annotation SummarizationSetBy = Automatic
+
+	column createdonbehalfbyyominame
+		dataType: string
+		lineageTag: 5937f9b9-f268-40b0-a5ac-5582fd4935cf
+		summarizeBy: none
+		sourceColumn: createdonbehalfbyyominame
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Modified By'
+		dataType: string
+		lineageTag: efdf799e-406e-4a06-845b-d9b13bc5e20c
+		summarizeBy: none
+		sourceColumn: modifiedbyname
+
+		annotation SummarizationSetBy = Automatic
+
+	column modifiedbyyominame
+		dataType: string
+		lineageTag: e806fb06-5e74-4eb3-b014-63decdb97f5b
+		summarizeBy: none
+		sourceColumn: modifiedbyyominame
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Modified By (Delegate)'
+		dataType: string
+		lineageTag: d7bacb03-38ac-4ac8-8789-c8b6a195f266
+		summarizeBy: none
+		sourceColumn: modifiedonbehalfbyname
+
+		annotation SummarizationSetBy = Automatic
+
+	column modifiedonbehalfbyyominame
+		dataType: string
+		lineageTag: 9b35ed40-279a-4ff2-a648-1fbaba28efb1
+		summarizeBy: none
+		sourceColumn: modifiedonbehalfbyyominame
+
+		annotation SummarizationSetBy = Automatic
+
+	column ownerid
+		dataType: string
+		lineageTag: 6f6115af-1e19-46f9-b142-e5a8f2970dd7
+		summarizeBy: none
+		sourceColumn: ownerid
+
+		annotation SummarizationSetBy = Automatic
+
+	column Owner
+		dataType: string
+		lineageTag: f8200923-6e20-4c1d-b4c3-90c4633c8f9a
+		summarizeBy: none
+		sourceColumn: owneridname
+
+		annotation SummarizationSetBy = Automatic
+
+	column owneridyominame
+		dataType: string
+		lineageTag: 2be7da91-0e4f-4802-bf74-4bc2af049ba0
+		summarizeBy: none
+		sourceColumn: owneridyominame
+
+		annotation SummarizationSetBy = Automatic
+
+	column owningbusinessunit
+		dataType: string
+		lineageTag: cb5fe8a2-c92b-4abc-ab1b-e76445b1d238
+		summarizeBy: none
+		sourceColumn: owningbusinessunit
+
+		annotation SummarizationSetBy = Automatic
+
+	column owninguser
+		dataType: string
+		lineageTag: 992a1190-47b6-4c7d-8d26-4b56a52553f1
+		summarizeBy: none
+		sourceColumn: owninguser
+
+		annotation SummarizationSetBy = Automatic
+
+	column owningteam
+		dataType: string
+		lineageTag: 76aef446-74b4-491a-b883-5a41ed9b7e92
+		summarizeBy: none
+		sourceColumn: owningteam
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Owning Business Unit'
+		dataType: string
+		lineageTag: ebae6d8d-60d8-4339-940b-4fbdc7bb0724
+		summarizeBy: none
+		sourceColumn: owningbusinessunitname
+
+		annotation SummarizationSetBy = Automatic
+
+	column Status
+		dataType: int64
+		formatString: 0
+		lineageTag: eead79f5-037c-48e5-9da5-58ec5c8c235e
+		summarizeBy: sum
+		sourceColumn: statecode
+
+		annotation SummarizationSetBy = Automatic
+
+	column statecodename
+		dataType: string
+		lineageTag: a34f0591-6039-4de7-bce8-cbbd7ce51626
+		summarizeBy: none
+		sourceColumn: statecodename
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Status Reason'
+		dataType: int64
+		formatString: 0
+		lineageTag: 62b06a2d-e3c5-4bc6-ba3b-34bee780fd40
+		summarizeBy: sum
+		sourceColumn: statuscode
+
+		annotation SummarizationSetBy = Automatic
+
+	column statuscodename
+		dataType: string
+		lineageTag: d41912a4-f1af-4bba-8765-2f153ce5a644
+		summarizeBy: none
+		sourceColumn: statuscodename
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Import Sequence Number'
+		dataType: int64
+		formatString: 0
+		lineageTag: 35467de0-e5b4-4cc3-be43-f0712e573c04
+		summarizeBy: sum
+		sourceColumn: importsequencenumber
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Record Created On'
+		dataType: dateTime
+		formatString: General Date
+		lineageTag: 494ce277-f62b-479b-ac92-67c5cc620265
+		summarizeBy: none
+		sourceColumn: overriddencreatedon
+
+		variation Variation
+			isDefault
+			relationship: f09e3474-bc7e-4edc-9741-ffd6bf0ed44f
+			defaultHierarchy: LocalDateTable_ad549916-ca28-494e-845d-35ac92ce02a1.'Date Hierarchy'
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Time Zone Rule Version Number'
+		dataType: int64
+		formatString: 0
+		lineageTag: 8c17f50c-4023-4090-a304-0bc425b07be3
+		summarizeBy: sum
+		sourceColumn: timezoneruleversionnumber
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'UTC Conversion Time Zone Code'
+		dataType: int64
+		formatString: 0
+		lineageTag: ad82bf29-6a17-45ec-bbfb-867f320434c1
+		summarizeBy: count
+		sourceColumn: utcconversiontimezonecode
+
+		annotation SummarizationSetBy = Automatic
+
+	column Name
+		dataType: string
+		lineageTag: 4f28737e-4fb6-4a1a-ac65-08de60480857
+		summarizeBy: none
+		sourceColumn: dogma_name
+
+		annotation SummarizationSetBy = Automatic
+
+	column Date
+		dataType: dateTime
+		formatString: General Date
+		lineageTag: ef054cb8-8ba8-4591-9c44-473af878aac6
+		summarizeBy: none
+		sourceColumn: dogma_date
+
+		variation Variation
+			isDefault
+			relationship: 57eae100-894b-47fc-9fdc-f08d58738715
+			defaultHierarchy: LocalDateTable_9e3c3fdd-257e-4c1c-8e54-7dc101b1e271.'Date Hierarchy'
+
+		annotation SummarizationSetBy = Automatic
+
+	column Duration
+		dataType: double
+		lineageTag: 64ad19dd-94ff-42bf-bce6-8705d50efcc7
+		summarizeBy: sum
+		sourceColumn: dogma_duration
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column dogma_project
+		dataType: string
+		lineageTag: 306cd08b-0842-4837-8a7c-1f6ffa98ed82
+		summarizeBy: none
+		sourceColumn: dogma_project
+
+		annotation SummarizationSetBy = Automatic
+
+	column dogma_timesheetheader
+		dataType: string
+		lineageTag: ad2b763f-d8a6-49bd-9e49-817b8058fbf6
+		summarizeBy: none
+		sourceColumn: dogma_timesheetheader
+
+		annotation SummarizationSetBy = Automatic
+
+	column dogma_timesheetperiod
+		dataType: string
+		lineageTag: 76f183d4-a0af-4b7c-bef3-787bef87ba6b
+		summarizeBy: none
+		sourceColumn: dogma_timesheetperiod
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Project Code'
+		dataType: string
+		lineageTag: 81864767-75f4-4e5c-a377-b7ba7fd086ee
+		summarizeBy: none
+		sourceColumn: dogma_projectname
+
+		changedProperty = Name
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Timesheet Header'
+		dataType: string
+		lineageTag: 590a0f00-4e17-489b-8976-0cc89ef77a83
+		summarizeBy: none
+		sourceColumn: dogma_timesheetheadername
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Timesheet Period'
+		dataType: string
+		lineageTag: 03efc28c-0902-42c5-b5ed-6df6e3fdd677
+		summarizeBy: none
+		sourceColumn: dogma_timesheetperiodname
+
+		annotation SummarizationSetBy = Automatic
+
+	column crbb5_marktodelete
+		dataType: boolean
+		formatString: """TRUE"";""TRUE"";""FALSE"""
+		lineageTag: 14b2affe-e43b-43ab-bca5-4bd451fd461b
+		summarizeBy: none
+		sourceColumn: crbb5_marktodelete
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'mark to delete'
+		dataType: string
+		lineageTag: 0c3705ea-ef64-4b93-bf0d-4d0ebf1297bd
+		summarizeBy: none
+		sourceColumn: crbb5_marktodeletename
+
+		annotation SummarizationSetBy = Automatic
+
+	column crbb5_isduplicate
+		dataType: boolean
+		formatString: """TRUE"";""TRUE"";""FALSE"""
+		lineageTag: 1b1d24de-8ff8-4f2f-9dc9-8e23380614da
+		summarizeBy: none
+		sourceColumn: crbb5_isduplicate
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'is Duplicate?'
+		dataType: string
+		lineageTag: a048a1e8-4a4c-4d09-bfd2-eb58daf64316
+		summarizeBy: none
+		sourceColumn: crbb5_isduplicatename
+
+		annotation SummarizationSetBy = Automatic
+
+	column crbb5_isownermismatch
+		dataType: boolean
+		formatString: """TRUE"";""TRUE"";""FALSE"""
+		lineageTag: 3239b241-b6d1-494a-8665-e13ad3c7d0e5
+		summarizeBy: none
+		sourceColumn: crbb5_isownermismatch
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Is Owner Mismatch?'
+		dataType: string
+		lineageTag: 42adc0a8-67d5-4a13-b647-c028c66b504c
+		summarizeBy: none
+		sourceColumn: crbb5_isownermismatchname
+
+		annotation SummarizationSetBy = Automatic
+
+	column crbb5_originalprojectcode
+		dataType: string
+		lineageTag: ea78a245-597d-4a32-b549-45552e8918a6
+		summarizeBy: none
+		sourceColumn: crbb5_originalprojectcode
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Original Project Code'
+		dataType: string
+		lineageTag: fc0eeb66-e69c-4a31-b121-2c28c3198482
+		summarizeBy: none
+		sourceColumn: crbb5_originalprojectcodename
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'systemuser(owninguser).crbb5_timeworkreference'
+		dataType: string
+		lineageTag: 6ccef280-01e0-498e-afd0-afa82dc439d6
+		summarizeBy: none
+		sourceColumn: systemuser(owninguser).crbb5_timeworkreference
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'systemuser(owninguser).crbb5_crbb5_timeworkreference'
+		dataType: string
+		lineageTag: 103617ac-d2a6-48fd-813c-ec8fd601d3de
+		summarizeBy: none
+		sourceColumn: systemuser(owninguser).crbb5_crbb5_timeworkreference
+
+		annotation SummarizationSetBy = Automatic
+
+	column crbb5_crbb5_timeworkreferencename
+		dataType: string
+		lineageTag: d5eb64d7-f968-42fe-a9f5-f22318e20664
+		summarizeBy: none
+		sourceColumn: crbb5_crbb5_timeworkreferencename
+
+		annotation SummarizationSetBy = Automatic
+
+	partition dogma_timesheet = m
+		mode: import
+		source =
+				let
+				    Source = CommonDataService.Database("emservices.crm11.dynamics.com"),
+				    dbo_dogma_timesheet = Source{[Schema="dbo",Item="dogma_timesheet"]}[Data],
+				    #"Expanded systemuser(owninguser)" = Table.ExpandRecordColumn(dbo_dogma_timesheet, "systemuser(owninguser)", {"crbb5_timeworkreference", "crbb5_crbb5_timeworkreference", "crbb5_crbb5_timeworkreferencename"}, {"systemuser(owninguser).crbb5_timeworkreference", "systemuser(owninguser).crbb5_crbb5_timeworkreference", "systemuser(owninguser).crbb5_crbb5_timeworkreferencename"}),
+				    #"Renamed Columns" = Table.RenameColumns(#"Expanded systemuser(owninguser)",{{"systemuser(owninguser).crbb5_crbb5_timeworkreferencename", "crbb5_crbb5_timeworkreferencename"}})
+				in
+				    #"Renamed Columns"
+
+	annotation PBI_ResultType = Table
+
+	annotation PBI_NavigationStepName = Navigation
+

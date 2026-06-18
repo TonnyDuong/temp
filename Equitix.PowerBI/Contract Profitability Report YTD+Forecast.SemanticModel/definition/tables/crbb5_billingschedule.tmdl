@@ -1,0 +1,719 @@
+table crbb5_billingschedule
+	lineageTag: 26484233-1f22-4353-a143-867165f7d5e9
+
+	column 'Billing Schedule'
+		dataType: string
+		lineageTag: 2a07f246-f382-4c28-89de-ae31a80b2a8e
+		summarizeBy: none
+		sourceColumn: crbb5_billingscheduleid
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Created On'
+		dataType: dateTime
+		formatString: General Date
+		lineageTag: 80343bb7-9596-4aee-beef-3f7082f6c392
+		summarizeBy: none
+		sourceColumn: createdon
+
+		variation Variation
+			isDefault
+			relationship: 5852a1dc-365e-43a6-ba51-0eefe850d19f
+			defaultHierarchy: LocalDateTable_2d43a6f5-cff5-48e2-9c7f-f2401593bf33.'Date Hierarchy'
+
+		annotation SummarizationSetBy = Automatic
+
+	column createdby
+		dataType: string
+		lineageTag: e9966a8d-8926-4204-bbd9-ec81cdfb4a53
+		summarizeBy: none
+		sourceColumn: createdby
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Modified On'
+		dataType: dateTime
+		formatString: General Date
+		lineageTag: 33b15ccc-492a-438e-98b5-38a5b523a8d4
+		summarizeBy: none
+		sourceColumn: modifiedon
+
+		variation Variation
+			isDefault
+			relationship: 62bd6b8b-b12c-4a08-ba52-59f70b17e3b9
+			defaultHierarchy: LocalDateTable_52ace62f-9419-4565-a3b6-dca1380f971b.'Date Hierarchy'
+
+		annotation SummarizationSetBy = Automatic
+
+	column modifiedby
+		dataType: string
+		lineageTag: c0097018-09fa-4ffd-8f0d-a4d7f0f33dbd
+		summarizeBy: none
+		sourceColumn: modifiedby
+
+		annotation SummarizationSetBy = Automatic
+
+	column createdonbehalfby
+		dataType: string
+		lineageTag: b225bfd1-6943-4709-b74d-150e521d5e7d
+		summarizeBy: none
+		sourceColumn: createdonbehalfby
+
+		annotation SummarizationSetBy = Automatic
+
+	column modifiedonbehalfby
+		dataType: string
+		lineageTag: 15281506-914c-400d-bbb5-7c4c4a5cab43
+		summarizeBy: none
+		sourceColumn: modifiedonbehalfby
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Created By'
+		dataType: string
+		lineageTag: e308abbb-9e21-404e-b7d7-f13027625597
+		summarizeBy: none
+		sourceColumn: createdbyname
+
+		annotation SummarizationSetBy = Automatic
+
+	column createdbyyominame
+		dataType: string
+		lineageTag: a0b1ad97-8752-4026-9306-630421e1eb59
+		summarizeBy: none
+		sourceColumn: createdbyyominame
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Created By (Delegate)'
+		dataType: string
+		lineageTag: 566da8eb-06b7-43f9-b32e-a809d779505c
+		summarizeBy: none
+		sourceColumn: createdonbehalfbyname
+
+		annotation SummarizationSetBy = Automatic
+
+	column createdonbehalfbyyominame
+		dataType: string
+		lineageTag: 8a3f7fd0-e2b7-454f-994c-b3c18f1fcbd6
+		summarizeBy: none
+		sourceColumn: createdonbehalfbyyominame
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Modified By'
+		dataType: string
+		lineageTag: f11f2913-8b30-4b7f-8d35-345f98f7406a
+		summarizeBy: none
+		sourceColumn: modifiedbyname
+
+		annotation SummarizationSetBy = Automatic
+
+	column modifiedbyyominame
+		dataType: string
+		lineageTag: b9c8c06f-87de-4d35-b785-5dfd2902fa6b
+		summarizeBy: none
+		sourceColumn: modifiedbyyominame
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Modified By (Delegate)'
+		dataType: string
+		lineageTag: 57844cc8-ec26-4135-848c-ddcdaaa7222c
+		summarizeBy: none
+		sourceColumn: modifiedonbehalfbyname
+
+		annotation SummarizationSetBy = Automatic
+
+	column modifiedonbehalfbyyominame
+		dataType: string
+		lineageTag: 8fb43804-1183-4d70-b967-152535b96bef
+		summarizeBy: none
+		sourceColumn: modifiedonbehalfbyyominame
+
+		annotation SummarizationSetBy = Automatic
+
+	column ownerid
+		dataType: string
+		lineageTag: 5daa06ce-2d3d-4cc3-8ff3-50fd3ff27505
+		summarizeBy: none
+		sourceColumn: ownerid
+
+		annotation SummarizationSetBy = Automatic
+
+	column Owner
+		dataType: string
+		lineageTag: 02e7e836-a3dc-46ab-8959-2b71bd273c03
+		summarizeBy: none
+		sourceColumn: owneridname
+
+		annotation SummarizationSetBy = Automatic
+
+	column owneridyominame
+		dataType: string
+		lineageTag: 313408bc-511a-437e-b30e-8e743700f4e8
+		summarizeBy: none
+		sourceColumn: owneridyominame
+
+		annotation SummarizationSetBy = Automatic
+
+	column owningbusinessunit
+		dataType: string
+		lineageTag: 4cb09472-d953-4ae8-81bd-41746493d67a
+		summarizeBy: none
+		sourceColumn: owningbusinessunit
+
+		annotation SummarizationSetBy = Automatic
+
+	column owninguser
+		dataType: string
+		lineageTag: 0b9f6559-be85-4b98-a347-4c440e05f350
+		summarizeBy: none
+		sourceColumn: owninguser
+
+		annotation SummarizationSetBy = Automatic
+
+	column owningteam
+		dataType: string
+		lineageTag: f7bc2828-2225-4950-b206-bfcdd1ad349a
+		summarizeBy: none
+		sourceColumn: owningteam
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Owning Business Unit'
+		dataType: string
+		lineageTag: 04eefa1e-6e95-4df5-aa43-3cf6ef58e7a4
+		summarizeBy: none
+		sourceColumn: owningbusinessunitname
+
+		annotation SummarizationSetBy = Automatic
+
+	column Status
+		dataType: int64
+		formatString: 0
+		lineageTag: 2af044b8-e444-4b2e-85a3-6bb29bce1eec
+		summarizeBy: sum
+		sourceColumn: statecode
+
+		annotation SummarizationSetBy = Automatic
+
+	column statecodename
+		dataType: string
+		lineageTag: 6a7ff8d6-9ecc-4c5c-b62a-1ba6e20325ed
+		summarizeBy: none
+		sourceColumn: statecodename
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Status Reason'
+		dataType: int64
+		formatString: 0
+		lineageTag: cd70f06b-31e9-4414-af3a-96bb349dd39d
+		summarizeBy: sum
+		sourceColumn: statuscode
+
+		annotation SummarizationSetBy = Automatic
+
+	column statuscodename
+		dataType: string
+		lineageTag: 30441d13-fb00-4121-b760-01530a957f35
+		summarizeBy: none
+		sourceColumn: statuscodename
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Import Sequence Number'
+		dataType: int64
+		formatString: 0
+		lineageTag: 0980cca2-b742-48c5-a71a-e7d590d527d3
+		summarizeBy: sum
+		sourceColumn: importsequencenumber
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Record Created On'
+		dataType: dateTime
+		formatString: General Date
+		lineageTag: a916adc6-46f1-447f-bac5-d22f138bc204
+		summarizeBy: none
+		sourceColumn: overriddencreatedon
+
+		variation Variation
+			isDefault
+			relationship: b53224cc-8eaf-4300-9682-06fb4a82fc8e
+			defaultHierarchy: LocalDateTable_f9548c27-e169-4c29-9513-1afa959d87cc.'Date Hierarchy'
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Time Zone Rule Version Number'
+		dataType: int64
+		formatString: 0
+		lineageTag: 530b621f-b64b-411c-915a-8cc7e0424c93
+		summarizeBy: sum
+		sourceColumn: timezoneruleversionnumber
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'UTC Conversion Time Zone Code'
+		dataType: int64
+		formatString: 0
+		lineageTag: 3e2d4b45-b7b0-4a51-8fbd-7981f8c84ea5
+		summarizeBy: count
+		sourceColumn: utcconversiontimezonecode
+
+		annotation SummarizationSetBy = Automatic
+
+	column Item
+		dataType: string
+		lineageTag: 2c87659f-3f63-463e-95de-926c45302dba
+		summarizeBy: none
+		sourceColumn: crbb5_item
+
+		annotation SummarizationSetBy = Automatic
+
+	column crbb5_billingmethod
+		dataType: int64
+		formatString: 0
+		lineageTag: b2a8cc43-605c-4530-9c30-24eca88a8710
+		summarizeBy: sum
+		sourceColumn: crbb5_billingmethod
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Billing Method'
+		dataType: string
+		lineageTag: cfc1b05a-051a-41dd-9a66-d487b642a0a0
+		summarizeBy: none
+		sourceColumn: crbb5_billingmethodname
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Invoice Frequency'
+		dataType: int64
+		formatString: 0
+		lineageTag: 291af7ca-a57a-4cbe-9629-5cfc8ec33a49
+		summarizeBy: sum
+		sourceColumn: crbb5_invoicefrequency
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Base Fee'
+		dataType: decimal
+		formatString: "£"#,0.###############;-"£"#,0.###############;"£"#,0.###############
+		lineageTag: ad6c27ff-8134-4b2c-bf6e-afa83bf506dc
+		summarizeBy: sum
+		sourceColumn: crbb5_basefee
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"currencyCulture":"en-GB"}
+
+	column transactioncurrencyid
+		dataType: string
+		lineageTag: a1e07e26-c2fb-4cbe-beaa-ab461a7b89b8
+		summarizeBy: none
+		sourceColumn: transactioncurrencyid
+
+		annotation SummarizationSetBy = Automatic
+
+	column Currency
+		dataType: string
+		lineageTag: 0a12e032-4675-4a83-9d94-fb37fcbbcfbb
+		summarizeBy: none
+		sourceColumn: transactioncurrencyidname
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Exchange Rate'
+		dataType: double
+		lineageTag: a2099807-276b-4244-979d-e394f1c8cbd0
+		summarizeBy: sum
+		sourceColumn: exchangerate
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column 'Base Fee (Base)'
+		dataType: decimal
+		formatString: "£"#,0.###############;-"£"#,0.###############;"£"#,0.###############
+		lineageTag: 5c93afac-37da-46fc-9faa-954dcd00d635
+		summarizeBy: sum
+		sourceColumn: crbb5_basefee_base
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"currencyCulture":"en-GB"}
+
+	column crbb5_project
+		dataType: string
+		lineageTag: 8b5bafba-b438-4e93-a33c-3688c469081d
+		summarizeBy: none
+		sourceColumn: crbb5_project
+
+		annotation SummarizationSetBy = Automatic
+
+	column Project
+		dataType: string
+		lineageTag: 3ab6e07e-d046-4d5c-a9c0-212073aa61e8
+		summarizeBy: none
+		sourceColumn: crbb5_projectname
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Client Code'
+		dataType: string
+		lineageTag: 06fec39f-12f4-4ff6-8843-f9ae135f6b49
+		summarizeBy: none
+		sourceColumn: crbb5_clientcode
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Billing Start Date'
+		dataType: dateTime
+		formatString: General Date
+		lineageTag: d5363a41-1d66-41cc-afb3-69bda1f54cbe
+		summarizeBy: none
+		sourceColumn: crbb5_billingstartdate
+
+		variation Variation
+			isDefault
+			relationship: 38797fa5-568f-4d7e-808a-bd81bc3186a1
+			defaultHierarchy: LocalDateTable_dddb7632-ff80-4ba2-809f-b16570184ae7.'Date Hierarchy'
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Billing End Date'
+		dataType: dateTime
+		formatString: General Date
+		lineageTag: e07ab268-fb87-436f-8bbb-ca46eb8c15d5
+		summarizeBy: none
+		sourceColumn: crbb5_billingenddate
+
+		variation Variation
+			isDefault
+			relationship: 26cdecbc-d245-47cc-a88d-24874b839467
+			defaultHierarchy: LocalDateTable_acc1a69e-9bc0-4af0-8940-66efa1804941.'Date Hierarchy'
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Base annual fee'
+		dataType: double
+		lineageTag: d5bc1bb0-2b20-49f8-ac12-ad213fe936fe
+		summarizeBy: sum
+		sourceColumn: crbb5_baseannualfee
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column crbb5_basecurrency
+		dataType: int64
+		formatString: 0
+		lineageTag: b1044673-108d-4184-b5e0-d1f3accdb201
+		summarizeBy: sum
+		sourceColumn: crbb5_basecurrency
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Base Currency'
+		dataType: string
+		lineageTag: 3222ac8f-b78f-4bc2-9e30-0f80efe57f55
+		summarizeBy: none
+		sourceColumn: crbb5_basecurrencyname
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Base Index'
+		dataType: string
+		lineageTag: 2a9af51f-19f0-4650-a5da-aebaaf559fc1
+		summarizeBy: none
+		sourceColumn: crbb5_baseindex
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Current Index'
+		dataType: string
+		lineageTag: 0f469413-bd6c-44a1-982a-3243c799add5
+		summarizeBy: none
+		sourceColumn: crbb5_currentindex
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Index Month'
+		dataType: int64
+		formatString: 0
+		lineageTag: a5d0e936-e48e-4534-b5a1-3c0f867bd706
+		summarizeBy: sum
+		sourceColumn: crbb5_indexmonth
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Index Uplift Date'
+		dataType: string
+		lineageTag: 43ab2130-876a-4c55-8afb-3d8a048adba0
+		summarizeBy: none
+		sourceColumn: crbb5_indexupliftdate
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Current Annual Fee'
+		dataType: double
+		lineageTag: 337f904f-5607-4b91-9b0f-0d4870016cae
+		summarizeBy: sum
+		sourceColumn: crbb5_currentannualfee
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column 'Billing frequency p.a.'
+		dataType: int64
+		formatString: 0
+		lineageTag: 08c5d4e9-d0a5-4216-80b2-39b6b9f4fb1d
+		summarizeBy: sum
+		sourceColumn: crbb5_billingfrequencypa
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Invoice amount current'
+		dataType: decimal
+		formatString: "£"#,0.###############;-"£"#,0.###############;"£"#,0.###############
+		lineageTag: 55b7d514-2980-441b-bad7-5fb66b13e642
+		summarizeBy: sum
+		sourceColumn: crbb5_invoiceamountcurrent
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"currencyCulture":"en-GB"}
+
+	column 'Invoice amount current (Base)'
+		dataType: decimal
+		formatString: "£"#,0.###############;-"£"#,0.###############;"£"#,0.###############
+		lineageTag: 35ffccda-0622-4cca-b67d-d3555d14a533
+		summarizeBy: sum
+		sourceColumn: crbb5_invoiceamountcurrent_base
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"currencyCulture":"en-GB"}
+
+	column Notes
+		dataType: string
+		lineageTag: 93027da9-d237-45aa-92e8-5dce2d3349f0
+		summarizeBy: none
+		sourceColumn: crbb5_notes
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Billing Reference'
+		dataType: string
+		lineageTag: b9fd2333-17a7-4fa1-811f-29a851973795
+		summarizeBy: none
+		sourceColumn: crbb5_billingreference
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Netsuite Description'
+		dataType: string
+		lineageTag: bbfe42e1-3f95-49d1-af40-6d2ded149d77
+		summarizeBy: none
+		sourceColumn: crbb5_netsuitedescription
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Base to Current'
+		dataType: double
+		lineageTag: a3842ae5-9734-48f1-9e74-e8ae49ee5a80
+		summarizeBy: sum
+		sourceColumn: crbb5_basetocurrent
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column 'Index Day of Month'
+		dataType: int64
+		formatString: 0
+		lineageTag: 26ab80a0-1f07-469d-9df4-824ab6dbf4df
+		summarizeBy: sum
+		sourceColumn: crbb5_indexdayofmonth
+
+		annotation SummarizationSetBy = Automatic
+
+	column crbb5_indexthismonth
+		dataType: boolean
+		formatString: """TRUE"";""TRUE"";""FALSE"""
+		lineageTag: 2ac6b539-dff8-4e61-b82c-e4cf66acc60b
+		summarizeBy: none
+		sourceColumn: crbb5_indexthismonth
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Index this month ?'
+		dataType: string
+		lineageTag: 6bb60275-0542-41ad-aa0d-954f8ea1d792
+		summarizeBy: none
+		sourceColumn: crbb5_indexthismonthname
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Invoice cycle decimal'
+		dataType: double
+		lineageTag: e2f4b01e-cfa1-41d5-83fe-275fb48432ec
+		summarizeBy: sum
+		sourceColumn: crbb5_invoicecycledecimal
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column 'Invoice cycle whole'
+		dataType: int64
+		formatString: 0
+		lineageTag: d1e50627-83e8-4f07-aca7-6833e571889d
+		summarizeBy: sum
+		sourceColumn: crbb5_invoicecyclewhole
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Billing month zero'
+		dataType: dateTime
+		formatString: General Date
+		lineageTag: a50dda76-0bf0-4ec9-bb3d-3d661ac98aac
+		summarizeBy: none
+		sourceColumn: crbb5_billingmonthzero
+
+		variation Variation
+			isDefault
+			relationship: f64ca299-0596-4024-acc8-a528594855ba
+			defaultHierarchy: LocalDateTable_48a198af-47f3-475a-876f-93ef1c6006bd.'Date Hierarchy'
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Billing start month'
+		dataType: int64
+		formatString: 0
+		lineageTag: 86d1997c-29e8-4921-80e6-9b4a349a23e9
+		summarizeBy: sum
+		sourceColumn: crbb5_billingstartmonth
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Current month'
+		dataType: int64
+		formatString: 0
+		lineageTag: 674a79ea-6fe0-4db5-8a31-a18324dcbf19
+		summarizeBy: sum
+		sourceColumn: crbb5_currentmonth
+
+		annotation SummarizationSetBy = Automatic
+
+	column crbb5_indexcyclethismonth
+		dataType: boolean
+		formatString: """TRUE"";""TRUE"";""FALSE"""
+		lineageTag: 8c2beb09-0baa-441a-ab65-b2035bc0e69e
+		summarizeBy: none
+		sourceColumn: crbb5_indexcyclethismonth
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Index cycle this month ?'
+		dataType: string
+		lineageTag: 6b70252b-e5ed-450f-84a0-5914d2e246f6
+		summarizeBy: none
+		sourceColumn: crbb5_indexcyclethismonthname
+
+		annotation SummarizationSetBy = Automatic
+
+	column crbb5_invoicecyclethismonth
+		dataType: boolean
+		formatString: """TRUE"";""TRUE"";""FALSE"""
+		lineageTag: cadfaac7-784d-4756-9608-f304e494fd09
+		summarizeBy: none
+		sourceColumn: crbb5_invoicecyclethismonth
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Invoice cycle this month ?'
+		dataType: string
+		lineageTag: b123ed57-bcab-400a-8b90-20d33e132251
+		summarizeBy: none
+		sourceColumn: crbb5_invoicecyclethismonthname
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Project warning'
+		dataType: string
+		lineageTag: ce98ad8f-d8eb-48f4-bdbf-39c2cbd6ca1f
+		summarizeBy: none
+		sourceColumn: crbb5_projectwarning
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Invoice next date'
+		dataType: dateTime
+		formatString: General Date
+		lineageTag: bae068a3-0341-40cd-96ab-b59949895cec
+		summarizeBy: none
+		sourceColumn: crbb5_invoicecyclewholedate
+
+		variation Variation
+			isDefault
+			relationship: e045667a-a47d-4f50-92c3-71f494f3a7d8
+			defaultHierarchy: LocalDateTable_5f6a7a5e-fe2f-4002-a683-ab5ed2d04240.'Date Hierarchy'
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Invoice last date'
+		dataType: dateTime
+		formatString: General Date
+		lineageTag: c9a0bf7f-1d38-4c3a-a916-cdbafad3686c
+		summarizeBy: none
+		sourceColumn: crbb5_invoicelastdate
+
+		variation Variation
+			isDefault
+			relationship: caeb2ab4-13f6-4d41-afd3-db5525003940
+			defaultHierarchy: LocalDateTable_061c8a6e-a14f-4fae-a9ec-eb6401a9e92f.'Date Hierarchy'
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Inedxation Basis'
+		dataType: string
+		lineageTag: 5a7cc255-72b7-4aa5-921e-e3254550d207
+		summarizeBy: none
+		sourceColumn: crbb5_inedxationbasis
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Fee Type'
+		dataType: string
+		lineageTag: c1886bd1-4b71-47a8-995f-7666f4e5eda3
+		summarizeBy: none
+		sourceColumn: crbb5_feetype
+
+		annotation SummarizationSetBy = Automatic
+
+	column Calculation
+		dataType: string
+		lineageTag: 51335669-f7a5-476e-a77a-f570004fef2c
+		summarizeBy: none
+		sourceColumn: crbb5_calculation
+
+		annotation SummarizationSetBy = Automatic
+
+	partition crbb5_billingschedule = m
+		mode: import
+		source =
+				let
+				    Source = CommonDataService.Database("emservices.crm11.dynamics.com"),
+				    dbo_crbb5_billingschedule = Source{[Schema="dbo",Item="crbb5_billingschedule"]}[Data]
+				in
+				    dbo_crbb5_billingschedule
+
+	annotation PBI_NavigationStepName = Navigation
+
+	annotation PBI_ResultType = Table
+

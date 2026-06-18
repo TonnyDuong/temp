@@ -1,0 +1,163 @@
+table _Revenue_Forecast_OOC
+	lineageTag: b5424e74-ee82-4720-a917-65c1cc357cec
+
+	column Date
+		dataType: dateTime
+		formatString: Long Date
+		lineageTag: c4a98c26-3ca9-4939-b51d-979b8e49e304
+		summarizeBy: none
+		sourceColumn: Date
+
+		variation Variation
+			isDefault
+			relationship: a3a2cab5-b9d4-4df9-a0b9-50fcc104c287
+			defaultHierarchy: LocalDateTable_368467ac-36dc-4873-a1cb-7efb0a3a1429.'Date Hierarchy'
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation UnderlyingDateTimeDataType = Date
+
+	column 'Project Code'
+		dataType: string
+		lineageTag: 61bfacd1-8850-4e48-9d02-bbc10075897a
+		summarizeBy: none
+		sourceColumn: Project Code
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Account Code'
+		dataType: int64
+		formatString: 0
+		lineageTag: 99479180-129b-4c40-beda-6e3d8148c9c5
+		summarizeBy: count
+		sourceColumn: Account Code
+
+		annotation SummarizationSetBy = Automatic
+
+	column Subsidiary
+		dataType: string
+		lineageTag: a3bb4937-eab8-48e9-9505-bd9f7025fb22
+		summarizeBy: none
+		sourceColumn: Subsidiary
+
+		annotation SummarizationSetBy = Automatic
+
+	column Type
+		dataType: string
+		lineageTag: 5ba1eb2d-5a0e-4ba8-a948-0263962e4a2f
+		summarizeBy: none
+		sourceColumn: Type
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Contract Type'
+		dataType: string
+		lineageTag: 4ee0cd8b-7d66-4d1b-82b2-e966f6a41b29
+		summarizeBy: none
+		sourceColumn: Contract Type
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Snapshot Date'
+		dataType: dateTime
+		formatString: Long Date
+		lineageTag: 2100d442-24bf-49c3-9178-0983ff14d409
+		summarizeBy: none
+		sourceColumn: Snapshot Date
+
+		variation Variation
+			isDefault
+			relationship: 828bedf2-62c3-45d4-a4e6-a876baa19b7c
+			defaultHierarchy: LocalDateTable_5fe4ab9e-bf33-416f-af6d-e75845151d41.'Date Hierarchy'
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation UnderlyingDateTimeDataType = Date
+
+	column Amount
+		dataType: decimal
+		formatString: "£"#,0.###############;-"£"#,0.###############;"£"#,0.###############
+		lineageTag: e1b442ef-4c7a-4181-9675-a575889a15eb
+		summarizeBy: sum
+		sourceColumn: Amount
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"currencyCulture":"en-GB"}
+
+	column TransactionLineKey
+		dataType: string
+		lineageTag: 690b0890-8564-4775-9bc7-04b7ba544ea7
+		summarizeBy: none
+		sourceColumn: TransactionLineKey
+
+		annotation SummarizationSetBy = Automatic
+
+	partition _Revenue_Forecast_OOC = m
+		mode: import
+		source =
+				// =====================================================================
+				// _Revenue_Forecast_OOC  (helper — load disabled)
+				// ---------------------------------------------------------------------
+				// Purpose:      Out-of-contract revenue forecast from the client's
+				//               "Additional Services Forecast" file. Conformed to the
+				//               fact_Revenue_Live schema.
+				// Grain:        One row per (Project Code, Month).
+				// Dependencies: stg_AdditionalServicesForecast  (SharePoint Data folder)
+				// Load:         DISABLED.
+				// ---------------------------------------------------------------------
+				// File layout (CONFIRMED from the delivered file):
+				//   - WIDE monthly layout: the value columns are month-end dates
+				//     (1/31/2026 … 12/31/2026), one column per month.
+				//   - The header row is ROW 5 (rows 1-4 are a title + a note + blanks).
+				//     The stg_AdditionalServicesForecast staging query MUST skip those
+				//     rows and promote row 5 as headers before this helper runs.
+				//   - Metadata columns: Supersector, Sector, Upstream Reports,
+				//     Project Code, Department, Location.
+				//   - `Project Code` is the join key to dim_Project (JBL-02, D&G-03, …);
+				//     the file note confirms "Project code is chosen to allow modelling
+				//     to remain inline with the rest of the forecast model".
+				//   - additional services = Account Code 40014 = Out of Contract.
+				// ---------------------------------------------------------------------
+				// TODO:
+				//   - Month headers display as US M/d/yyyy. If they arrive as text in that
+				//     format, the explicit Culture below parses them; if the staging query
+				//     already types them as dates, replace the Date step with a direct type.
+				// =====================================================================
+				let
+				    Source = #"stg_AdditionalServicesForecast",
+				
+				    // Step 1 — anchor on the metadata columns; unpivot the month columns
+				    NonDateColumns = {
+				        "Supersector", "Sector", "Upstream Reports", "Project Code", "Department", "Location"
+				    },
+				    Unpivoted = Table.UnpivotOtherColumns(Source, NonDateColumns, "Forecast Date Text", "Amount"),
+				
+				    // Step 2 — parse the month-end header (US M/d/yyyy) into a real Date
+				    ParsedDate = Table.AddColumn(Unpivoted, "Date",
+				        each Date.FromText([#"Forecast Date Text"], [Format="dd/MM/yyyy", Culture="en-US"]),
+				        type date),
+				    Typed = Table.TransformColumnTypes(ParsedDate, {{"Amount", Currency.Type}}),
+				
+				    // Step 3 — map Subsidiary from Location, then constants for the fact schema
+				    AddSubsidiary   = Table.AddColumn(Typed,          "Subsidiary",    each [Location],        type text),
+				    AddAccountCode  = Table.AddColumn(AddSubsidiary,  "Account Code",  each 40014,             Int64.Type),
+				    AddType         = Table.AddColumn(AddAccountCode, "Type",          each "Forecast",        type text),
+				    AddContractType = Table.AddColumn(AddType,        "Contract Type", each "Out of Contract", type text),
+				    AddSnapshot     = Table.AddColumn(AddContractType,"Snapshot Date", each null,              type date),
+				    AddTLK          = Table.AddColumn(AddSnapshot,    "TransactionLineKey", each null,         type text),
+				
+				    Final = Table.SelectColumns(AddTLK,
+				        {"Date", "Project Code", "Account Code", "Subsidiary",
+				         "Type", "Contract Type", "Snapshot Date", "Amount", "TransactionLineKey"}),
+				
+				    // Keep only months after the cutover date
+				    FilteredByCutover = Table.SelectRows(Final,
+				        each [Date] > _CutoverDate)
+				in
+				    FilteredByCutover
+
+	annotation PBI_NavigationStepName = Navigation
+
+	annotation PBI_ResultType = Table
+

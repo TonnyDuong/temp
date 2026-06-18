@@ -1,0 +1,70 @@
+table FetchAllColumns
+	lineageTag: eee4db3c-61c5-4f6a-ba09-41f4a695f22f
+
+	column Row
+		dataType: int64
+		formatString: 0
+		lineageTag: 6f2ebfca-67ec-4f35-b070-b2384ebb7273
+		summarizeBy: sum
+		sourceColumn: Row
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Column Set 1'
+		dataType: string
+		lineageTag: b436e275-ec93-41f5-9f77-fd1328059534
+		summarizeBy: none
+		sourceColumn: Column Set 1
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Column Set 2'
+		dataType: string
+		lineageTag: 049bebba-877f-4332-a486-74e811f0ef36
+		summarizeBy: none
+		sourceColumn: Column Set 2
+
+		annotation SummarizationSetBy = Automatic
+
+	partition FetchAllColumns = m
+		mode: import
+		source =
+				let
+				    Source = #"crbb5_jedoxallocation",
+				
+				    ColumnNames =
+				        Table.FromList(
+				            Table.ColumnNames(Source),
+				            Splitter.SplitByNothing(),
+				            {"Column Name"}
+				        ),
+				
+				    AddIndex =
+				        Table.AddIndexColumn(ColumnNames, "Index", 0, 1, Int64.Type),
+				
+				    AddRowNumber =
+				        Table.AddColumn(AddIndex, "Row", each Number.Mod([Index], 50) + 1, Int64.Type),
+				
+				    AddGroupNumber =
+				        Table.AddColumn(AddRowNumber, "Group", each "Column Set " & Text.From(Number.IntegerDivide([Index], 50) + 1), type text),
+				
+				    RemoveIndex =
+				        Table.RemoveColumns(AddGroupNumber, {"Index"}),
+				
+				    Pivoted =
+				        Table.Pivot(
+				            RemoveIndex,
+				            List.Distinct(RemoveIndex[Group]),
+				            "Group",
+				            "Column Name"
+				        ),
+				
+				    Sorted =
+				        Table.Sort(Pivoted, {{"Row", Order.Ascending}})
+				in
+				    Sorted
+
+	annotation PBI_NavigationStepName = Navigation
+
+	annotation PBI_ResultType = Table
+

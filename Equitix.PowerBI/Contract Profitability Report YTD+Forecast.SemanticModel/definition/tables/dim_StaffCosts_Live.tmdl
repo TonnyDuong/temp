@@ -1,0 +1,351 @@
+table dim_StaffCosts_Live
+	lineageTag: 0b7b968d-0963-4697-9b0b-b40e91298d39
+
+	column TimeWorkReference
+		dataType: string
+		lineageTag: 839bcd2a-d309-4a8c-a95d-9ebab31430e8
+		summarizeBy: none
+		sourceColumn: TimeWorkReference
+
+		annotation SummarizationSetBy = Automatic
+
+	column Year
+		dataType: int64
+		formatString: 0
+		lineageTag: 73e52a41-98b1-4e9e-801b-535985838257
+		summarizeBy: none
+		sourceColumn: Year
+
+		annotation SummarizationSetBy = Automatic
+
+	column EmployeeID
+		dataType: string
+		lineageTag: a7409bd1-70dc-499c-a2e9-f50b581ea235
+		summarizeBy: none
+		sourceColumn: EmployeeID
+
+		annotation SummarizationSetBy = Automatic
+
+	column EmployeeName
+		dataType: string
+		lineageTag: 0ba58dc1-019b-4198-b6d8-cbd1312ca539
+		summarizeBy: none
+		sourceColumn: EmployeeName
+
+		annotation SummarizationSetBy = Automatic
+
+	column Country
+		dataType: string
+		lineageTag: d4c51831-085c-48dd-ae60-cca0196debd0
+		summarizeBy: none
+		sourceColumn: Country
+
+		annotation SummarizationSetBy = Automatic
+
+	column HoursPerDay
+		dataType: double
+		lineageTag: 71902b9c-6e0c-43f1-94a7-56f11e2b0457
+		summarizeBy: sum
+		sourceColumn: HoursPerDay
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column DayRate
+		dataType: decimal
+		formatString: "£"#,0.###############;-"£"#,0.###############;"£"#,0.###############
+		lineageTag: e13b8f40-4d2b-4ce3-9c9f-2860b43a6535
+		summarizeBy: sum
+		sourceColumn: DayRate
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"currencyCulture":"en-GB"}
+
+	column StaffCostPerHour
+		dataType: decimal
+		formatString: "£"#,0.00;-"£"#,0.00;"£"#,0.00
+		lineageTag: d4aeb507-bd2b-4971-b6d5-18fdb9be672d
+		summarizeBy: none
+		sourceColumn: StaffCostPerHour
+
+		annotation SummarizationSetBy = User
+
+		annotation PBI_FormatHint = {"currencyCulture":"en-GB"}
+
+	column StaffKey
+		dataType: string
+		lineageTag: ec3e757f-17f5-48d4-80ae-c967617e94aa
+		summarizeBy: none
+		sourceColumn: StaffKey
+
+		annotation SummarizationSetBy = Automatic
+
+	column ContractHours
+		dataType: string
+		lineageTag: f1553770-7e96-4a4f-b3fe-c502a729ed79
+		summarizeBy: none
+		sourceColumn: ContractHours
+
+		annotation SummarizationSetBy = Automatic
+
+	column FullTimeHours
+		dataType: double
+		lineageTag: 8f1e0ca3-1349-4c75-a829-330bca57c891
+		summarizeBy: sum
+		sourceColumn: FullTimeHours
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column HoursRatio
+		dataType: double
+		lineageTag: dc2cb80b-32eb-4500-97ca-d85942422233
+		summarizeBy: sum
+		sourceColumn: HoursRatio
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column NetWorkingDays
+		dataType: int64
+		formatString: 0
+		lineageTag: 6ef460f4-2bd5-4fec-ab4a-56ebfa5218e7
+		summarizeBy: sum
+		sourceColumn: NetWorkingDays
+
+		annotation SummarizationSetBy = Automatic
+
+	column HolidayDays
+		dataType: double
+		lineageTag: e53d091c-64f5-465a-b4b5-eff1ae7e2e7b
+		summarizeBy: sum
+		sourceColumn: HolidayDays
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column PublicHolidayDays
+		dataType: double
+		lineageTag: 03531c37-2767-4290-ab6e-9739b9335681
+		summarizeBy: sum
+		sourceColumn: PublicHolidayDays
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column WorkedDays
+		dataType: double
+		lineageTag: 2f042b24-fd28-42e6-b314-1097562f6110
+		summarizeBy: sum
+		sourceColumn: WorkedDays
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column AnnualCost
+		dataType: decimal
+		formatString: "£"#,0.###############;-"£"#,0.###############;"£"#,0.###############
+		lineageTag: 32742411-9f2f-4c1a-b1ea-51cd4cff36f8
+		summarizeBy: sum
+		sourceColumn: AnnualCost
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"currencyCulture":"en-GB"}
+
+	column RevisedAnnualCost
+		dataType: decimal
+		formatString: "£"#,0.###############;-"£"#,0.###############;"£"#,0.###############
+		lineageTag: e5dcc0ab-c1af-48ad-8f1e-e4554df6e314
+		summarizeBy: sum
+		sourceColumn: RevisedAnnualCost
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"currencyCulture":"en-GB"}
+
+	partition dim_StaffCosts_Live = m
+		mode: import
+		source =
+				// =====================================================================
+				// dim_StaffCosts_Live
+				// ---------------------------------------------------------------------
+				// Purpose:      Per-(Employee, Year) day rate, hourly rate, AND the staff
+				//               forecast cost inputs (working hours, holiday allowance,
+				//               revised annual cost net of holidays). Country-aware
+				//               divisor for hourly; tenure-agnostic average for holidays.
+				// Grain:        One row per TimeWorkReference per Year.
+				// Dependencies: stg_Staff Costs Summary, crbb5_bamboohr, dim_HolidayPolicy_Live
+				// Load:         enabled.
+				// ---------------------------------------------------------------------
+				// Business rules (CONFIRMED by client email):
+				//   StaffCostPerHour  = DayRate / HoursPerDay
+				//   HoursPerDay       = 7.5 for UK + Ireland, 8 for Italy
+				//   Project Cost      = (booked hours) × StaffCostPerHour  [in fact_Timesheet_Live]
+				//   No over/under-standard-hours adjustment: the hourly charge is applied
+				//   straight to the hours booked by project. No floor, ceiling or cap.
+				//
+				// Rate source (CONFIRMED by data screenshots):
+				//   stg_Staff Costs Summary holds the DAY RATE per (employee, year)
+				//   directly in the year columns (`2025`, `2026`). Take DayRate straight
+				//   from that column — there is NO "/ 261" annual-to-day conversion.
+				//
+				// Dedupe rule:
+				//   When the same TimeWorkReference appears with both EMPEMCON* (contractor)
+				//   and EMPEM* (permanent) EmployeeIDs, keep the EMPEM* row.
+				//
+				// Forecast-cost inputs (CONFIRMED by Chris's 02 Jun 2026 email + workbook):
+				//   ContractHours      = crbb5_bamboohr.crbb5_contracthours (weekly, e.g. 37.5 FT / 20 PT)
+				//   FullTimeHours      = 37.5 for UK + Ireland, 40 for Italy
+				//   HoursRatio         = ContractHours / FullTimeHours  (FTE factor for the year)
+				//   NetWorkingDays(yr) = Date.NetWorkingDays equivalent for that calendar year (≈ 261)
+				//   HolidayDays        = dim_HolidayPolicy_Live[HolidayDays] for the year (default 28)
+				//   PublicHolidayDays  = dim_HolidayPolicy_Live[PublicHolidayDays] (default 8)
+				//   WorkedDays         = (NetWorkingDays − HolidayDays − PublicHolidayDays) × HoursRatio
+				//   AnnualCost         = NetWorkingDays × HoursRatio × DayRate
+				//   RevisedAnnualCost  = WorkedDays × DayRate
+				//                        (this is the cost net of holiday allowance — the
+				//                         figure used downstream by _Cost_Staff_Forecast as
+				//                         the per-employee envelope for project allocation)
+				// ---------------------------------------------------------------------
+				// RESOLVED (confirmed by the latest data screenshots): the per-year
+				// columns in stg_Staff Costs Summary (`2025`, `2026`) ARE DAY RATES
+				// (£/day, e.g. Agnew 2026 = 241.55 → StaffCostPerHour 241.55/7.5 = 32.21),
+				// NOT annual salaries. So DayRate is taken directly from the year column
+				// and there is NO "/ 261" step.
+				// ---------------------------------------------------------------------
+				// TODO:
+				//   - Confirm source column names exactly match those used here.
+				// =====================================================================
+				let
+				    Source = #"stg_Staff Costs Summary",
+				
+				    // Step 1 — friendly column names
+				    Renamed = Table.RenameColumns(Source, {
+				        {"Employee #",              "EmployeeID"},
+				        {"Time@work Reference",     "TimeWorkReference"},
+				        {"Last Name, First Name",   "EmployeeName"}
+				    }),
+				
+				    // Step 2 — unpivot the per-year columns so each row is (TWR, Year, DayRate)
+				    //          The year column value is the DAY RATE (£/day) directly.
+				    Unpivoted = Table.UnpivotOtherColumns(
+				        Renamed,
+				        {"EmployeeID", "TimeWorkReference", "EmployeeName"},
+				        "Year",
+				        "DayRate"
+				    ),
+				    YearAsInt = Table.TransformColumnTypes(Unpivoted, {{"Year", Int64.Type}, {"DayRate", Currency.Type}}),
+				
+				    // Step 3 — group by (TWR, Year), pick the permanent (EMPEM*) ID when both contractor and permanent exist
+				    Grouped = Table.Group(YearAsInt,
+				        {"TimeWorkReference", "Year"},
+				        {
+				            {"EmployeeID",   each
+				                let
+				                    PermanentIds = List.Select([EmployeeID], (id) => not Text.StartsWith(id, "EMPEMCON"))
+				                in
+				                    if List.Count(PermanentIds) > 0 then List.First(PermanentIds) else List.First([EmployeeID]),
+				                type text},
+				            {"EmployeeName", each List.First([EmployeeName]), type text},
+				            {"DayRate",      each List.Max([DayRate]),        Currency.Type}
+				        }
+				    ),
+				
+				    // Step 4 — fetch Country from crbb5_bamboohr via TimeWorkReference.
+				    //          crbb5_bamboohr is exposed by LOGICAL name (confirmed against
+				    //          its column list): join on crbb5_timeworkreference, take crbb5_country.
+				    MergedCountry = Table.NestedJoin(
+				        Grouped, {"TimeWorkReference"},
+				        #"crbb5_bamboohr", {"crbb5_timeworkreference"},
+				        "BambooHR_Lookup", JoinKind.LeftOuter
+				    ),
+				    ExpandCountry = Table.ExpandTableColumn(MergedCountry, "BambooHR_Lookup",
+				        {"crbb5_country", "crbb5_contracthours"},
+				        {"Country", "ContractHours"}),
+				
+				     // Step 5 — default blank Country to UK; default missing ContractHours
+				    //          to the country full-time standard (37.5 UK/IE, 40 Italy)
+				    FilledCountry = Table.ReplaceValue(
+				        ExpandCountry,
+				        each [Country],
+				        each (if [Country] = null or [Country] = "" then "UK" else [Country]),
+				        Replacer.ReplaceValue,
+				        {"Country"}
+				    ),
+				     AddFullTimeHours = Table.AddColumn(FilledCountry, "FullTimeHours",
+				        each if [Country] = "Italy" then 40.0 else 37.5,
+				        type number),
+				    FilledContractHours = Table.ReplaceValue(
+				        AddFullTimeHours,
+				        each [ContractHours],
+				        each (if [ContractHours] = null then [FullTimeHours] else [ContractHours]),
+				        Replacer.ReplaceValue,
+				        {"ContractHours"}
+				    ),
+				    AddHoursRatio = Table.AddColumn(FilledContractHours, "HoursRatio",
+				        each [ContractHours] / [FullTimeHours],
+				        type number),
+				
+				    // Step 6 — country-aware hours per day (for the timesheet-based hourly rate)
+				    AddHoursPerDay = Table.AddColumn(AddHoursRatio, "HoursPerDay",
+				        each if [Country] = "Italy" then 8.0 else 7.5,
+				        type number),
+				
+				    // Step 7 — hourly rate (DayRate comes straight from the source year column)
+				    AddHourlyRate = Table.AddColumn(AddHoursPerDay, "StaffCostPerHour",
+				        each [DayRate] / [HoursPerDay],
+				        Currency.Type),
+				
+				    // Step 8 — NetWorkingDays for the year (≈ 261). Computed dynamically so
+				    //          2025/2026/2027 each get the right count (260/261/262).
+				    AddNetWorkingDays = Table.AddColumn(AddHourlyRate, "NetWorkingDays",
+				        each let yr = [Year] in
+				             List.Count(List.Select(
+				                List.Dates(#date(yr,1,1), Duration.Days(#date(yr,12,31) - #date(yr,1,1)) + 1, #duration(1,0,0,0)),
+				                (d) => Date.DayOfWeek(d, Day.Monday) < 5)),
+				        Int64.Type),
+				
+				    // Step 9 — join the per-year holiday allowance
+				    MergedPolicy = Table.NestedJoin(
+				        AddNetWorkingDays, {"Year"},
+				        #"dim_HolidayPolicy_Live", {"Year"},
+				        "Policy_Lookup", JoinKind.LeftOuter
+				    ),
+				    ExpandPolicy = Table.ExpandTableColumn(MergedPolicy, "Policy_Lookup",
+				        {"HolidayDays", "PublicHolidayDays"},
+				        {"HolidayDays", "PublicHolidayDays"}),
+				
+				    // Step 10 — forecast-cost inputs
+				    AddWorkedDays = Table.AddColumn(ExpandPolicy, "WorkedDays",
+				        each ([NetWorkingDays] - [HolidayDays] - [PublicHolidayDays]) * [HoursRatio],
+				        type number),
+				    AddAnnualCost = Table.AddColumn(AddWorkedDays, "AnnualCost",
+				        each [NetWorkingDays] * [HoursRatio] * [DayRate],
+				        Currency.Type),
+				    AddRevisedAnnualCost = Table.AddColumn(AddAnnualCost, "RevisedAnnualCost",
+				        each [WorkedDays] * [DayRate],
+				        Currency.Type),
+				
+				    // Step 11 — composite StaffKey ("<TWR>-<Year>"). dim_StaffCosts keys on
+				    //          (TimeWorkReference, Year) — Power BI relationships can't model
+				    //          a composite key directly. This concat lets a single-column
+				    //          relationship work IF the corresponding facts/helpers also
+				    //          carry the same StaffKey shape.
+				    AddStaffKey = Table.AddColumn(AddRevisedAnnualCost, "StaffKey",
+				        each [TimeWorkReference] & "-" & Text.From([Year]),
+				        type text)
+				in
+				    AddStaffKey
+
+	annotation PBI_NavigationStepName = Navigation
+
+	annotation PBI_ResultType = Table
+
