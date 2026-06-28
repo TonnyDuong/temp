@@ -95,7 +95,11 @@ let
         else null,
         type text),
 
+    // Relationship keys cannot be blank on the one side of the model.
+    NonBlankAccountCodes = Table.SelectRows(AddCostCategory,
+        each [Account Code] <> null and [Account Code] <> ""),
+
     // Enforce the documented grain: one row per Account Code for relationship keys.
-    Deduplicated = Table.Distinct(AddCostCategory, {"Account Code"})
+    Deduplicated = Table.Distinct(NonBlankAccountCodes, {"Account Code"})
 in
     Deduplicated
