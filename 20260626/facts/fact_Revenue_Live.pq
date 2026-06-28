@@ -20,6 +20,6 @@ let
         #"_Revenue_Forecast_HARP",
         #"_Revenue_Forecast_OOC"
     }),
-    #"Changed Type" = Table.TransformColumnTypes(Combined,{{"Date", type date}, {"Account Code", Int64.Type}})
+    #"Filtered Rows" = Table.SelectRows(Combined, each true)
 in
-    #"Changed Type"
+    Combined

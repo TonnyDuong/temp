@@ -90,15 +90,12 @@ let
         {"Sector", "Portfolio", "Contract Title", "MSA Reference", "Concession Expiry", "Contract Status"}
     ),
 
-    // Step 2b — Region split/filtering is deferred for the current sprint.
-    RemovedRegionHelpers = Expanded,
-
-     // Step 2c — IsInScope flag. TRUE if the contract status is in Chris's
+     // Step 2b — IsInScope flag. TRUE if the contract status is in Chris's
     //           confirmed list for the profitability report. From his
     //           02 Jun 2026 email: "Live, Mobilised and Terminated. These 3
     //           stages all indicate a Live (or previously Live) contract."
     //           Pipeline (and any other status) is excluded.
-    AddIsInScope = Table.AddColumn(RemovedRegionHelpers, "IsInScope",
+    AddIsInScope = Table.AddColumn(Expanded, "IsInScope",
         each List.Contains({"Live", "Mobilised", "Mobilized", "Terminated"}, [Contract Status] ?? ""),
         type logical),
 

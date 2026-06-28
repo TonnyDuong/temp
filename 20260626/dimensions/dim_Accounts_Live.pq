@@ -27,8 +27,9 @@
 // "Staff" cost category does NOT appear here — it's stamped directly on
 // timesheet-derived rows in fact_Cost_Live (which have no Account Code).
 // ---------------------------------------------------------------------
-// TYPE NOTE: Account Code is kept as Int64 here and in fact helpers.
-// This matches the active report model relationship type.
+// TYPE NOTE: Account Code is kept as text here and in fact helpers.
+// This matches the CoA source and avoids relationship mismatches after
+// adding the 40013 OOC actual account.
 // =====================================================================
 // =====================================================================
 // dim_Accounts_Live
@@ -54,39 +55,39 @@
 // =====================================================================
 let
     Source = #"stg_FinanceOutput FY26_CoA",
-    ToAccountCode = (value as any) as nullable number =>
-        let
-            NumericValue = try Number.From(value) otherwise null,
-            TextValue = try Text.Trim(Text.From(value)) otherwise null,
-            Characters = if TextValue = null then {} else Text.ToList(TextValue),
-            DigitOrSpace = List.Transform(Characters, each if List.Contains({"0".."9"}, _) then _ else " "),
-            Tokens = List.Select(Text.Split(Text.Combine(DigitOrSpace), " "), each Text.Length(_) >= 5),
-            Candidate =
-                if NumericValue is number then Text.From(Int64.From(NumericValue))
-                else if List.Count(Tokens) = 0 then null
-                else Text.Start(List.Last(Tokens), 5)
-        in
-            if Candidate = null then null else Int64.From(Candidate),
 
     // Step 1 — Nominal Code IS the Account Code; rename for consistency.
     Renamed = Table.RenameColumns(Source, {{"Nominal Code", "Account Code"}}),
 
-    AccountCodeAsInt = Table.TransformColumns(Renamed, {{"Account Code", each ToAccountCode(_), Int64.Type}}),
+//Step 2
+//Typed= Table.TransformColumnTypes(Renamed, {{"Account Code", Int64.Type}}),
+
+    AccountCodeAsText = Table.TransformColumns(Renamed, {{"Account Code", each
+        let
+            TextValue = try Text.Trim(Text.From(_)) otherwise null,
+            NumericValue = try Number.From(_) otherwise null,
+            Digits = if TextValue = null then null else Text.Select(TextValue, {"0".."9"})
+        in
+            if TextValue = null or TextValue = "" then null
+            else if NumericValue is number then Text.From(Int64.From(NumericValue))
+            else if Digits = null or Digits = "" then null
+            else Text.Start(Digits, 5),
+        type text}}),
 
     // Step 2 — Contract Type
-    AddContractType = Table.AddColumn(AccountCodeAsInt, "Contract Type", each
-        if [Account Code] = 40010 then "In Contract"
-        else if [Account Code] = 40011 then "In Contract"
-        else if [Account Code] = 40012 then "In Contract"
-        else if [Account Code] = 40013 then "Out of Contract"
-        else if [Account Code] = 40014 then "Out of Contract"
+    AddContractType = Table.AddColumn(AccountCodeAsText, "Contract Type", each
+        if [Account Code] = "40010" then "In Contract"
+        else if [Account Code] = "40011" then "In Contract"
+        else if [Account Code] = "40012" then "In Contract"
+        else if [Account Code] = "40013" then "Out of Contract"
+        else if [Account Code] = "40014" then "Out of Contract"
         else null,
         type text),
 
     // Step 3 — Cost Category
     AddCostCategory = Table.AddColumn(AddContractType, "Cost Category", each
-     if List.Contains({60201, 60202, 60203}, [Account Code])  then "Subcontractor"
-     else if Text.StartsWith(Text.From([Account Code] ?? ""), "607") then "(exclude -- on timesheets"
+     if List.Contains({"60201", "60202", "60203"}, [Account Code])  then "Subcontractor"
+     else if Text.StartsWith([Account Code] ?? "", "607") then "(exclude -- on timesheets"
         
         else if [Account Type] = "Expense" then "Other Cost"
         else if [Account Type] = "Income"  then "(not a cost)"

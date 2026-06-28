@@ -16,25 +16,22 @@
 // =====================================================================
 let
     Source = #"stg_FinanceOutput FY26_FY2026",
-    ToAccountCode = (value as any) as nullable number =>
+
+    // Normalize to the five-digit text key before filtering; subcontractor codes are compared as text.
+    AccountCodeAsText = Table.TransformColumns(Source, {{"Account No.", each
         let
-            NumericValue = try Number.From(value) otherwise null,
-            TextValue = try Text.Trim(Text.From(value)) otherwise null,
-            Characters = if TextValue = null then {} else Text.ToList(TextValue),
-            DigitOrSpace = List.Transform(Characters, each if List.Contains({"0".."9"}, _) then _ else " "),
-            Tokens = List.Select(Text.Split(Text.Combine(DigitOrSpace), " "), each Text.Length(_) >= 5),
-            Candidate =
-                if NumericValue is number then Text.From(Int64.From(NumericValue))
-                else if List.Count(Tokens) = 0 then null
-                else Text.Start(List.Last(Tokens), 5)
+            TextValue = try Text.Trim(Text.From(_)) otherwise null,
+            NumericValue = try Number.From(_) otherwise null,
+            Digits = if TextValue = null then null else Text.Select(TextValue, {"0".."9"})
         in
-            if Candidate = null then null else Int64.From(Candidate),
+            if TextValue = null or TextValue = "" then null
+            else if NumericValue is number then Text.From(Int64.From(NumericValue))
+            else if Digits = null or Digits = "" then null
+            else Text.Start(Digits, 5),
+        type text}}),
 
-    // Normalize to the five-digit Int64 key before filtering.
-    AccountCodeAsInt = Table.TransformColumns(Source, {{"Account No.", each ToAccountCode(_), Int64.Type}}),
-
-    SubcontractorOnly = Table.SelectRows(AccountCodeAsInt, each
-        List.Contains({60201, 60202, 60203}, [#"Account No."])),
+    SubcontractorOnly = Table.SelectRows(AccountCodeAsText, each
+        List.Contains({"60201", "60202", "60203"}, [#"Account No."])),
 
     FilledLocation = Table.ReplaceValue(
         SubcontractorOnly,
