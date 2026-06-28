@@ -17,6 +17,8 @@
 // =====================================================================
 let
     Source = #"stg_FinanceOutput FY26_FY2026",
+
+    // Match dim_Accounts_Live text keys before joining account metadata.
     AccountCodeAsText = Table.TransformColumnTypes(Source, {{"Account No.", type text}}),
 
     // Step 1 — join account type so we can filter to Expense only

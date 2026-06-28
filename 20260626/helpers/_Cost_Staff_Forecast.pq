@@ -84,6 +84,7 @@ let
         {{"Date", type date}, {"Amount", Currency.Type}}),
 
     // Step 6 — constants for the fact schema
+    // Staff rows have no GL account; nullable text keeps fact_Cost_Live Account Code type-consistent.
     AddAccountCode = Table.AddColumn(TypedMonthly,   "Account Code",  each null,        type nullable text),
     AddCategory    = Table.AddColumn(AddAccountCode, "Category",      each "Staff",     type text),
     AddType        = Table.AddColumn(AddCategory,    "Type",          each "Forecast",  type text),

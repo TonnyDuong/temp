@@ -22,6 +22,7 @@ When changing this area:
 3. Prefer small, reviewable edits over broad rewrites.
 4. Keep query code, business-rule docs, and measure references aligned in the same change.
 5. Call out any place where code and docs disagree instead of silently picking one.
+6. Make only precise changes tied to explicit client requirements or verified defects. Do not rewrite headers, reformat files, remove fields, or update docs unless the change is needed for the requested fix.
 
 ## Canonical References
 
@@ -109,7 +110,8 @@ For any substantive Power Query change:
 2. Check whether a paired helper, fact, dimension, or measure export also needs updating.
 3. Update the relevant Markdown doc if the business rule, dependency, or source mapping changed.
 4. Verify load-enabled versus load-disabled intent was not accidentally changed.
-5. Call out unresolved assumptions and `TODO` items in your summary.
+5. In code comments and Markdown, state the client requirement or data evidence that justifies any added, removed, or changed field/rule.
+6. Call out unresolved assumptions and `TODO` items in your summary.
 
 ## Output Expectations
 

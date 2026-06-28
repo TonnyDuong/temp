@@ -41,6 +41,7 @@
 //   Join key       = crbb5_contractregister[crbb5_contractregisterid]  (confirmed).
 //   Sector (name)  = crbb5_supersectorchoicename                        (confirmed).
 //   Portfolio      = crbb5_portfolio                                    (confirmed).
+//   Contract title = crbb5_title                                        (24 Jun 2026 client request).
 //   MSA Reference  = crbb5_msareference                                 (confirmed).
 //   Concession Exp = crbb5_concessionexpiry                             (confirmed).
 //   Project Type   = crbb5_project[crbb5_projecttypename] (the text name,

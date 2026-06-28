@@ -16,6 +16,8 @@
 // =====================================================================
 let
     Source = #"stg_FinanceOutput FY26_FY2026",
+
+    // Match dim_Accounts_Live text keys; subcontractor codes are compared as text.
     AccountCodeAsText = Table.TransformColumnTypes(Source, {{"Account No.", type text}}),
 
     SubcontractorOnly = Table.SelectRows(AccountCodeAsText, each

@@ -43,7 +43,7 @@ let
 
     // Step 3 — map Subsidiary from Location, then constants for the fact schema
     AddSubsidiary   = Table.AddColumn(Typed,          "Subsidiary",    each [Location],        type text),
-    AddAccountCode  = Table.AddColumn(AddSubsidiary,  "Account Code",  each "40014",           type text),
+    AddAccountCode  = Table.AddColumn(AddSubsidiary,  "Account Code",  each "40014",           type text), // Text key matches dim_Accounts_Live.
     AddType         = Table.AddColumn(AddAccountCode, "Type",          each "Forecast",        type text),
     AddContractType = Table.AddColumn(AddType,        "Contract Type", each "Out of Contract", type text),
     AddSnapshot     = Table.AddColumn(AddContractType,"Snapshot Date", each null,              type date),

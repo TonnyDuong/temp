@@ -37,6 +37,7 @@ let
 
     // Step 3 — Account Code from Netsuite N/C, then constants
     Renamed        = Table.RenameColumns(Typed, {{"Netsuite N/C", "Account Code"}}),
+    // Match dim_Accounts_Live text keys for fact_Cost_Live relationships.
     AccountCodeAsText = Table.TransformColumnTypes(Renamed, {{"Account Code", type text}}),
     AddTWR         = Table.AddColumn(AccountCodeAsText, "TimeWorkReference", each null,         type text),
     AddCategory    = Table.AddColumn(AddTWR,         "Category",          each "Subcontractor", type text),

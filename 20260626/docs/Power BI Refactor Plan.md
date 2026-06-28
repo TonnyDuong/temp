@@ -1201,7 +1201,7 @@ in
 - If `Subsidiary: Full Name` ends in `EMS`, `BWG`, or `BWS` → set `Location: Full Name` default to `UK`.
 - Apply this transform during the `fact_Revenue` and `fact_Cost` ingest (Power Query M `Table.ReplaceValue` step).
 
-**Done when**: `fact_Revenue` has both actual and forecast rows, the four revenue account codes are present, the `Type` and `Contract Type` columns drive the slicers, blank `Location: Full Name` rows are defaulted per the rule above, and `Sum(Amount)` filtered to `Type=Actual` matches the NetSuite revenue total for FY2026 to date.
+**Done when**: `fact_Revenue` has both actual and forecast rows, the five revenue account codes are present, the `Type` and `Contract Type` columns drive the slicers, blank `Location: Full Name` rows are defaulted per the rule above, and `Sum(Amount)` filtered to `Type=Actual` matches the NetSuite revenue total for FY2026 to date.
 
 ### Task 3.3: Build `fact_Cost`
 
@@ -1372,7 +1372,7 @@ Margin FY %     = DIVIDE([Profit FY], [Total Rev FY])
 - The current sprint roll-up is **Sector → Contract → Project Display**.
 - In Power BI matrix rows, build the drill path as **`dim_Project_Live[Sector]` → `dim_Project_Live[Contract]` → `dim_Project_Live[Project Display]`**.
 - `Sector` remains the readable sector **name** (Social Infrastructure, Renewables, …), not the numeric "Sector 1/2/3" placeholders shown in the PoC mock-up.
-- `Contract` is the contract identifier carried on `dim_Project_Live` from `MSA Reference`.
+- `Contract` is the EMS contract name from `crbb5_title`, requested in the 24 Jun 2026 follow-up; `MSA Reference` remains available separately for audit.
 - `Project Display` remains the merged `"<Project Code> - <Project Name>"` label.
 - Do not expose `Region` as a slicer or visible hierarchy column in the current sprint; region filtering is deferred.
 

@@ -2,7 +2,7 @@
 // _Revenue_Actuals  (helper — load disabled)
 // ---------------------------------------------------------------------
 // Purpose:      Revenue actuals from NetSuite GL, conformed to the
-//               fact_Revenue_Live schema. Filtered to the four revenue
+//               fact_Revenue_Live schema. Filtered to the revenue
 //               account codes only.
 // Grain:        One row per NetSuite revenue line.
 // Dependencies: stg_FinanceOutput FY26_FY2026
@@ -11,6 +11,8 @@
 // Account codes included (confirmed by Chris):
 //   40010, 40011, 40012  →  Contract Type = "In Contract"
 //   40013, 40014         →  Contract Type = "Out of Contract"
+//   40013 is included because the 24 Jun 2026 YPS-04 extract showed
+//   OOC actual rows posted to this account.
 //
 // Blank Location: Full Name rule:
 //   Subsidiary ends in "ESS"             →  "Italy"
@@ -25,6 +27,8 @@
 // =====================================================================
 let
     Source = #"stg_FinanceOutput FY26_FY2026",
+
+    // Match dim_Accounts_Live text keys; required for the 40013 OOC fix and relationships.
     AccountCodeAsText = Table.TransformColumnTypes(Source, {{"Account No.", type text}}),
 
     // Step 1 — keep only revenue rows

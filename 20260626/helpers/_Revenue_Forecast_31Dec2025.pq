@@ -53,7 +53,7 @@ let
     AddSnapshot       = Table.AddColumn(Renamed,         "Snapshot Date",      each #date(2025, 12, 31), type date),
     AddType           = Table.AddColumn(AddSnapshot,     "Type",               each "Forecast",          type text),
     AddContractType   = Table.AddColumn(AddType,         "Contract Type",      each "In Contract",       type text),
-    AddAccountCode    = Table.AddColumn(AddContractType, "Account Code",       each "40010",             type text),    // TODO: confirm default
+    AddAccountCode    = Table.AddColumn(AddContractType, "Account Code",       each "40010",             type text),    // Text key matches dim_Accounts_Live; TODO: confirm default.
     AddTLK            = Table.AddColumn(AddAccountCode,  "TransactionLineKey", each null,                type text),
 
     Final = Table.SelectColumns(AddTLK,

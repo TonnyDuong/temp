@@ -11,6 +11,7 @@
 //   Contract Type:
 //     40010 / 40011 / 40012  →  In Contract
 //     40013 / 40014          →  Out of Contract
+//     40013 added from the 24 Jun 2026 YPS-04 OOC actuals extract.
 //     (HARP currently posts to 40011 Construction; switches to 40010
 //      Operational after its 9-year construction phase ends.)
 //
@@ -26,14 +27,9 @@
 // "Staff" cost category does NOT appear here — it's stamped directly on
 // timesheet-derived rows in fact_Cost_Live (which have no Account Code).
 // ---------------------------------------------------------------------
-// TYPE NOTE: the source `Nominal Code` is TEXT (the CoA screenshot shows
-// the ABC icon). But fact_Revenue_Live and fact_Cost_Live carry
-// `Account Code` as Int64 (NetSuite `Account No.` is numeric, and the
-// forecast helpers set 40014 etc. as Int64). Power BI relationships are
-// type-strict — if this dim's Account Code stays text the relationship
-// dim_Accounts_Live[Account Code] → fact_*[Account Code] will not build.
-// Step 2 below CASTS to Int64 so the relationship works and the rest of
-// the comparisons can use unquoted integers.
+// TYPE NOTE: Account Code is kept as text here and in fact helpers.
+// This matches the CoA source and avoids relationship mismatches after
+// adding the 40013 OOC actual account.
 // =====================================================================
 // =====================================================================
 // dim_Accounts_Live
