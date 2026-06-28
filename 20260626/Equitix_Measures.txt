@@ -35,9 +35,7 @@ CALCULATE(
     fact_Revenue_Live[Contract Type] = "Out of Contract")
 
 Revenue Forecast Remaining =
-CALCULATE(
-    SUM(fact_Revenue_Live[Amount]),
-    fact_Revenue_Live[Type] = "Forecast")
+[Revenue For In-Contract] + [Revenue For Oo-Contract]
 
 *Staff Cost Forecast = 
 CALCULATE(

@@ -82,6 +82,7 @@ Unless the user explicitly asks to change them, preserve these current rules:
 - Out-of-contract actual revenue includes account codes `40013` and `40014`; OOC forecast remains the Additional Services forecast stream using `40014`.
 - The cutover day is the 12th of the month unless explicitly changed for a controlled test.
 - `Account Code` must stay as text in the dimension and all helpers/facts.
+- DAX measure updates must preserve existing filter/category boundaries unless the client requirement explicitly changes them. For example, YTD + Forecast revenue should reuse the existing In-Contract and Out-of-Contract forecast measures rather than replacing them with an unrestricted forecast sum.
 
 ## High-Risk Areas
 

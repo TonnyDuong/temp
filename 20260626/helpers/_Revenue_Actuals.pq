@@ -28,8 +28,18 @@
 let
     Source = #"stg_FinanceOutput FY26_FY2026",
 
-    // Match dim_Accounts_Live text keys; required for the 40013 OOC fix and relationships.
-    AccountCodeAsText = Table.TransformColumnTypes(Source, {{"Account No.", type text}}),
+    // Normalize to the five-digit text key before filtering; a raw text cast can turn numeric source values into non-matching labels.
+    AccountCodeAsText = Table.TransformColumns(Source, {{"Account No.", each
+        let
+            TextValue = try Text.Trim(Text.From(_)) otherwise null,
+            NumericValue = try Number.From(_) otherwise null,
+            Digits = if TextValue = null then null else Text.Select(TextValue, {"0".."9"})
+        in
+            if TextValue = null or TextValue = "" then null
+            else if NumericValue is number then Text.From(Int64.From(NumericValue))
+            else if Digits = null or Digits = "" then null
+            else Text.Start(Digits, 5),
+        type text}}),
 
     // Step 1 — keep only revenue rows
     RevenueOnly = Table.SelectRows(AccountCodeAsText, each

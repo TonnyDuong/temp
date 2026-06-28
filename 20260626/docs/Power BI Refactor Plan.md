@@ -5,7 +5,7 @@ project: "[[Equitix]]"
 
 # Power BI Refactor Plan, [[Equitix]] Profitability Report
 
-> 24 Jun 2026 amendment: OOC actual revenue now includes account codes `40013` and `40014`; OOC forecast remains the Additional Services stream using `40014`. Keep account codes as text in all dimensions/facts. The current sprint hierarchy is `Sector -> Contract -> Project Display`; Region split/filtering is deferred. YTD + Forecast revenue must sum monthly forecast rows rather than multiplying one month by remaining months.
+> 24 Jun 2026 amendment: OOC actual revenue now includes account codes `40013` and `40014`; OOC forecast remains the Additional Services stream using `40014`. Keep account codes as text in all dimensions/facts. The current sprint hierarchy is `Sector -> Contract -> Project Display`; Region split/filtering is deferred. YTD + Forecast revenue must sum monthly forecast rows rather than multiplying one month by remaining months, while preserving the existing In-Contract and Out-of-Contract forecast measure boundaries.
 
 **Audience**: junior developer building / refactoring the `.pbix` model.
 

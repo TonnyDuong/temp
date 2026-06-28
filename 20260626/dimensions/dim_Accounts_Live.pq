@@ -62,10 +62,17 @@ let
 //Step 2
 //Typed= Table.TransformColumnTypes(Renamed, {{"Account Code", Int64.Type}}),
 
-    AccountCodeAsText= Table.TransformColumnTypes(
-        Renamed,
-        {{"Account Code", type text}}
-    ),
+    AccountCodeAsText = Table.TransformColumns(Renamed, {{"Account Code", each
+        let
+            TextValue = try Text.Trim(Text.From(_)) otherwise null,
+            NumericValue = try Number.From(_) otherwise null,
+            Digits = if TextValue = null then null else Text.Select(TextValue, {"0".."9"})
+        in
+            if TextValue = null or TextValue = "" then null
+            else if NumericValue is number then Text.From(Int64.From(NumericValue))
+            else if Digits = null or Digits = "" then null
+            else Text.Start(Digits, 5),
+        type text}}),
 
     // Step 2 — Contract Type
     AddContractType = Table.AddColumn(AccountCodeAsText, "Contract Type", each

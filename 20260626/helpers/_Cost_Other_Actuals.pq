@@ -18,8 +18,18 @@
 let
     Source = #"stg_FinanceOutput FY26_FY2026",
 
-    // Match dim_Accounts_Live text keys before joining account metadata.
-    AccountCodeAsText = Table.TransformColumnTypes(Source, {{"Account No.", type text}}),
+    // Normalize to the five-digit text key before joining account metadata.
+    AccountCodeAsText = Table.TransformColumns(Source, {{"Account No.", each
+        let
+            TextValue = try Text.Trim(Text.From(_)) otherwise null,
+            NumericValue = try Number.From(_) otherwise null,
+            Digits = if TextValue = null then null else Text.Select(TextValue, {"0".."9"})
+        in
+            if TextValue = null or TextValue = "" then null
+            else if NumericValue is number then Text.From(Int64.From(NumericValue))
+            else if Digits = null or Digits = "" then null
+            else Text.Start(Digits, 5),
+        type text}}),
 
     // Step 1 — join account type so we can filter to Expense only
     MergedAccountType = Table.NestedJoin(
