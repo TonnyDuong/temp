@@ -28,22 +28,22 @@
 let
     Source = #"stg_FinanceOutput FY26_FY2026",
 
-    // Normalize to the five-digit text key before filtering; a raw text cast can turn numeric source values into non-matching labels.
-    AccountCodeAsText = Table.TransformColumns(Source, {{"Account No.", each
+    // Normalize to the five-digit Int64 key before filtering.
+    AccountCodeAsInt = Table.TransformColumns(Source, {{"Account No.", each
         let
             TextValue = try Text.Trim(Text.From(_)) otherwise null,
             NumericValue = try Number.From(_) otherwise null,
             Digits = if TextValue = null then null else Text.Select(TextValue, {"0".."9"})
         in
             if TextValue = null or TextValue = "" then null
-            else if NumericValue is number then Text.From(Int64.From(NumericValue))
+            else if NumericValue is number then Int64.From(NumericValue)
             else if Digits = null or Digits = "" then null
-            else Text.Start(Digits, 5),
-        type text}}),
+            else Int64.From(Text.Start(Digits, 5)),
+        Int64.Type}}),
 
     // Step 1 — keep only revenue rows
-    RevenueOnly = Table.SelectRows(AccountCodeAsText, each
-        List.Contains({"40010", "40011", "40012", "40013", "40014"}, [#"Account No."])),
+    RevenueOnly = Table.SelectRows(AccountCodeAsInt, each
+        List.Contains({40010, 40011, 40012, 40013, 40014}, [#"Account No."])),
 
     // Step 2 — default blank Location: Full Name
     FilledLocation = Table.ReplaceValue(
@@ -63,7 +63,7 @@ let
 
     // Step 3 — Contract Type from Account Code
     AddContractType = Table.AddColumn(FilledLocation, "Contract Type",
-        each if List.Contains({"40013", "40014"}, [#"Account No."]) then "Out of Contract" else "In Contract",
+        each if List.Contains({40013, 40014}, [#"Account No."]) then "Out of Contract" else "In Contract",
         type text),
 
     // Step 4 — unique line key (Transaction ID + Transaction Line ID)

@@ -17,21 +17,21 @@
 let
     Source = #"stg_FinanceOutput FY26_FY2026",
 
-    // Normalize to the five-digit text key before filtering; subcontractor codes are compared as text.
-    AccountCodeAsText = Table.TransformColumns(Source, {{"Account No.", each
+    // Normalize to the five-digit Int64 key before filtering.
+    AccountCodeAsInt = Table.TransformColumns(Source, {{"Account No.", each
         let
             TextValue = try Text.Trim(Text.From(_)) otherwise null,
             NumericValue = try Number.From(_) otherwise null,
             Digits = if TextValue = null then null else Text.Select(TextValue, {"0".."9"})
         in
             if TextValue = null or TextValue = "" then null
-            else if NumericValue is number then Text.From(Int64.From(NumericValue))
+            else if NumericValue is number then Int64.From(NumericValue)
             else if Digits = null or Digits = "" then null
-            else Text.Start(Digits, 5),
-        type text}}),
+            else Int64.From(Text.Start(Digits, 5)),
+        Int64.Type}}),
 
-    SubcontractorOnly = Table.SelectRows(AccountCodeAsText, each
-        List.Contains({"60201", "60202", "60203"}, [#"Account No."])),
+    SubcontractorOnly = Table.SelectRows(AccountCodeAsInt, each
+        List.Contains({60201, 60202, 60203}, [#"Account No."])),
 
     FilledLocation = Table.ReplaceValue(
         SubcontractorOnly,

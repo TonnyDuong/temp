@@ -19,8 +19,8 @@ let
         {{"Amount", each List.Sum([Cost]), Currency.Type}}
     ),
 
-    // Staff rows have no GL account; nullable text keeps fact_Cost_Live Account Code type-consistent.
-    AddAccountCode = Table.AddColumn(Grouped,        "Account Code",  each null,     type nullable text),
+    // Staff rows have no GL account; nullable Int64 keeps fact_Cost_Live Account Code type-consistent.
+    AddAccountCode = Table.AddColumn(Grouped,        "Account Code",  each null,     Int64.Type),
     AddCategory    = Table.AddColumn(AddAccountCode, "Category",      each "Staff",  type text),
     AddType        = Table.AddColumn(AddCategory,    "Type",          each "Actual", type text),
     AddSnapshot    = Table.AddColumn(AddType,        "Snapshot Date", each null,     type date),

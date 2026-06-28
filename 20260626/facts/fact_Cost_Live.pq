@@ -23,6 +23,6 @@ let
         #"_Cost_Staff_Forecast",
         #"_Cost_Subcontractor_Forecast"
     }),
-    #"Changed Type" = Table.TransformColumnTypes(Combined,{{"Date", type date}})
+    #"Changed Type" = Table.TransformColumnTypes(Combined,{{"Date", type date}, {"Account Code", Int64.Type}})
 in
     #"Changed Type"
