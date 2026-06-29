@@ -470,7 +470,7 @@ Same row axis (Sector). Columns split actuals + forecast and roll up to full yea
 |---|---|---|---|
 | Revenue Act | (YTD actuals) | `In Contract` | NetSuite |
 | | | `Oo Contract` | NetSuite |
-| Revenue For | (Remaining forecast) | `In Contract` | **Billing Schedule** (Dataverse) + spreadsheet export for inflation adjustments |
+| Revenue Forecast | Remaining forecast, summed from monthly forecast rows | `In Contract` | **Billing Schedule** (Dataverse) + spreadsheet export for inflation adjustments |
 | | | `Oo Contract` | **Additional Services Forecast** spreadsheet (delivered, by month + project code) |
 | | | `Total Rev` | Sum |
 | Cost Act | (YTD actuals) | `Staff Cost` | Timesheets × Employee Day Rates |

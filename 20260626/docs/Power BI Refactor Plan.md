@@ -1281,29 +1281,59 @@ Revenue YTD = CALCULATE([Revenue Actual], DATESYTD(dim_Date_Live[Date]))
 -- as Forecast; from the 12th onward, the prior completed month flips to
 -- Actual. The "Forecast" side of the YTF table is therefore "remaining
 -- months only" (everything from the cutover month onward).
-Cutover Month Start =
+Cutover Date =
     VAR Today = TODAY()
     RETURN
     IF(DAY(Today) >= 12,
-        DATE(YEAR(Today), MONTH(Today), 1),                                  -- include current month as forecast
-        DATE(YEAR(Today), MONTH(Today)-1, 1) )                               -- before 12th: include prior month too as forecast
+        EOMONTH(Today, -1),                                                   -- include current month-end as forecast
+        EOMONTH(Today, -2) )                                                  -- before 12th: include prior month-end too as forecast
 
 -- Four-way split for the PoC tables (Act/For × In/Oo).
 -- Actuals are capped at "before cutover month"; Forecast is from cutover
 -- month onward, so Actual + Forecast sums cleanly to the full-year total.
 Rev Act In = CALCULATE([Revenue],
     fact_Revenue_Live[Type]="Actual",   fact_Revenue_Live[Contract Type]="In Contract",
-    fact_Revenue_Live[Date] < [Cutover Month Start])
+    fact_Revenue_Live[Date] <= [Cutover Date])
 Rev Act Oo = CALCULATE([Revenue],
     fact_Revenue_Live[Type]="Actual",   fact_Revenue_Live[Contract Type]="Out of Contract",
-    fact_Revenue_Live[Date] < [Cutover Month Start])
-Rev For In = CALCULATE([Revenue],
-    fact_Revenue_Live[Type]="Forecast", fact_Revenue_Live[Contract Type]="In Contract",
-    fact_Revenue_Live[Date] >= [Cutover Month Start])
-Rev For Oo = CALCULATE([Revenue],
-    fact_Revenue_Live[Type]="Forecast", fact_Revenue_Live[Contract Type]="Out of Contract",
-    fact_Revenue_Live[Date] >= [Cutover Month Start])
+    fact_Revenue_Live[Date] <= [Cutover Date])
+Revenue Forecast In =
+VAR CutoverDate = [Cutover Date]
+VAR ForecastYear = YEAR(TODAY())
+RETURN
+CALCULATE(
+    [Revenue],
+    fact_Revenue_Live[Type]="Forecast",
+    fact_Revenue_Live[Contract Type]="In Contract",
+    KEEPFILTERS(
+        FILTER(
+            ALL(fact_Revenue_Live[Date]),
+            fact_Revenue_Live[Date] > CutoverDate
+                && YEAR(fact_Revenue_Live[Date]) = ForecastYear
+        )
+    )
+)
+Revenue Forecast Oo =
+VAR CutoverDate = [Cutover Date]
+VAR ForecastYear = YEAR(TODAY())
+RETURN
+CALCULATE(
+    [Revenue],
+    fact_Revenue_Live[Type]="Forecast",
+    fact_Revenue_Live[Contract Type]="Out of Contract",
+    KEEPFILTERS(
+        FILTER(
+            ALL(fact_Revenue_Live[Date]),
+            fact_Revenue_Live[Date] > CutoverDate
+                && YEAR(fact_Revenue_Live[Date]) = ForecastYear
+        )
+    )
+)
+
+Revenue Forecast Remaining = [Revenue Forecast In] + [Revenue Forecast Oo]
 ```
+
+Forecast revenue must remain row-based: it sums the unpivoted monthly forecast rows after the cutover. For the YPS-01 example reviewed on 29 Jun 2026, this should match the Excel pattern `SUM(AM2:AS2)` for Jun-Dec 2026, including the higher Oct-Dec monthly values, rather than multiplying the June monthly fee by seven. In Power BI, that means the visual must use the `Revenue Forecast In` measure above from `fact_Revenue_Live[Amount]`, not a legacy measure derived from `Monthly Fee`, `Current Annual Fee`, `dim_Contracts`, `fact_Contracts`, or `crbb5_billingschedule`.
 
 ### Cost measures
 ```dax
@@ -1321,13 +1351,13 @@ Costs YTD = CALCULATE([Costs Actual], DATESYTD(dim_Date_Live[Date]))
 -- Category × Type split for the PoC tables (Staff/Subcontractor × Act/For).
 -- Same cutover-date rule as revenue: Actual < cutover month, Forecast >= cutover month.
 Staff Cost Act  = CALCULATE([Staff Costs],
-    fact_Cost_Live[Type]="Actual",   fact_Cost_Live[Date] < [Cutover Month Start])
+    fact_Cost_Live[Type]="Actual",   fact_Cost_Live[Date] <= [Cutover Date])
 Staff Cost For  = CALCULATE([Staff Costs],
-    fact_Cost_Live[Type]="Forecast", fact_Cost_Live[Date] >= [Cutover Month Start])
+    fact_Cost_Live[Type]="Forecast", fact_Cost_Live[Date] > [Cutover Date])
 Subcon Cost Act = CALCULATE([Subcontractor Costs],
-    fact_Cost_Live[Type]="Actual",   fact_Cost_Live[Date] < [Cutover Month Start])
+    fact_Cost_Live[Type]="Actual",   fact_Cost_Live[Date] <= [Cutover Date])
 Subcon Cost For = CALCULATE([Subcontractor Costs],
-    fact_Cost_Live[Type]="Forecast", fact_Cost_Live[Date] >= [Cutover Month Start])
+    fact_Cost_Live[Type]="Forecast", fact_Cost_Live[Date] > [Cutover Date])
 ```
 
 Note: `Category` filters in the cost measures sit directly on `fact_Cost_Live`, not via `dim_Accounts_Live`, because staff cost rows have a null `Account Code` (timesheet-derived) and would be lost if we filtered via the dim.
@@ -1362,7 +1392,7 @@ Profit YTD      = [Total Rev YTD] - [Total Cost YTD]
 Margin YTD %    = DIVIDE([Profit YTD], [Total Rev YTD])
 
 -- YTF + Forecast table (full-year = actual + forecast)
-Total Rev FY    = [Rev Act In] + [Rev Act Oo] + [Rev For In] + [Rev For Oo]
+Total Rev FY    = [Rev Act In] + [Rev Act Oo] + [Revenue Forecast In] + [Revenue Forecast Oo]
 Total Cost FY   = [Staff Cost Act] + [Staff Cost For] + [Subcon Cost Act] + [Subcon Cost For]
 Profit FY       = [Total Rev FY] - [Total Cost FY]
 Margin FY %     = DIVIDE([Profit FY], [Total Rev FY])
@@ -1378,7 +1408,7 @@ Margin FY %     = DIVIDE([Profit FY], [Total Rev FY])
 
 **Matrix layout — YTD table** (rows = `Sector` → `Contract` → `Project Display`): `Rev Act In YTD` (In Contract), `Rev Act Oo YTD` (Oo Contract), `Total Rev YTD`, `Staff Cost YTD`, `Subcon Cost YTD` (Subcontractor Costs), `Total Cost YTD`, `Profit YTD`, `Margin YTD %`.
 
-**Matrix layout — YTF + Forecast table** (rows = `Sector` → `Contract` → `Project Display`): `Rev Act In`, `Rev Act Oo`, `Rev For In`, `Rev For Oo`, `Total Rev FY`, `Staff Cost Act`, `Staff Cost For`, `Subcon Cost Act`, `Subcon Cost For`, `Total Cost FY`, `Profit FY`, `Margin FY %`. HARP forecast must not surface as a separate report column — it is part of the unified in-contract forecast stream. Forecast revenue must be summed from monthly forecast rows, not derived from one month multiplied by remaining months. Power BI's Matrix cannot reproduce the banded `Revenue Act / Revenue For / Cost Act / Cost For` super-headers from a flat value list — accept flat headers, or use a calculation group crossing a `Scenario` (Actual/Forecast) item with Contract Type on columns.
+**Matrix layout — YTF + Forecast table** (rows = `Sector` → `Contract` → `Project Display`): `Rev Act In`, `Rev Act Oo`, `Revenue Forecast In`, `Revenue Forecast Oo`, `Total Rev FY`, `Staff Cost Act`, `Staff Cost For`, `Subcon Cost Act`, `Subcon Cost For`, `Total Cost FY`, `Profit FY`, `Margin FY %`. HARP forecast must not surface as a separate report column — it is part of the unified in-contract forecast stream. Forecast revenue must be summed from monthly forecast rows, not derived from one month multiplied by remaining months. Power BI's Matrix cannot reproduce the banded `Revenue Act / Revenue Forecast / Cost Act / Cost For` super-headers from a flat value list — accept flat headers, or use a calculation group crossing a `Scenario` (Actual/Forecast) item with Contract Type on columns.
 
 ### Exact setup — YTD matrix
 
@@ -1400,8 +1430,8 @@ Build the **YTD** matrix as a separate visual. Do **not** reuse the FY / Forecas
    - `Profit YTD`
    - `Margin YTD %`
 5. Do **not** add any forecast measures to the YTD matrix. Specifically, do **not** add:
-   - `Rev For In`
-   - `Rev For Oo`
+   - `Revenue Forecast In`
+   - `Revenue Forecast Oo`
    - `Staff Cost For`
    - `Subcon Cost For`
    - `Total Rev FY`
@@ -1456,8 +1486,8 @@ Columns
 Values
 - Rev Act In
 - Rev Act Oo
-- Rev For In
-- Rev For Oo
+- Revenue Forecast In
+- Revenue Forecast Oo
 - Total Rev FY
 - Staff Cost Act
 - Staff Cost For
@@ -1470,7 +1500,7 @@ Values
 
 Important:
 - HARP must not appear as its own value or its own column in either matrix.
-- `Rev For In` already includes all in-contract forecast rows through the unified revenue logic, including HARP.
+- `Revenue Forecast In` already includes all in-contract forecast rows through the unified revenue logic, including HARP.
 - If you see separate entries such as `Revenue Forecast HARP`, `_Revenue_Forecast_HARP`, or any extra HARP-only value in the **Values** bucket, remove it.
 
 **Sanity check (Chris, 27 May):** with staff cost = booked hours × hourly rate, he expects sector **margins around 50–55%** — a lot of time is booked to these projects, so staff cost is high. If a sector reads a much higher margin (e.g. 80–90%), staff costs are probably under-counting (missing timesheet hours, unmatched rates, or `EMS 90` leakage) — investigate before sign-off.

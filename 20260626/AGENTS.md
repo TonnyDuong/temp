@@ -88,6 +88,7 @@ Unless the user explicitly asks to change them, preserve these current rules:
 
 Be careful in these spots because changes ripple widely:
 
+- Source Excel workbooks: before changing Power Query for missing rows, confirm the client has not left filters applied in the workbook/table. A saved filter can make staging or helpers appear empty while the data is still present in the file.
 - `_CutoverDate.pq`: used by both actual and forecast helpers.
 - `dim_StaffCosts_Live.pq`: shared by timesheet actuals and Jedox-based forecast cost.
 - `dim_Accounts_Live.pq`: classification logic and account-code typing affect both fact joins and measure semantics.

@@ -22,20 +22,49 @@ CALCULATE(
 
 Revenue Actual = CALCULATE([Revenue], fact_Revenue_Live[Type] = "Actual")
 
-Revenue For In-Contract =
-CALCULATE(
-    SUM(fact_Revenue_Live[Amount]),
-    fact_Revenue_Live[Type] = "Forecast",
-    fact_Revenue_Live[Contract Type] = "In Contract")
+Cutover Date =
+VAR TodayDate = TODAY()
+VAR MonthsBack =
+    IF(DAY(TodayDate) >= 12, 1, 2)
+RETURN
+    EOMONTH(TodayDate, -MonthsBack)
 
-Revenue For Oo-Contract =
+Revenue Forecast In =
+VAR CutoverDate = [Cutover Date]
+VAR ForecastYear = YEAR(TODAY())
+RETURN
 CALCULATE(
     SUM(fact_Revenue_Live[Amount]),
     fact_Revenue_Live[Type] = "Forecast",
-    fact_Revenue_Live[Contract Type] = "Out of Contract")
+    fact_Revenue_Live[Contract Type] = "In Contract",
+    KEEPFILTERS(
+        FILTER(
+            ALL(fact_Revenue_Live[Date]),
+            fact_Revenue_Live[Date] > CutoverDate
+                && YEAR(fact_Revenue_Live[Date]) = ForecastYear
+        )
+    )
+)
+
+Revenue Forecast Oo =
+VAR CutoverDate = [Cutover Date]
+VAR ForecastYear = YEAR(TODAY())
+RETURN
+CALCULATE(
+    SUM(fact_Revenue_Live[Amount]),
+    fact_Revenue_Live[Type] = "Forecast",
+    fact_Revenue_Live[Contract Type] = "Out of Contract",
+    KEEPFILTERS(
+        FILTER(
+            ALL(fact_Revenue_Live[Date]),
+            fact_Revenue_Live[Date] > CutoverDate
+                && YEAR(fact_Revenue_Live[Date]) = ForecastYear
+        )
+    )
+)
 
 Revenue Forecast Remaining =
-[Revenue For In-Contract] + [Revenue For Oo-Contract]
+[Revenue Forecast In] + [Revenue Forecast Oo]
 
 *Staff Cost Forecast = 
 CALCULATE(

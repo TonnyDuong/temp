@@ -91,6 +91,20 @@ Queries depend on each other. If you're pasting them in for the first time, crea
 - For helpers, the **load** setting must be disabled in Power BI Desktop (right-click the query → uncheck "Enable load"). The `.pq` files contain the M code only; the load flag is set in the PBI UI.
 - For dimensions and facts, leave **load** enabled (default).
 
+## Missing Data Troubleshooting
+
+Before changing M code for blank helpers, facts, or measures, verify the source workbook state. A client-saved Excel filter can hide rows from the source table or worksheet and make downstream queries appear empty even when the `.pq` logic is correct.
+
+First checks for missing actuals or forecast rows:
+
+1. Open the source Excel file used by the staging query.
+2. Clear filters on the relevant worksheet or Excel table.
+3. Confirm the expected account, project, and date rows are visible in Excel.
+4. Save the workbook after clearing filters.
+5. Refresh Power BI and then re-check the staging query before debugging helpers.
+
+If rows are present in staging but missing later, continue with query-step checks in the affected helper, especially account-code filters, cutover-date filters, and joins to dimensions.
+
 ## Naming convention
 
 Every query name carries the **`_Live`** suffix so the new model can coexist with the existing one during development. After Phase 5 verification, run Phase 6 (swap-over) to drop the suffix.
