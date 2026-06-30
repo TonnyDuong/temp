@@ -1,0 +1,69 @@
+Margin FY % = DIVIDE([Profit FY], [Total Revenue FY])
+
+*Margin YTD % = DIVIDE([Profit YTD], [Total Revenue YTD])
+
+Profit FY = [Total Revenue FY] - [Total Costs FY]
+
+*Profit YTD = [Total Revenue YTD] - [Total Costs YTD]
+
+*Revenue = SUM(fact_Revenue_Live[Amount]) * -1
+
+Revenue Act In-Contract =
+CALCULATE(
+    -SUM(fact_Revenue_Live[Amount]),
+    fact_Revenue_Live[Type] = "Actual",
+    fact_Revenue_Live[Contract Type] = "In Contract")
+
+Revenue Act Oo-Contract =
+CALCULATE(
+    -SUM(fact_Revenue_Live[Amount]),
+    fact_Revenue_Live[Type] = "Actual",
+    fact_Revenue_Live[Contract Type] = "Out of Contract")
+
+Revenue Actual = CALCULATE([Revenue], fact_Revenue_Live[Type] = "Actual")
+
+Revenue For In-Contract =
+CALCULATE(
+    SUM(fact_Revenue_Live[Amount]),
+    fact_Revenue_Live[Type] = "Forecast",
+    fact_Revenue_Live[Contract Type] = "In Contract")
+
+Revenue For Oo-Contract =
+CALCULATE(
+    SUM(fact_Revenue_Live[Amount]),
+    fact_Revenue_Live[Type] = "Forecast",
+    fact_Revenue_Live[Contract Type] = "Out of Contract")
+
+Revenue Forecast Remaining =
+[Revenue For In-Contract] + [Revenue For Oo-Contract]
+
+*Staff Cost Forecast = 
+CALCULATE(
+    SUM(_Cost_Staff_Forecast[Amount]),
+    FILTER(dim_Project_Live, dim_Project_Live[IsInScope] = TRUE()))
+
+*System Date = "DATE: " & FORMAT(TODAY(), "dd-MM-yyyy")
+
+Total Costs FY = SUM(_Cost_Other_Actuals[Amount])
++SUM(_Cost_Staff_Actuals[Amount])
++SUM(_Cost_Staff_Forecast[Amount])
++SUM(_Cost_Subcontractor_Actuals[Amount])
++SUM(_Cost_Subcontractor_Forecast[Amount])
+
+*Total Costs YTD = SUM(_Cost_Other_Actuals[Amount])
++SUM(_Cost_Staff_Actuals[Amount])
++SUM(_Cost_Subcontractor_Actuals[Amount])
+
+Total Revenue YTD + Forecast = [Total Revenue YTD] + [Revenue Forecast Remaining]
+
+Total Revenue FY = [Total Revenue YTD + Forecast]
+
+Total Revenue YTD = [Revenue Act In-Contract] + [Revenue Act Oo-Contract]
+
+*Total Staff Cost = 
+    SUMX(
+    fact_Timesheet_Live,
+    fact_Timesheet_Live[Duration] *
+    RELATED(dim_StaffCosts_Live[StaffCostPerHour]))
+
+* = not enabled
