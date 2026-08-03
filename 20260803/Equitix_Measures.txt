@@ -117,18 +117,6 @@ CALCULATE(
 Revenue Forecast Remaining =
 [Revenue For In-Contract] + [Revenue For Oo-Contract]
 
-Rev Act In =
-[Revenue Act In-Contract]
-
-Rev Act Oo =
-[Revenue Act Oo-Contract]
-
-Rev For In =
-[Revenue For In-Contract]
-
-Rev For Oo =
-[Revenue For Oo-Contract]
-
 _Staff Cost Actual Raw =
 CALCULATE(
     SUM(fact_Cost_Live[Amount]),
@@ -201,52 +189,25 @@ CALCULATE(
         dim_Date_Live[Date] > YTDEndDate
             && dim_Date_Live[Date] <= DATE(SelectedYear, 12, 31)))
 
-Staff Cost Act =
-[Staff Cost Actual]
-
-Staff Cost For =
-[Staff Cost Forecast]
-
-Subcon Cost Act =
-[Subcontractor Actual]
-
-Subcon Cost For =
-[Subcontractor Forecast]
-
-Staff Cost YTD =
-[Staff Cost Actual]
-
-Subcon Cost YTD =
-[Subcontractor Actual]
-
 System Date = "DATE: " & FORMAT(TODAY(), "dd-MM-yyyy")
 
 Total Staff Cost =
-[Staff Cost Act] + [Staff Cost For]
-
-Total Cost YTD =
-[Staff Cost YTD] + [Subcon Cost YTD]
+[Staff Cost Actual] + [Staff Cost Forecast]
 
 Total Costs YTD =
-[Total Cost YTD]
-
-Total Cost FY =
-[Staff Cost Act] + [Staff Cost For] + [Subcon Cost Act] + [Subcon Cost For]
+[Staff Cost Actual] + [Subcontractor Actual]
 
 Total Costs FY =
-[Total Cost FY]
+[Staff Cost Actual]
++[Staff Cost Forecast]
++[Subcontractor Actual]
++[Subcontractor Forecast]
 
 Total Revenue YTD =
-[Rev Act In] + [Rev Act Oo]
-
-Total Rev YTD =
-[Total Revenue YTD]
+[Revenue Act In-Contract] + [Revenue Act Oo-Contract]
 
 Total Revenue YTD + Forecast =
 [Total Revenue YTD] + [Revenue Forecast Remaining]
 
 Total Revenue FY =
 [Total Revenue YTD + Forecast]
-
-Total Rev FY =
-[Total Revenue FY]
