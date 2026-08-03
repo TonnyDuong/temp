@@ -1,0 +1,214 @@
+Margin FY % = DIVIDE([Profit FY], [Total Revenue FY])
+
+*Margin YTD % = DIVIDE([Profit YTD], [Total Revenue YTD])
+
+Profit FY = [Total Revenue FY] - [Total Costs FY]
+
+*Profit YTD = [Total Revenue YTD] - [Total Costs YTD]
+
+*Revenue = SUM(fact_Revenue_Live[Amount]) * -1
+
+Reporting Year =
+SELECTCOLUMNS(
+    FILTER(
+        VALUES(dim_Date_Live[Year]),
+        dim_Date_Live[Year] IN { 2025, 2026 }
+    ),
+    "Year", dim_Date_Live[Year])
+
+_Selected Reporting Year =
+COALESCE(
+    SELECTEDVALUE('Reporting Year'[Year]),
+    YEAR(TODAY()))
+
+_Reporting YTD End Date =
+VAR SelectedYear = [_Selected Reporting Year]
+VAR CutoverDate =
+    EOMONTH(
+        TODAY(),
+        IF(DAY(TODAY()) >= 12, -1, -2))
+RETURN
+DATE(
+    SelectedYear,
+    MONTH(CutoverDate),
+    DAY(CutoverDate))
+
+_Revenue Act In-Contract Raw =
+CALCULATE(
+    -SUM(fact_Revenue_Live[Amount]),
+    fact_Revenue_Live[Type] = "Actual",
+    fact_Revenue_Live[Contract Type] = "In Contract")
+
+Revenue Act In-Contract =
+VAR SelectedYear = [_Selected Reporting Year]
+VAR YTDEndDate = [_Reporting YTD End Date]
+RETURN
+CALCULATE(
+    [_Revenue Act In-Contract Raw],
+    FILTER(
+        ALL(dim_Date_Live),
+        dim_Date_Live[Date] >= DATE(SelectedYear, 1, 1)
+            && dim_Date_Live[Date] <= YTDEndDate))
+
+_Revenue Act Oo-Contract Raw =
+CALCULATE(
+    -SUM(fact_Revenue_Live[Amount]),
+    fact_Revenue_Live[Type] = "Actual",
+    fact_Revenue_Live[Contract Type] = "Out of Contract",
+    fact_Revenue_Live[Account Code] = "40013")
+
+Revenue Act Oo-Contract =
+VAR SelectedYear = [_Selected Reporting Year]
+VAR YTDEndDate = [_Reporting YTD End Date]
+RETURN
+CALCULATE(
+    [_Revenue Act Oo-Contract Raw],
+    FILTER(
+        ALL(dim_Date_Live),
+        dim_Date_Live[Date] >= DATE(SelectedYear, 1, 1)
+            && dim_Date_Live[Date] <= YTDEndDate))
+
+Revenue Actual =
+VAR SelectedYear = [_Selected Reporting Year]
+VAR YTDEndDate = [_Reporting YTD End Date]
+RETURN
+CALCULATE(
+    [Revenue],
+    fact_Revenue_Live[Type] = "Actual",
+    FILTER(
+        ALL(dim_Date_Live),
+        dim_Date_Live[Date] >= DATE(SelectedYear, 1, 1)
+            && dim_Date_Live[Date] <= YTDEndDate))
+
+_Revenue For In-Contract Raw =
+CALCULATE(
+    SUM(fact_Revenue_Live[Amount]),
+    fact_Revenue_Live[Type] = "Forecast",
+    fact_Revenue_Live[Contract Type] = "In Contract")
+
+Revenue For In-Contract =
+VAR SelectedYear = [_Selected Reporting Year]
+VAR YTDEndDate = [_Reporting YTD End Date]
+RETURN
+CALCULATE(
+    [_Revenue For In-Contract Raw],
+    FILTER(
+        ALL(dim_Date_Live),
+        dim_Date_Live[Date] > YTDEndDate
+            && dim_Date_Live[Date] <= DATE(SelectedYear, 12, 31)))
+
+_Revenue For Oo-Contract Raw =
+CALCULATE(
+    SUM(fact_Revenue_Live[Amount]),
+    fact_Revenue_Live[Type] = "Forecast",
+    fact_Revenue_Live[Contract Type] = "Out of Contract")
+
+Revenue For Oo-Contract =
+VAR SelectedYear = [_Selected Reporting Year]
+VAR YTDEndDate = [_Reporting YTD End Date]
+RETURN
+CALCULATE(
+    [_Revenue For Oo-Contract Raw],
+    FILTER(
+        ALL(dim_Date_Live),
+        dim_Date_Live[Date] > YTDEndDate
+            && dim_Date_Live[Date] <= DATE(SelectedYear, 12, 31)))
+
+Revenue Forecast Remaining =
+[Revenue For In-Contract] + [Revenue For Oo-Contract]
+
+_Staff Cost Actual Raw =
+CALCULATE(
+    SUM(fact_Cost_Live[Amount]),
+    fact_Cost_Live[Type] = "Actual",
+    fact_Cost_Live[Category] = "Staff")
+
+Staff Cost Actual =
+VAR SelectedYear = [_Selected Reporting Year]
+VAR YTDEndDate = [_Reporting YTD End Date]
+RETURN
+CALCULATE(
+    [_Staff Cost Actual Raw],
+    FILTER(
+        ALL(dim_Date_Live),
+        dim_Date_Live[Date] >= DATE(SelectedYear, 1, 1)
+            && dim_Date_Live[Date] <= YTDEndDate))
+
+_Staff Cost Forecast Raw =
+CALCULATE(
+    SUM(fact_Cost_Live[Amount]),
+    fact_Cost_Live[Type] = "Forecast",
+    fact_Cost_Live[Category] = "Staff")
+
+Staff Cost Forecast =
+VAR SelectedYear = [_Selected Reporting Year]
+VAR YTDEndDate = [_Reporting YTD End Date]
+RETURN
+CALCULATE(
+    [_Staff Cost Forecast Raw],
+    FILTER(
+        ALL(dim_Date_Live),
+        dim_Date_Live[Date] > YTDEndDate
+            && dim_Date_Live[Date] <= DATE(SelectedYear, 12, 31)))
+
+_Subcontractor Actual Raw =
+CALCULATE(
+    SUM(fact_Cost_Live[Amount]),
+    fact_Cost_Live[Type] = "Actual",
+    fact_Cost_Live[Category] = "Subcontractor",
+    fact_Cost_Live[Account Code] = "60201")
+
+Subcontractor Actual =
+VAR SelectedYear = [_Selected Reporting Year]
+VAR YTDEndDate = [_Reporting YTD End Date]
+RETURN
+CALCULATE(
+    [_Subcontractor Actual Raw],
+    FILTER(
+        ALL(dim_Date_Live),
+        dim_Date_Live[Date] >= DATE(SelectedYear, 1, 1)
+            && dim_Date_Live[Date] <= YTDEndDate))
+
+Subcontractor Actual Flipped =
+-[Subcontractor Actual]
+
+_Subcontractor Forecast Raw =
+CALCULATE(
+    SUM(fact_Cost_Live[Amount]),
+    fact_Cost_Live[Type] = "Forecast",
+    fact_Cost_Live[Category] = "Subcontractor")
+
+Subcontractor Forecast =
+VAR SelectedYear = [_Selected Reporting Year]
+VAR YTDEndDate = [_Reporting YTD End Date]
+RETURN
+CALCULATE(
+    [_Subcontractor Forecast Raw],
+    FILTER(
+        ALL(dim_Date_Live),
+        dim_Date_Live[Date] > YTDEndDate
+            && dim_Date_Live[Date] <= DATE(SelectedYear, 12, 31)))
+
+*System Date = "DATE: " & FORMAT(TODAY(), "dd-MM-yyyy")
+
+Total Costs FY = [Staff Cost Actual]
++[Staff Cost Forecast]
++[Subcontractor Actual]
++[Subcontractor Forecast]
+
+*Total Costs YTD =
+[Staff Cost Actual] + [Subcontractor Actual]
+
+Total Revenue YTD + Forecast = [Total Revenue YTD] + [Revenue Forecast Remaining]
+
+Total Revenue FY = [Total Revenue YTD + Forecast]
+
+Total Revenue YTD = [Revenue Act In-Contract] + [Revenue Act Oo-Contract]
+
+*Total Staff Cost = 
+    SUMX(
+    fact_Timesheet_Live,
+    fact_Timesheet_Live[Duration] *
+    RELATED(dim_StaffCosts_Live[StaffCostPerHour]))
+
+* = not enabled
