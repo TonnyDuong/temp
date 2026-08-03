@@ -1,0 +1,333 @@
+// =====================================================================
+// Measure Troubleshooting Debug Measures
+// ---------------------------------------------------------------------
+// Purpose:
+//   Temporary DAX patterns for comparing trusted implicit Sum(Amount)
+//   visual columns against explicit measures, selected-year filtering,
+//   row counts, and date coverage.
+//
+// Usage:
+//   1. Copy only the section relevant to the table or measure being tested.
+//   2. Add the Reporting Year table only if testing disconnected year logic.
+//   3. Place the original implicit Sum(Amount) beside the matching Raw,
+//      Selected Year, Difference, and Rows measures in the same visual.
+//   4. Remove or hide these measures after diagnosis.
+//
+// Expected interpretation:
+//   - Original implicit Sum(Amount) should match the matching Raw measure.
+//   - Any difference between Raw and Selected Year is caused by date/year
+//     filtering, not by a change of source table.
+//   - Do not add cutoff-date logic in DAX for the existing actual/forecast
+//     helper tables. Cutoff is already applied in Power Query using
+//     _CutoverDate.
+// =====================================================================
+
+
+// =====================================================================
+// Calculated table
+// Create with Modeling -> New table.
+// Keep disconnected. Do not relate this table to dim_Date_Live.
+// =====================================================================
+
+Reporting Year =
+SELECTCOLUMNS(
+    FILTER(
+        VALUES(dim_Date_Live[Year]),
+        dim_Date_Live[Year] IN { 2025, 2026, 2027 }
+    ),
+    "Year", dim_Date_Live[Year]
+)
+
+
+// =====================================================================
+// Shared debug measure
+// =====================================================================
+
+Debug Selected Reporting Year =
+SELECTEDVALUE('Reporting Year'[Year], -1)
+
+
+// =====================================================================
+// _Cost_Staff_Actuals
+// =====================================================================
+
+Debug Staff Actual Raw =
+SUM('_Cost_Staff_Actuals'[Amount])
+
+Debug Staff Actual Selected Year =
+VAR SelectedYear =
+    SELECTEDVALUE('Reporting Year'[Year])
+RETURN
+CALCULATE(
+    SUM('_Cost_Staff_Actuals'[Amount]),
+    FILTER(
+        ALL('_Cost_Staff_Actuals'[Date]),
+        YEAR('_Cost_Staff_Actuals'[Date]) = SelectedYear
+    )
+)
+
+Debug Staff Actual Difference =
+[Debug Staff Actual Raw] - [Debug Staff Actual Selected Year]
+
+Debug Staff Actual Rows Raw =
+COUNTROWS('_Cost_Staff_Actuals')
+
+Debug Staff Actual Rows Selected Year =
+VAR SelectedYear =
+    SELECTEDVALUE('Reporting Year'[Year])
+RETURN
+CALCULATE(
+    COUNTROWS('_Cost_Staff_Actuals'),
+    FILTER(
+        ALL('_Cost_Staff_Actuals'[Date]),
+        YEAR('_Cost_Staff_Actuals'[Date]) = SelectedYear
+    )
+)
+
+Debug Staff Actual Min Date =
+MIN('_Cost_Staff_Actuals'[Date])
+
+Debug Staff Actual Max Date =
+MAX('_Cost_Staff_Actuals'[Date])
+
+Debug Staff Actual Years =
+VAR Years =
+    DISTINCT(
+        SELECTCOLUMNS(
+            ALL('_Cost_Staff_Actuals'[Date]),
+            "Year", YEAR('_Cost_Staff_Actuals'[Date])
+        )
+    )
+RETURN
+CONCATENATEX(Years, [Year], ", ", [Year], ASC)
+
+
+// =====================================================================
+// _Cost_Staff_Forecast
+// =====================================================================
+
+Debug Staff Forecast Raw =
+SUM('_Cost_Staff_Forecast'[Amount])
+
+Debug Staff Forecast Selected Year =
+VAR SelectedYear =
+    SELECTEDVALUE('Reporting Year'[Year])
+RETURN
+CALCULATE(
+    SUM('_Cost_Staff_Forecast'[Amount]),
+    FILTER(
+        ALL('_Cost_Staff_Forecast'[Date]),
+        YEAR('_Cost_Staff_Forecast'[Date]) = SelectedYear
+    )
+)
+
+Debug Staff Forecast Difference =
+[Debug Staff Forecast Raw] - [Debug Staff Forecast Selected Year]
+
+Debug Staff Forecast Rows Raw =
+COUNTROWS('_Cost_Staff_Forecast')
+
+Debug Staff Forecast Rows Selected Year =
+VAR SelectedYear =
+    SELECTEDVALUE('Reporting Year'[Year])
+RETURN
+CALCULATE(
+    COUNTROWS('_Cost_Staff_Forecast'),
+    FILTER(
+        ALL('_Cost_Staff_Forecast'[Date]),
+        YEAR('_Cost_Staff_Forecast'[Date]) = SelectedYear
+    )
+)
+
+Debug Staff Forecast Min Date =
+MIN('_Cost_Staff_Forecast'[Date])
+
+Debug Staff Forecast Max Date =
+MAX('_Cost_Staff_Forecast'[Date])
+
+Debug Staff Forecast Years =
+VAR Years =
+    DISTINCT(
+        SELECTCOLUMNS(
+            ALL('_Cost_Staff_Forecast'[Date]),
+            "Year", YEAR('_Cost_Staff_Forecast'[Date])
+        )
+    )
+RETURN
+CONCATENATEX(Years, [Year], ", ", [Year], ASC)
+
+
+// =====================================================================
+// _Cost_Subcontractor_Actuals
+// =====================================================================
+
+Debug Subcontractor Actual Raw =
+SUM('_Cost_Subcontractor_Actuals'[Amount])
+
+Debug Subcontractor Actual Selected Year =
+VAR SelectedYear =
+    SELECTEDVALUE('Reporting Year'[Year])
+RETURN
+CALCULATE(
+    SUM('_Cost_Subcontractor_Actuals'[Amount]),
+    FILTER(
+        ALL('_Cost_Subcontractor_Actuals'[Date]),
+        YEAR('_Cost_Subcontractor_Actuals'[Date]) = SelectedYear
+    )
+)
+
+Debug Subcontractor Actual Difference =
+[Debug Subcontractor Actual Raw] - [Debug Subcontractor Actual Selected Year]
+
+Debug Subcontractor Actual Rows Raw =
+COUNTROWS('_Cost_Subcontractor_Actuals')
+
+Debug Subcontractor Actual Rows Selected Year =
+VAR SelectedYear =
+    SELECTEDVALUE('Reporting Year'[Year])
+RETURN
+CALCULATE(
+    COUNTROWS('_Cost_Subcontractor_Actuals'),
+    FILTER(
+        ALL('_Cost_Subcontractor_Actuals'[Date]),
+        YEAR('_Cost_Subcontractor_Actuals'[Date]) = SelectedYear
+    )
+)
+
+Debug Subcontractor Actual Min Date =
+MIN('_Cost_Subcontractor_Actuals'[Date])
+
+Debug Subcontractor Actual Max Date =
+MAX('_Cost_Subcontractor_Actuals'[Date])
+
+Debug Subcontractor Actual Years =
+VAR Years =
+    DISTINCT(
+        SELECTCOLUMNS(
+            ALL('_Cost_Subcontractor_Actuals'[Date]),
+            "Year", YEAR('_Cost_Subcontractor_Actuals'[Date])
+        )
+    )
+RETURN
+CONCATENATEX(Years, [Year], ", ", [Year], ASC)
+
+
+// =====================================================================
+// _Cost_Subcontractor_Forecast
+// =====================================================================
+
+Debug Subcontractor Forecast Raw =
+SUM('_Cost_Subcontractor_Forecast'[Amount])
+
+Debug Subcontractor Forecast Selected Year =
+VAR SelectedYear =
+    SELECTEDVALUE('Reporting Year'[Year])
+RETURN
+CALCULATE(
+    SUM('_Cost_Subcontractor_Forecast'[Amount]),
+    FILTER(
+        ALL('_Cost_Subcontractor_Forecast'[Date]),
+        YEAR('_Cost_Subcontractor_Forecast'[Date]) = SelectedYear
+    )
+)
+
+Debug Subcontractor Forecast Difference =
+[Debug Subcontractor Forecast Raw] - [Debug Subcontractor Forecast Selected Year]
+
+Debug Subcontractor Forecast Rows Raw =
+COUNTROWS('_Cost_Subcontractor_Forecast')
+
+Debug Subcontractor Forecast Rows Selected Year =
+VAR SelectedYear =
+    SELECTEDVALUE('Reporting Year'[Year])
+RETURN
+CALCULATE(
+    COUNTROWS('_Cost_Subcontractor_Forecast'),
+    FILTER(
+        ALL('_Cost_Subcontractor_Forecast'[Date]),
+        YEAR('_Cost_Subcontractor_Forecast'[Date]) = SelectedYear
+    )
+)
+
+Debug Subcontractor Forecast Min Date =
+MIN('_Cost_Subcontractor_Forecast'[Date])
+
+Debug Subcontractor Forecast Max Date =
+MAX('_Cost_Subcontractor_Forecast'[Date])
+
+Debug Subcontractor Forecast Years =
+VAR Years =
+    DISTINCT(
+        SELECTCOLUMNS(
+            ALL('_Cost_Subcontractor_Forecast'[Date]),
+            "Year", YEAR('_Cost_Subcontractor_Forecast'[Date])
+        )
+    )
+RETURN
+CONCATENATEX(Years, [Year], ", ", [Year], ASC)
+
+
+// =====================================================================
+// Revenue fact checks
+// These help confirm whether the revenue issue is the same kind of
+// selected-year/date-context problem.
+// =====================================================================
+
+Debug Revenue Raw =
+SUM(fact_Revenue_Live[Amount])
+
+Debug Revenue Actual Raw =
+CALCULATE(
+    SUM(fact_Revenue_Live[Amount]),
+    fact_Revenue_Live[Type] = "Actual"
+)
+
+Debug Revenue Forecast Raw =
+CALCULATE(
+    SUM(fact_Revenue_Live[Amount]),
+    fact_Revenue_Live[Type] = "Forecast"
+)
+
+Debug Revenue Selected Year =
+VAR SelectedYear =
+    SELECTEDVALUE('Reporting Year'[Year])
+RETURN
+CALCULATE(
+    SUM(fact_Revenue_Live[Amount]),
+    FILTER(
+        ALL(dim_Date_Live[Date]),
+        YEAR(dim_Date_Live[Date]) = SelectedYear
+    )
+)
+
+Debug Revenue Rows Raw =
+COUNTROWS(fact_Revenue_Live)
+
+Debug Revenue Rows Selected Year =
+VAR SelectedYear =
+    SELECTEDVALUE('Reporting Year'[Year])
+RETURN
+CALCULATE(
+    COUNTROWS(fact_Revenue_Live),
+    FILTER(
+        ALL(dim_Date_Live[Date]),
+        YEAR(dim_Date_Live[Date]) = SelectedYear
+    )
+)
+
+Debug Revenue Min Date =
+MIN(fact_Revenue_Live[Date])
+
+Debug Revenue Max Date =
+MAX(fact_Revenue_Live[Date])
+
+Debug Revenue Years =
+VAR Years =
+    DISTINCT(
+        SELECTCOLUMNS(
+            ALL(fact_Revenue_Live[Date]),
+            "Year", YEAR(fact_Revenue_Live[Date])
+        )
+    )
+RETURN
+CONCATENATEX(Years, [Year], ", ", [Year], ASC)

@@ -21,18 +21,6 @@ COALESCE(
     SELECTEDVALUE('Reporting Year'[Year]),
     YEAR(TODAY()))
 
-_Reporting YTD End Date =
-VAR SelectedYear = [_Selected Reporting Year]
-VAR CutoverDate =
-    EOMONTH(
-        TODAY(),
-        IF(DAY(TODAY()) >= 12, -1, -2))
-RETURN
-DATE(
-    SelectedYear,
-    MONTH(CutoverDate),
-    DAY(CutoverDate))
-
 _Revenue Act In-Contract Raw =
 CALCULATE(
     -SUM(fact_Revenue_Live[Amount]),
@@ -41,14 +29,13 @@ CALCULATE(
 
 Revenue Act In-Contract =
 VAR SelectedYear = [_Selected Reporting Year]
-VAR YTDEndDate = [_Reporting YTD End Date]
 RETURN
 CALCULATE(
     [_Revenue Act In-Contract Raw],
     FILTER(
         ALL(dim_Date_Live),
         dim_Date_Live[Date] >= DATE(SelectedYear, 1, 1)
-            && dim_Date_Live[Date] <= YTDEndDate))
+            && dim_Date_Live[Date] <= DATE(SelectedYear, 12, 31)))
 
 _Revenue Act Oo-Contract Raw =
 CALCULATE(
@@ -59,18 +46,16 @@ CALCULATE(
 
 Revenue Act Oo-Contract =
 VAR SelectedYear = [_Selected Reporting Year]
-VAR YTDEndDate = [_Reporting YTD End Date]
 RETURN
 CALCULATE(
     [_Revenue Act Oo-Contract Raw],
     FILTER(
         ALL(dim_Date_Live),
         dim_Date_Live[Date] >= DATE(SelectedYear, 1, 1)
-            && dim_Date_Live[Date] <= YTDEndDate))
+            && dim_Date_Live[Date] <= DATE(SelectedYear, 12, 31)))
 
 Revenue Actual =
 VAR SelectedYear = [_Selected Reporting Year]
-VAR YTDEndDate = [_Reporting YTD End Date]
 RETURN
 CALCULATE(
     [Revenue],
@@ -78,7 +63,7 @@ CALCULATE(
     FILTER(
         ALL(dim_Date_Live),
         dim_Date_Live[Date] >= DATE(SelectedYear, 1, 1)
-            && dim_Date_Live[Date] <= YTDEndDate))
+            && dim_Date_Live[Date] <= DATE(SelectedYear, 12, 31)))
 
 _Revenue For In-Contract Raw =
 CALCULATE(
@@ -88,13 +73,12 @@ CALCULATE(
 
 Revenue For In-Contract =
 VAR SelectedYear = [_Selected Reporting Year]
-VAR YTDEndDate = [_Reporting YTD End Date]
 RETURN
 CALCULATE(
     [_Revenue For In-Contract Raw],
     FILTER(
         ALL(dim_Date_Live),
-        dim_Date_Live[Date] > YTDEndDate
+        dim_Date_Live[Date] >= DATE(SelectedYear, 1, 1)
             && dim_Date_Live[Date] <= DATE(SelectedYear, 12, 31)))
 
 _Revenue For Oo-Contract Raw =
@@ -105,13 +89,12 @@ CALCULATE(
 
 Revenue For Oo-Contract =
 VAR SelectedYear = [_Selected Reporting Year]
-VAR YTDEndDate = [_Reporting YTD End Date]
 RETURN
 CALCULATE(
     [_Revenue For Oo-Contract Raw],
     FILTER(
         ALL(dim_Date_Live),
-        dim_Date_Live[Date] > YTDEndDate
+        dim_Date_Live[Date] >= DATE(SelectedYear, 1, 1)
             && dim_Date_Live[Date] <= DATE(SelectedYear, 12, 31)))
 
 Revenue Forecast Remaining =
@@ -122,27 +105,25 @@ SUM('_Cost_Staff_Actuals'[Amount])
 
 Staff Cost Actual =
 VAR SelectedYear = [_Selected Reporting Year]
-VAR YTDEndDate = [_Reporting YTD End Date]
 RETURN
 CALCULATE(
     [_Staff Cost Actual Raw],
     FILTER(
         ALL('_Cost_Staff_Actuals'[Date]),
         '_Cost_Staff_Actuals'[Date] >= DATE(SelectedYear, 1, 1)
-            && '_Cost_Staff_Actuals'[Date] <= YTDEndDate))
+            && '_Cost_Staff_Actuals'[Date] <= DATE(SelectedYear, 12, 31)))
 
 _Staff Cost Forecast Raw =
 SUM('_Cost_Staff_Forecast'[Amount])
 
 Staff Cost Forecast =
 VAR SelectedYear = [_Selected Reporting Year]
-VAR YTDEndDate = [_Reporting YTD End Date]
 RETURN
 CALCULATE(
     [_Staff Cost Forecast Raw],
     FILTER(
         ALL('_Cost_Staff_Forecast'[Date]),
-        '_Cost_Staff_Forecast'[Date] > YTDEndDate
+        '_Cost_Staff_Forecast'[Date] >= DATE(SelectedYear, 1, 1)
             && '_Cost_Staff_Forecast'[Date] <= DATE(SelectedYear, 12, 31)))
 
 _Subcontractor Actual Raw =
@@ -150,14 +131,13 @@ SUM('_Cost_Subcontractor_Actuals'[Amount])
 
 Subcontractor Actual =
 VAR SelectedYear = [_Selected Reporting Year]
-VAR YTDEndDate = [_Reporting YTD End Date]
 RETURN
 CALCULATE(
     [_Subcontractor Actual Raw],
     FILTER(
         ALL('_Cost_Subcontractor_Actuals'[Date]),
         '_Cost_Subcontractor_Actuals'[Date] >= DATE(SelectedYear, 1, 1)
-            && '_Cost_Subcontractor_Actuals'[Date] <= YTDEndDate))
+            && '_Cost_Subcontractor_Actuals'[Date] <= DATE(SelectedYear, 12, 31)))
 
 Subcontractor Actual Flipped =
 -[Subcontractor Actual]
@@ -167,13 +147,12 @@ SUM('_Cost_Subcontractor_Forecast'[Amount])
 
 Subcontractor Forecast =
 VAR SelectedYear = [_Selected Reporting Year]
-VAR YTDEndDate = [_Reporting YTD End Date]
 RETURN
 CALCULATE(
     [_Subcontractor Forecast Raw],
     FILTER(
         ALL('_Cost_Subcontractor_Forecast'[Date]),
-        '_Cost_Subcontractor_Forecast'[Date] > YTDEndDate
+        '_Cost_Subcontractor_Forecast'[Date] >= DATE(SelectedYear, 1, 1)
             && '_Cost_Subcontractor_Forecast'[Date] <= DATE(SelectedYear, 12, 31)))
 
 System Date = "DATE: " & FORMAT(TODAY(), "dd-MM-yyyy")
