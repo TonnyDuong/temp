@@ -1,12 +1,12 @@
 Margin FY % = DIVIDE([Profit FY], [Total Revenue FY])
 
-*Margin YTD % = DIVIDE([Profit YTD], [Total Revenue YTD])
+Margin YTD % = DIVIDE([Profit YTD], [Total Revenue YTD])
 
 Profit FY = [Total Revenue FY] - [Total Costs FY]
 
-*Profit YTD = [Total Revenue YTD] - [Total Costs YTD]
+Profit YTD = [Total Revenue YTD] - [Total Costs YTD]
 
-*Revenue = SUM(fact_Revenue_Live[Amount]) * -1
+Revenue = SUM(fact_Revenue_Live[Amount]) * -1
 
 Reporting Year =
 SELECTCOLUMNS(
@@ -117,6 +117,18 @@ CALCULATE(
 Revenue Forecast Remaining =
 [Revenue For In-Contract] + [Revenue For Oo-Contract]
 
+Rev Act In =
+[Revenue Act In-Contract]
+
+Rev Act Oo =
+[Revenue Act Oo-Contract]
+
+Rev For In =
+[Revenue For In-Contract]
+
+Rev For Oo =
+[Revenue For Oo-Contract]
+
 _Staff Cost Actual Raw =
 CALCULATE(
     SUM(fact_Cost_Live[Amount]),
@@ -189,26 +201,52 @@ CALCULATE(
         dim_Date_Live[Date] > YTDEndDate
             && dim_Date_Live[Date] <= DATE(SelectedYear, 12, 31)))
 
-*System Date = "DATE: " & FORMAT(TODAY(), "dd-MM-yyyy")
+Staff Cost Act =
+[Staff Cost Actual]
 
-Total Costs FY = [Staff Cost Actual]
-+[Staff Cost Forecast]
-+[Subcontractor Actual]
-+[Subcontractor Forecast]
+Staff Cost For =
+[Staff Cost Forecast]
 
-*Total Costs YTD =
-[Staff Cost Actual] + [Subcontractor Actual]
+Subcon Cost Act =
+[Subcontractor Actual]
 
-Total Revenue YTD + Forecast = [Total Revenue YTD] + [Revenue Forecast Remaining]
+Subcon Cost For =
+[Subcontractor Forecast]
 
-Total Revenue FY = [Total Revenue YTD + Forecast]
+Staff Cost YTD =
+[Staff Cost Actual]
 
-Total Revenue YTD = [Revenue Act In-Contract] + [Revenue Act Oo-Contract]
+Subcon Cost YTD =
+[Subcontractor Actual]
 
-*Total Staff Cost = 
-    SUMX(
-    fact_Timesheet_Live,
-    fact_Timesheet_Live[Duration] *
-    RELATED(dim_StaffCosts_Live[StaffCostPerHour]))
+System Date = "DATE: " & FORMAT(TODAY(), "dd-MM-yyyy")
 
-* = not enabled
+Total Staff Cost =
+[Staff Cost Act] + [Staff Cost For]
+
+Total Cost YTD =
+[Staff Cost YTD] + [Subcon Cost YTD]
+
+Total Costs YTD =
+[Total Cost YTD]
+
+Total Cost FY =
+[Staff Cost Act] + [Staff Cost For] + [Subcon Cost Act] + [Subcon Cost For]
+
+Total Costs FY =
+[Total Cost FY]
+
+Total Revenue YTD =
+[Rev Act In] + [Rev Act Oo]
+
+Total Rev YTD =
+[Total Revenue YTD]
+
+Total Revenue YTD + Forecast =
+[Total Revenue YTD] + [Revenue Forecast Remaining]
+
+Total Revenue FY =
+[Total Revenue YTD + Forecast]
+
+Total Rev FY =
+[Total Revenue FY]
