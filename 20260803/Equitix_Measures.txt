@@ -118,10 +118,7 @@ Revenue Forecast Remaining =
 [Revenue For In-Contract] + [Revenue For Oo-Contract]
 
 _Staff Cost Actual Raw =
-CALCULATE(
-    SUM(fact_Cost_Live[Amount]),
-    fact_Cost_Live[Type] = "Actual",
-    fact_Cost_Live[Category] = "Staff")
+SUM('_Cost_Staff_Actuals'[Amount])
 
 Staff Cost Actual =
 VAR SelectedYear = [_Selected Reporting Year]
@@ -130,15 +127,12 @@ RETURN
 CALCULATE(
     [_Staff Cost Actual Raw],
     FILTER(
-        ALL(dim_Date_Live),
-        dim_Date_Live[Date] >= DATE(SelectedYear, 1, 1)
-            && dim_Date_Live[Date] <= YTDEndDate))
+        ALL('_Cost_Staff_Actuals'[Date]),
+        '_Cost_Staff_Actuals'[Date] >= DATE(SelectedYear, 1, 1)
+            && '_Cost_Staff_Actuals'[Date] <= YTDEndDate))
 
 _Staff Cost Forecast Raw =
-CALCULATE(
-    SUM(fact_Cost_Live[Amount]),
-    fact_Cost_Live[Type] = "Forecast",
-    fact_Cost_Live[Category] = "Staff")
+SUM('_Cost_Staff_Forecast'[Amount])
 
 Staff Cost Forecast =
 VAR SelectedYear = [_Selected Reporting Year]
@@ -147,16 +141,12 @@ RETURN
 CALCULATE(
     [_Staff Cost Forecast Raw],
     FILTER(
-        ALL(dim_Date_Live),
-        dim_Date_Live[Date] > YTDEndDate
-            && dim_Date_Live[Date] <= DATE(SelectedYear, 12, 31)))
+        ALL('_Cost_Staff_Forecast'[Date]),
+        '_Cost_Staff_Forecast'[Date] > YTDEndDate
+            && '_Cost_Staff_Forecast'[Date] <= DATE(SelectedYear, 12, 31)))
 
 _Subcontractor Actual Raw =
-CALCULATE(
-    SUM(fact_Cost_Live[Amount]),
-    fact_Cost_Live[Type] = "Actual",
-    fact_Cost_Live[Category] = "Subcontractor",
-    fact_Cost_Live[Account Code] = "60201")
+SUM('_Cost_Subcontractor_Actuals'[Amount])
 
 Subcontractor Actual =
 VAR SelectedYear = [_Selected Reporting Year]
@@ -165,18 +155,15 @@ RETURN
 CALCULATE(
     [_Subcontractor Actual Raw],
     FILTER(
-        ALL(dim_Date_Live),
-        dim_Date_Live[Date] >= DATE(SelectedYear, 1, 1)
-            && dim_Date_Live[Date] <= YTDEndDate))
+        ALL('_Cost_Subcontractor_Actuals'[Date]),
+        '_Cost_Subcontractor_Actuals'[Date] >= DATE(SelectedYear, 1, 1)
+            && '_Cost_Subcontractor_Actuals'[Date] <= YTDEndDate))
 
 Subcontractor Actual Flipped =
 -[Subcontractor Actual]
 
 _Subcontractor Forecast Raw =
-CALCULATE(
-    SUM(fact_Cost_Live[Amount]),
-    fact_Cost_Live[Type] = "Forecast",
-    fact_Cost_Live[Category] = "Subcontractor")
+SUM('_Cost_Subcontractor_Forecast'[Amount])
 
 Subcontractor Forecast =
 VAR SelectedYear = [_Selected Reporting Year]
@@ -185,9 +172,9 @@ RETURN
 CALCULATE(
     [_Subcontractor Forecast Raw],
     FILTER(
-        ALL(dim_Date_Live),
-        dim_Date_Live[Date] > YTDEndDate
-            && dim_Date_Live[Date] <= DATE(SelectedYear, 12, 31)))
+        ALL('_Cost_Subcontractor_Forecast'[Date]),
+        '_Cost_Subcontractor_Forecast'[Date] > YTDEndDate
+            && '_Cost_Subcontractor_Forecast'[Date] <= DATE(SelectedYear, 12, 31)))
 
 System Date = "DATE: " & FORMAT(TODAY(), "dd-MM-yyyy")
 
