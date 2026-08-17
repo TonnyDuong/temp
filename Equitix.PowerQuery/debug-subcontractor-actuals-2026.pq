@@ -1,234 +1,267 @@
 // =====================================================================
 // Debug_Subcontractor_Actuals_2026  (temporary diagnostic query)
 // ---------------------------------------------------------------------
-// Purpose:      Screenshot-only reconciliation for the 2026 subcontractor
-//               actual variance between FinanceOutput FY26 and Power BI.
+// Purpose:      Project-code grouping for the 2026 subcontractor actual
+//               report path, plus staging-side checks for source/debug
+//               comparison.
 // Grain:        One diagnostic row per External ID / project code.
-// Dependencies: stg_FinanceOutput FY26_FY2026, dim_Project_Live,
+// Dependencies: _Cost_Subcontractor_Actuals, fact_Cost_Live,
+//               stg_FinanceOutput FY26_FY2026, dim_Project_Live,
 //               _NormalizeAccountCode, _CutoverDate
 // Load:         ENABLE during diagnosis only; remove or disable afterward.
 // ---------------------------------------------------------------------
-// Screenshot targets:
-//   2026 Excel reconciliation magnitude =  243,536.16
-//   Expected raw Power BI sign           = -243,536.16
-//   Current screenshot raw Power BI      = -217,651.21
-//   Variance ignoring sign               =   25,884.95
+// Use for trial comparison:
+//   - Compare Excel grouped External ID / Amount against
+//     `Helper Actual Amount` first.
+//   - If the visual uses fact_Cost_Live, compare against
+//     `Fact Cost Actual Amount`.
+//   - Staging columns are included only to diagnose source/read-step drift.
 // =====================================================================
 let
-    Source = #"stg_FinanceOutput FY26_FY2026",
+    StagingSource = #"stg_FinanceOutput FY26_FY2026",
+    HelperSource = #"_Cost_Subcontractor_Actuals",
+    FactSource = #"fact_Cost_Live",
 
-    AccountCodeAsText = Table.TransformColumns(Source,
-        {{"Account No.", each #"_NormalizeAccountCode"(_), type nullable text}}),
-
-    AddProjectCode = Table.AddColumn(AccountCodeAsText, "Debug Project Code", each
+    NormalizeProject = (value as any) as text =>
         let
-            ProjectCodeRaw = try Text.From([#"Class: Class External ID"]) otherwise ""
+            ProjectCodeRaw = try Text.From(value) otherwise "",
+            ProjectCode = Text.Upper(Text.Trim(ProjectCodeRaw ?? ""))
         in
-            Text.Trim(ProjectCodeRaw ?? ""),
-        type text),
+            if ProjectCode = "" then "(BLANK)" else ProjectCode,
 
-    AddProjectCodeNormalized = Table.AddColumn(AddProjectCode, "Debug Project Code Normalized", each
-        Text.Upper([Debug Project Code]),
-        type text),
-
-    AddProjectExclusionStatus = Table.AddColumn(AddProjectCodeNormalized, "Debug Project Exclusion Status", each
-        if [Debug Project Code Normalized] = "" then "Blank project/class"
-        else if [Debug Project Code Normalized] = "(BLANK)" then "Blank project/class"
-        else if [Debug Project Code Normalized] = "EMS-04" then "EMS-04"
-        else "Included",
-        type text),
-
-    Rows2026 = Table.SelectRows(AddProjectExclusionStatus, each
-        [#"Period End Date"] <> null
-        and Date.Year([#"Period End Date"]) = 2026),
-
-    Raw60201 = Table.SelectRows(Rows2026, each
-        [#"Account No."] = "60201"),
-
-    AfterProjectExclusions = Table.SelectRows(Raw60201, each
-        [Debug Project Exclusion Status] = "Included"),
-
-    RemovedByProjectExclusions = Table.SelectRows(Raw60201, each
-        [Debug Project Exclusion Status] <> "Included"),
-
-    RemovedByCutover = Table.SelectRows(AfterProjectExclusions, each
-        [#"Period End Date"] > _CutoverDate),
-
-    FinalAfterCutover = Table.SelectRows(AfterProjectExclusions, each
-        [#"Period End Date"] <= _CutoverDate),
-
-    ProjectDimensionKeys = Table.Distinct(
-        Table.SelectColumns(
-            Table.AddColumn(#"dim_Project_Live", "Debug Project Code Normalized", each
-                let
-                    ProjectCodeRaw = try Text.From([Project Code]) otherwise ""
-                in
-                    Text.Upper(Text.Trim(ProjectCodeRaw ?? "")),
-                type text),
-            {"Debug Project Code Normalized"}
-        )
-    ),
-
-    UnmappedProjectRows = Table.NestedJoin(
-        FinalAfterCutover, {"Debug Project Code Normalized"},
-        ProjectDimensionKeys, {"Debug Project Code Normalized"},
-        "ProjectMatch", JoinKind.LeftAnti
-    ),
-
-    SumAmount = (Rows as table) as nullable number =>
+    SumColumn = (Rows as table, ColumnName as text) as number =>
         let
-            Amounts = List.RemoveNulls(Table.Column(Rows, "Sum of Amount"))
+            Amounts = List.RemoveNulls(Table.Column(Rows, ColumnName))
         in
             if List.IsEmpty(Amounts) then 0 else Number.Round(List.Sum(Amounts), 2),
 
     GroupByProject = (
         Rows as table,
+        ProjectColumn as text,
+        AmountColumn as text,
         RowColumnName as text,
         AmountColumnName as text
     ) as table =>
-        Table.Group(
-            Rows,
-            {"Debug Project Code Normalized"},
-            {
-                {RowColumnName, each Table.RowCount(_), Int64.Type},
-                {AmountColumnName, each SumAmount(_), type number}
-            }
-        ),
+        let
+            AddExternalID = Table.AddColumn(
+                Rows,
+                "External ID",
+                each NormalizeProject(Record.Field(_, ProjectColumn)),
+                type text
+            ),
+            Grouped = Table.Group(
+                AddExternalID,
+                {"External ID"},
+                {
+                    {RowColumnName, each Table.RowCount(_), Int64.Type},
+                    {AmountColumnName, each SumColumn(_, AmountColumn), type number}
+                }
+            )
+        in
+            Grouped,
 
-    RawGrouped = GroupByProject(
-        Raw60201,
-        "Raw 60201 Rows",
-        "Raw 60201 Amount"
+    HelperRows2026 = Table.SelectRows(HelperSource, each
+        [Date] <> null
+        and Date.Year([Date]) = 2026
     ),
 
-    FinalGrouped = GroupByProject(
-        FinalAfterCutover,
-        "PQ Debug Rows",
-        "PQ Debug Amount"
+    HelperGrouped = GroupByProject(
+        HelperRows2026,
+        "Project Code",
+        "Amount",
+        "Helper Actual Rows",
+        "Helper Actual Amount"
+    ),
+
+    FactRows2026 = Table.SelectRows(FactSource, each
+        [Date] <> null
+        and Date.Year([Date]) = 2026
+        and [Category] = "Subcontractor"
+        and [Type] = "Actual"
+    ),
+
+    FactGrouped = GroupByProject(
+        FactRows2026,
+        "Project Code",
+        "Amount",
+        "Fact Cost Actual Rows",
+        "Fact Cost Actual Amount"
+    ),
+
+    AccountCodeAsText = Table.TransformColumns(StagingSource,
+        {{"Account No.", each #"_NormalizeAccountCode"(_), type nullable text}}),
+
+    AddStagingExternalID = Table.AddColumn(
+        AccountCodeAsText,
+        "External ID",
+        each NormalizeProject([#"Class: Class External ID"]),
+        type text
+    ),
+
+    StagingRows2026 = Table.SelectRows(AddStagingExternalID, each
+        [#"Period End Date"] <> null
+        and Date.Year([#"Period End Date"]) = 2026
+    ),
+
+    StagingRaw60201 = Table.SelectRows(StagingRows2026, each
+        [#"Account No."] = "60201"
+    ),
+
+    StagingIncluded = Table.SelectRows(StagingRaw60201, each
+        [External ID] <> "(BLANK)"
+        and [External ID] <> "EMS-04"
+    ),
+
+    RemovedByProjectExclusions = Table.SelectRows(StagingRaw60201, each
+        [External ID] = "(BLANK)"
+        or [External ID] = "EMS-04"
+    ),
+
+    RemovedByCutover = Table.SelectRows(StagingIncluded, each
+        [#"Period End Date"] > _CutoverDate
+    ),
+
+    StagingFinalAfterCutover = Table.SelectRows(StagingIncluded, each
+        [#"Period End Date"] <= _CutoverDate
+    ),
+
+    ProjectDimensionKeys = Table.Distinct(
+        Table.SelectColumns(
+            Table.AddColumn(#"dim_Project_Live", "External ID", each
+                NormalizeProject([Project Code]),
+                type text),
+            {"External ID"}
+        )
+    ),
+
+    UnmappedProjectRows = Table.NestedJoin(
+        StagingFinalAfterCutover, {"External ID"},
+        ProjectDimensionKeys, {"External ID"},
+        "ProjectMatch", JoinKind.LeftAnti
+    ),
+
+    StagingRawGrouped = GroupByProject(
+        StagingRaw60201,
+        "External ID",
+        "Sum of Amount",
+        "Staging Raw 60201 Rows",
+        "Staging Raw 60201 Amount"
+    ),
+
+    StagingFinalGrouped = GroupByProject(
+        StagingFinalAfterCutover,
+        "External ID",
+        "Sum of Amount",
+        "Staging Final Rows",
+        "Staging Final Amount"
     ),
 
     RemovedProjectGrouped = GroupByProject(
         RemovedByProjectExclusions,
+        "External ID",
+        "Sum of Amount",
         "Removed Blank/EMS-04 Rows",
         "Removed Blank/EMS-04 Amount"
     ),
 
     RemovedCutoverGrouped = GroupByProject(
         RemovedByCutover,
+        "External ID",
+        "Sum of Amount",
         "Removed Cutover Rows",
         "Removed Cutover Amount"
     ),
 
     UnmappedGrouped = GroupByProject(
         UnmappedProjectRows,
+        "External ID",
+        "Sum of Amount",
         "Unmapped Rows",
         "Unmapped Amount"
     ),
 
     AllProjectCodes = Table.Distinct(Table.Combine({
-        Table.SelectColumns(RawGrouped, {"Debug Project Code Normalized"}),
-        Table.SelectColumns(FinalGrouped, {"Debug Project Code Normalized"}),
-        Table.SelectColumns(RemovedProjectGrouped, {"Debug Project Code Normalized"}),
-        Table.SelectColumns(RemovedCutoverGrouped, {"Debug Project Code Normalized"}),
-        Table.SelectColumns(UnmappedGrouped, {"Debug Project Code Normalized"})
+        Table.SelectColumns(HelperGrouped, {"External ID"}),
+        Table.SelectColumns(FactGrouped, {"External ID"}),
+        Table.SelectColumns(StagingRawGrouped, {"External ID"}),
+        Table.SelectColumns(StagingFinalGrouped, {"External ID"}),
+        Table.SelectColumns(RemovedProjectGrouped, {"External ID"}),
+        Table.SelectColumns(RemovedCutoverGrouped, {"External ID"}),
+        Table.SelectColumns(UnmappedGrouped, {"External ID"})
     })),
 
-    JoinRaw = Table.NestedJoin(
-        AllProjectCodes, {"Debug Project Code Normalized"},
-        RawGrouped, {"Debug Project Code Normalized"},
-        "Raw", JoinKind.LeftOuter
-    ),
-    ExpandRaw = Table.ExpandTableColumn(
-        JoinRaw,
-        "Raw",
-        {"Raw 60201 Rows", "Raw 60201 Amount"},
-        {"Raw 60201 Rows", "Raw 60201 Amount"}
-    ),
-
-    JoinFinal = Table.NestedJoin(
-        ExpandRaw, {"Debug Project Code Normalized"},
-        FinalGrouped, {"Debug Project Code Normalized"},
-        "Final", JoinKind.LeftOuter
-    ),
-    ExpandFinal = Table.ExpandTableColumn(
-        JoinFinal,
-        "Final",
-        {"PQ Debug Rows", "PQ Debug Amount"},
-        {"PQ Debug Rows", "PQ Debug Amount"}
-    ),
-
-    JoinRemovedProject = Table.NestedJoin(
-        ExpandFinal, {"Debug Project Code Normalized"},
-        RemovedProjectGrouped, {"Debug Project Code Normalized"},
-        "RemovedProject", JoinKind.LeftOuter
-    ),
-    ExpandRemovedProject = Table.ExpandTableColumn(
-        JoinRemovedProject,
-        "RemovedProject",
-        {"Removed Blank/EMS-04 Rows", "Removed Blank/EMS-04 Amount"},
-        {"Removed Blank/EMS-04 Rows", "Removed Blank/EMS-04 Amount"}
+    JoinTables = List.Accumulate(
+        {
+            [Table = HelperGrouped, Columns = {"Helper Actual Rows", "Helper Actual Amount"}, Name = "Helper"],
+            [Table = FactGrouped, Columns = {"Fact Cost Actual Rows", "Fact Cost Actual Amount"}, Name = "Fact"],
+            [Table = StagingRawGrouped, Columns = {"Staging Raw 60201 Rows", "Staging Raw 60201 Amount"}, Name = "StagingRaw"],
+            [Table = StagingFinalGrouped, Columns = {"Staging Final Rows", "Staging Final Amount"}, Name = "StagingFinal"],
+            [Table = RemovedProjectGrouped, Columns = {"Removed Blank/EMS-04 Rows", "Removed Blank/EMS-04 Amount"}, Name = "RemovedProject"],
+            [Table = RemovedCutoverGrouped, Columns = {"Removed Cutover Rows", "Removed Cutover Amount"}, Name = "RemovedCutover"],
+            [Table = UnmappedGrouped, Columns = {"Unmapped Rows", "Unmapped Amount"}, Name = "Unmapped"]
+        },
+        AllProjectCodes,
+        (State as table, Current as record) as table =>
+            let
+                Joined = Table.NestedJoin(
+                    State, {"External ID"},
+                    Current[Table], {"External ID"},
+                    Current[Name], JoinKind.LeftOuter
+                ),
+                Expanded = Table.ExpandTableColumn(
+                    Joined,
+                    Current[Name],
+                    Current[Columns],
+                    Current[Columns]
+                )
+            in
+                Expanded
     ),
 
-    JoinRemovedCutover = Table.NestedJoin(
-        ExpandRemovedProject, {"Debug Project Code Normalized"},
-        RemovedCutoverGrouped, {"Debug Project Code Normalized"},
-        "RemovedCutover", JoinKind.LeftOuter
-    ),
-    ExpandRemovedCutover = Table.ExpandTableColumn(
-        JoinRemovedCutover,
-        "RemovedCutover",
-        {"Removed Cutover Rows", "Removed Cutover Amount"},
-        {"Removed Cutover Rows", "Removed Cutover Amount"}
-    ),
-
-    JoinUnmapped = Table.NestedJoin(
-        ExpandRemovedCutover, {"Debug Project Code Normalized"},
-        UnmappedGrouped, {"Debug Project Code Normalized"},
-        "Unmapped", JoinKind.LeftOuter
-    ),
-    ExpandUnmapped = Table.ExpandTableColumn(
-        JoinUnmapped,
-        "Unmapped",
-        {"Unmapped Rows", "Unmapped Amount"},
-        {"Unmapped Rows", "Unmapped Amount"}
-    ),
+    NumericColumns = {
+        "Helper Actual Rows",
+        "Helper Actual Amount",
+        "Fact Cost Actual Rows",
+        "Fact Cost Actual Amount",
+        "Staging Raw 60201 Rows",
+        "Staging Raw 60201 Amount",
+        "Staging Final Rows",
+        "Staging Final Amount",
+        "Removed Blank/EMS-04 Rows",
+        "Removed Blank/EMS-04 Amount",
+        "Removed Cutover Rows",
+        "Removed Cutover Amount",
+        "Unmapped Rows",
+        "Unmapped Amount"
+    },
 
     FillNulls = Table.ReplaceValue(
-        ExpandUnmapped,
+        JoinTables,
         null,
         0,
         Replacer.ReplaceValue,
-        {
-            "Raw 60201 Rows",
-            "Raw 60201 Amount",
-            "PQ Debug Rows",
-            "PQ Debug Amount",
-            "Removed Blank/EMS-04 Rows",
-            "Removed Blank/EMS-04 Amount",
-            "Removed Cutover Rows",
-            "Removed Cutover Amount",
-            "Unmapped Rows",
-            "Unmapped Amount"
-        }
+        NumericColumns
     ),
 
-    AddRawVsPQVariance = Table.AddColumn(
+    AddHelperVsFactVariance = Table.AddColumn(
         FillNulls,
-        "Raw Less PQ Debug Amount",
-        each Number.Round([Raw 60201 Amount] - [PQ Debug Amount], 2),
+        "Helper Less Fact Amount",
+        each Number.Round([Helper Actual Amount] - [Fact Cost Actual Amount], 2),
         type number
     ),
 
-    Renamed = Table.RenameColumns(
-        AddRawVsPQVariance,
-        {{"Debug Project Code Normalized", "External ID"}}
+    AddHelperVsStagingVariance = Table.AddColumn(
+        AddHelperVsFactVariance,
+        "Helper Less Staging Final Amount",
+        each Number.Round([Helper Actual Amount] - [Staging Final Amount], 2),
+        type number
     ),
 
     Sorted = Table.Sort(
-        Renamed,
+        AddHelperVsStagingVariance,
         {
-            {"Raw Less PQ Debug Amount", Order.Ascending},
-            {"PQ Debug Amount", Order.Ascending},
+            {"Helper Actual Amount", Order.Ascending},
+            {"Fact Cost Actual Amount", Order.Ascending},
             {"External ID", Order.Ascending}
         }
     )
