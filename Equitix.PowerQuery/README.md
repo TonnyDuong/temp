@@ -54,12 +54,43 @@ When you edit a query in Power BI Desktop, **also update the `.pq` file** so the
 ## Folder structure
 
 ```
-powerquery/
-├── README.md
-├── dimensions/         # one file per dim_*_Live query
-├── facts/              # one file per fact_*_Live query
-└── helpers/            # sub-queries used inside fact_Revenue_Live and fact_Cost_Live (load disabled in PBI)
+Equitix.PowerQuery/
+|-- README.md
+|-- AGENTS.md
+|-- sources/            # one .pq script per source/staging query
+|-- dimensions/         # one file per dim_*_Live query
+|-- facts/              # one file per fact_*_Live query
+|-- helpers/            # sub-queries used inside fact_Revenue_Live and fact_Cost_Live
+|-- docs/               # companion plan and audit markdown
+`-- Equitix_Measures.txt
 ```
+
+The source folder is named `sources` (plural). There is no active singular `source` folder.
+
+## Source query names
+
+The `.pq` files under `sources/` are the Power Query source/staging queries that the other `.pq` files reference by name. Keep the filename stem aligned with the Power BI query name.
+
+| Query name | Source |
+|---|---|
+| `crbb5_bamboohr` | Dataverse table `dbo.crbb5_bamboohr` |
+| `crbb5_billingschedule` | Dataverse table `dbo.crbb5_billingschedule` |
+| `crbb5_contractregister` | Dataverse table `dbo.crbb5_contractregister` |
+| `crbb5_jedoxallocation` | Dataverse table `dbo.crbb5_jedoxallocation` |
+| `crbb5_project` | Dataverse table `dbo.crbb5_project`, with `Project Display` added |
+| `dogma_timesheet` | Dataverse table `dbo.dogma_timesheet`, with owning-user Time@work fields expanded |
+| `dogma_timesheetheader` | Dataverse table `dbo.dogma_timesheetheader` |
+| `dogma_timesheetperiod` | Dataverse table `dbo.dogma_timesheetperiod` |
+| `stg_EMS Fixed Fee Forecast_Contracts1` | `EMS Fixed Fee Forecast.xlsx`, `Contracts` sheet |
+| `stg_EMS Fixed Fee Forecast_Project HARP` | `EMS Fixed Fee Forecast.xlsx`, `ProjectHARP` sheet |
+| `stg_EMS Fixed Fee Forecast_31Dec2025` | `EMS Fixed Fee Forecast.xlsx`, `31.12.2025` sheet |
+| `stg_EMS Fixed Fee Forecast_Actuals` | `EMS Fixed Fee Forecast.xlsx`, `Actuals` sheet |
+| `stg_FinanceOutput FY26_CoA` | `FinanceOutput FY26.xlsx`, `CoA` sheet |
+| `stg_FinanceOutput FY26_FY2026` | `FinanceOutput FY26.xlsx`, `FY2026` sheet |
+| `stg_Staff Costs Summary` | `Staff Costs Summary.xlsx`, `Sheet1` |
+| `stg_AdditionalServicesForecast` | `Additional Services Forecast.xlsx`, `AdditionalServices Forecast` sheet |
+| `stg_SubcontractorForecast` | `Subcontractor forecast.xlsx`, `Sheet1` |
+| `Equitix_Measures` | Empty placeholder query for the measure container |
 
 ## Build order
 
@@ -91,11 +122,28 @@ Queries depend on each other. If you're pasting them in for the first time, crea
 - For helpers, the **load** setting must be disabled in Power BI Desktop (right-click the query → uncheck "Enable load"). The `.pq` files contain the M code only; the load flag is set in the PBI UI.
 - For dimensions and facts, leave **load** enabled (default).
 
+## Missing Data Troubleshooting
+
+Before changing M code for blank helpers, facts, or measures, verify the source workbook state. A client-saved Excel filter can hide rows from the source table or worksheet and make downstream queries appear empty even when the `.pq` logic is correct.
+
+Keep troubleshooting changes to the exact request. If a possible model issue, normalization issue, or cleanup opportunity is found while investigating missing data, record it as a finding and get explicit approval before changing the implementation.
+
+First checks for missing actuals or forecast rows:
+
+1. Open the source Excel file used by the staging query.
+2. Clear filters on the relevant worksheet or Excel table.
+3. Confirm the expected account, project, and date rows are visible in Excel.
+4. Save the workbook after clearing filters.
+5. Refresh Power BI and then re-check the staging query before debugging helpers.
+
+If rows are present in staging but missing later, continue with query-step checks in the affected helper, especially account-code filters, cutover-date filters, and joins to dimensions.
+
 ## Naming convention
 
 Every query name carries the **`_Live`** suffix so the new model can coexist with the existing one during development. After Phase 5 verification, run Phase 6 (swap-over) to drop the suffix.
 
 ## Companion documents
 
-- **`../Power BI Refactor Plan.md`** — step-by-step task instructions, definition-of-done per task.
-- **`../Power BI Schema Audit - Equip Profitability Report.md`** — full schema context, business rules, client meeting notes.
+- **`docs/Power BI Refactor Plan.md`** — step-by-step task instructions, definition-of-done per task.
+- **`docs/Power BI Schema Audit - Equip Profitability Report.md`** — full schema context, business rules, client meeting notes.
+- **`docs/Client Decision Log.md`** — dated client decisions and exact quoted rationale for account-code/reporting rules.

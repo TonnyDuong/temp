@@ -34,23 +34,15 @@
 //                     ...), NOT the numeric choice ID. The numeric
 //                     crbb5_supersectorchoice is just a table ID and is
 //                     not surfaced. Source the *name* column instead.
-//   Contract        = MSA Reference (used as the contract level in the
-//                     report hierarchy).
-//   Region          = contract-level region from crbb5_region, falling
-//                     back to crbb5_region2 when the primary field is blank.
 //   Project Display = "<Project Code> - <Project Name>" so report rows
 //                     show the code and the full description together.
-//   Report hierarchy (top -> bottom drill path) =
-//                     Region -> Sector -> Contract -> Project Display
-//                     This implements the requested roll-up
-//                     Project -> Contract -> Sector -> Region.
 // ---------------------------------------------------------------------
 // Column sources (CONFIRMED against the crbb5_contractregister column list):
 //   Join key       = crbb5_contractregister[crbb5_contractregisterid]  (confirmed).
 //   Sector (name)  = crbb5_supersectorchoicename                        (confirmed).
 //   Portfolio      = crbb5_portfolio                                    (confirmed).
+//   Contract title = crbb5_title                                        (24 Jun 2026 client request).
 //   MSA Reference  = crbb5_msareference                                 (confirmed).
-//   Region         = crbb5_region with fallback to crbb5_region2
 //   Concession Exp = crbb5_concessionexpiry                             (confirmed).
 //   Project Type   = crbb5_project[crbb5_projecttypename] (the text name,
 //                     e.g. Operational / Construction — NOT the numeric
@@ -94,30 +86,16 @@ let
         "ContractRegister_Lookup", JoinKind.LeftOuter
     ),
     Expanded = Table.ExpandTableColumn(Merged, "ContractRegister_Lookup",
-        {"crbb5_supersectorchoicename", "crbb5_portfolio", "crbb5_msareference", "crbb5_concessionexpiry", "crbb5_contractstatus", "crbb5_region", "crbb5_region2"},
-        {"Sector", "Portfolio", "MSA Reference", "Concession Expiry", "Contract Status", "Primary Region", "Secondary Region"}
+        {"crbb5_supersectorchoicename", "crbb5_portfolio", "crbb5_title", "crbb5_msareference", "crbb5_concessionexpiry", "crbb5_contractstatus"},
+        {"Sector", "Portfolio", "Contract Title", "MSA Reference", "Concession Expiry", "Contract Status"}
     ),
 
-    // Step 2b — canonical Region. Use the primary region from the contract
-    //           register when present; otherwise fall back to the secondary
-    //           region field.
-    AddRegion = Table.AddColumn(Expanded, "Region", each
-        let
-            PrimaryRegion = try Text.Trim(Text.From([Primary Region])) otherwise "",
-            SecondaryRegion = try Text.Trim(Text.From([Secondary Region])) otherwise ""
-        in
-            if PrimaryRegion <> "" then PrimaryRegion
-            else if SecondaryRegion <> "" then SecondaryRegion
-            else null,
-        type text),
-    RemovedRegionHelpers = Table.RemoveColumns(AddRegion, {"Primary Region", "Secondary Region"}),
-
-     // Step 2c — IsInScope flag. TRUE if the contract status is in Chris's
+     // Step 2b — IsInScope flag. TRUE if the contract status is in Chris's
     //           confirmed list for the profitability report. From his
     //           02 Jun 2026 email: "Live, Mobilised and Terminated. These 3
     //           stages all indicate a Live (or previously Live) contract."
     //           Pipeline (and any other status) is excluded.
-    AddIsInScope = Table.AddColumn(RemovedRegionHelpers, "IsInScope",        
+    AddIsInScope = Table.AddColumn(Expanded, "IsInScope",
         each List.Contains({"Live", "Mobilised", "Mobilized", "Terminated"}, [Contract Status] ?? ""),
         type logical),
 
@@ -132,7 +110,12 @@ let
 
     // Step 4 — explicit Contract level for report hierarchies.
     AddContract = Table.AddColumn(FilledPortfolio, "Contract",
-        each [MSA Reference],
+        each
+            let
+                ContractTitle = try Text.Trim(Text.From([Contract Title])) otherwise "",
+                MSAReference = try Text.Trim(Text.From([MSA Reference])) otherwise ""
+            in
+                if ContractTitle <> "" then ContractTitle else MSAReference,
         type text),
 
     // Step 5 — derive Contract Phase from MSA Reference prefix

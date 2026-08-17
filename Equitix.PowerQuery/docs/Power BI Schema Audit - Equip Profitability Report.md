@@ -7,6 +7,8 @@ project: "[[Equitix]]"
 
 Companion to [[Power BI Refactor Plan]].
 
+> 03 Jul 2026 amendment: OOC actual/report revenue uses account code `40013` only. `40014` was previously included, but the client later excluded it because "40014 is recharged cost." OOC forecast remains the Additional Services stream using `40014`. The current sprint hierarchy is `Sector -> Contract -> Project Display`; Region split/filtering is deferred.
+
 Source: 21 video clips + 4 screenshots in `D:\Projects\Equitix\schema capture\` captured 2026-05-22, plus initial recording `2026-05-21 18-12-28.mkv`, plus four meeting / Q&A transcripts (kickoff 2 April, catch-up 21 April, weekly check-in 13 May, follow-up clarifications). For each table the Data panel was expanded so all column names are visible directly. No Model/Relationships view was captured, so relationships below are **inferred from column names and values**.
 
 Sigma symbol (`Σ`) marks numeric/measure columns. Calendar icon marks date columns. All other columns are text/lookup.
@@ -28,17 +30,16 @@ This is important context for reading the issues list below — it determines wh
 
 ## Source workbook structure (SharePoint)
 
-The 7 `stg_*` tables in the model are not 7 independent sources — they are sheets across **three Excel workbooks** maintained by Equitix on SharePoint. Knowing this matters because (a) some "tables" can share refresh logic, (b) the workbook ↔ sheet mapping is what the developer has to wire up in Power Query, and (c) there are sheets in the workbooks that may not be ingested yet.
+The checked-in source exports live in `Equitix.PowerQuery/sources` (plural). The SharePoint `stg_*` queries are not one independent workbook each: they are sheets across **five Excel workbooks** maintained by Equitix on SharePoint. This count includes the three core workbooks plus the delivered Additional Services and Subcontractor forecast workbooks.
 
 ### Workbook 1: `EMS Fixed Fee Forecast.xlsx`
 
 | Sheet | Currently ingested as | Notes / open questions |
 |---|---|---|
-| `CONTRACTS` | `stg_EMS Fixed Fee Forecast_Contracts1` | columns: `MSA Reference`, `Project Code`, `Billing Schedule Item`, `Entity`, `Project Type`, `SuperSector`. **Concern flagged on the diagram**: contracts with entity other than EMS (BWS, ESS) were missing from the FY2026 tab — Chris rebuilt that file, but worth re-validating |
-| `ProjectHARP` | not separately ingested — likely merged with `HARP_DATA` into `stg_EMS Fixed Fee Forecast_Project HARP` | columns: `MSA Reference`, `Project Code (Key)`, `Entity`, `Project Type`, `Supersector`. **Open**: is this just contract attributes for HARP, with `HARP_DATA` carrying the forecast values? |
+| `Contracts` | `stg_EMS Fixed Fee Forecast_Contracts1` | Source file currently reads `Item="Contracts"` and skips the first 6 rows before promoting headers. This is the source for live standard in-contract forecast values. **Concern flagged on the diagram**: contracts with entity other than EMS (BWS, ESS) were missing from the FY2026 tab — Chris rebuilt that file, but worth re-validating. |
+| `ProjectHARP` | `stg_EMS Fixed Fee Forecast_Project HARP` | Source file currently reads `Item="ProjectHARP"` and contains the wide HARP monthly forecast columns out to 2035. Treat this as the current HARP ingest name unless the workbook is later changed. |
 | `Actuals` | `stg_EMS Fixed Fee Forecast_Actuals` | columns: `Transaction Ref`, `Account No.`, `Class: Class External ID`. Slim — only 8 columns. NetSuite actuals subset. |
-| `HARP_DATA` | likely `stg_EMS Fixed Fee Forecast_Project HARP` (the wide / date-pivoted one) | **Open — exact contents unconfirmed.** Captured as wide date columns out to 2035. Confirm with client whether this is the forecast values for the HARP project. |
-| `31.12.2025` | `stg_EMS Fixed Fee Forecast_31Dec2025` | columns include `Item`, `Project`, `Currency`, `Subsidiary (Project)`, `Billing Reference`, `Inedxation Basis` *(typo — Indexation)*. This is a snapshot from end of Dec 2025. Confirm whether the wide date columns I captured earlier are part of this sheet or a separate one. |
+| `31.12.2025` | `stg_EMS Fixed Fee Forecast_31Dec2025` | legacy snapshot/reference sheet. Do not use it for live standard in-contract forecast values while `Contracts` carries the indexed monthly schedule; using this sheet misses indexation uplift in the forecast. |
 
 ### Workbook 2: `FinanceOutput FY26.xlsx`
 
@@ -51,7 +52,19 @@ The 7 `stg_*` tables in the model are not 7 independent sources — they are she
 
 | Sheet | Currently ingested as | Notes |
 |---|---|---|
-| `Employee Info (Sheet1)` | `stg_Staff Costs Summary` | columns: `Employee # (ID)`, `Time@work Reference`, `Year (2025, 2026)`, `Costs for year 2025, 2026` |
+| `Sheet1` | `stg_Staff Costs Summary` | columns: `Employee # (ID)`, `Time@work Reference`, `Year (2025, 2026)`, `Costs for year 2025, 2026` |
+
+### Workbook 4: `Additional Services Forecast.xlsx`
+
+| Sheet | Currently ingested as | Notes |
+|---|---|---|
+| `AdditionalServices Forecast` | `stg_AdditionalServicesForecast` | OOC revenue forecast; skips first 4 rows, promotes headers, then feeds `_Revenue_Forecast_OOC` with account code `40014`. |
+
+### Workbook 5: `Subcontractor forecast.xlsx`
+
+| Sheet | Currently ingested as | Notes |
+|---|---|---|
+| `Sheet1` | `stg_SubcontractorForecast` | Subcontractor cost forecast; skips first 2 rows, promotes headers, then feeds `_Cost_Subcontractor_Forecast`. |
 
 (**Note**: `dogma_timesheet` shown on the diagram is **not** in this workbook — it lives in Dataverse. Excluded here.)
 
@@ -61,7 +74,7 @@ These are the joins that wire the workbooks together — they're what the Power 
 
 | From | To | Key |
 |---|---|---|
-| `CONTRACTS` → `FY2026` | join via `Project Code` — **corrected**: `FY2026` has no Project Code column, so the key is `Class: Class External ID` (which holds the project code, e.g. `ASH-01`) |
+| `Contracts` → `FY2026` | join via `Project Code` — **corrected**: `FY2026` has no Project Code column, so the key is `Class: Class External ID` (which holds the project code, e.g. `ASH-01`) |
 | `ProjectHARP` → `FY2026` | join via `Project Code` (HARP is one project's worth of rows in FY2026) |
 | `Actuals` → `FY2026` | shared `Transaction Ref` / `Account No.` |
 | `CoA` → `FY2026` | join via `Account No.` to `Nominal Code` |
@@ -69,10 +82,10 @@ These are the joins that wire the workbooks together — they're what the Power 
 
 ### Open items on the diagram to confirm
 
-1. **`HARP_DATA` contents** — is it the wide / date-pivoted forecast values for HARP, or something else? Likely yes but worth asking.
+1. **HARP workbook naming** — source control currently reads the wide HARP forecast from `ProjectHARP`. If Equitix later reintroduces or renames a separate HARP forecast sheet, update `stg_EMS Fixed Fee Forecast_Project HARP` and this audit together.
 2. **`31.12.2025` sheet** — is this a one-time snapshot, or does the workbook get a new dated sheet every quarter / month?
-3. **Sheets that exist but aren't ingested** — does the developer's Power Query touch every sheet, or are some ignored? `Actuals` is in the diagram but lightly used; `ProjectHARP` may be a duplicate of HARP rows in `CONTRACTS`.
-4. **Subsidiary path in `CONTRACTS`** — does the sheet hold contracts only for EMS UK, or all four subsidiaries (EMS UK / ESS / BWG / BWS)? Chris said the FY26 file was rebuilt to include BWS and ESS; confirm the same holds for `CONTRACTS`.
+3. **Sheets that exist but aren't ingested** — does the developer's Power Query touch every sheet, or are some ignored? `Actuals` is in the diagram but lightly used; `ProjectHARP` may overlap with HARP rows in `Contracts`.
+4. **Subsidiary path in `Contracts`** — does the sheet hold contracts only for EMS UK, or all four subsidiaries (EMS UK / ESS / BWG / BWS)? Chris said the FY26 file was rebuilt to include BWS and ESS; confirm the same holds for `Contracts`.
 
 ## Architectural principle
 
@@ -97,14 +110,15 @@ The transcripts answer several questions left open by the schema-only inference.
 | `40010` | Operational revenue | **In Contract** | confirmed by Chris Rolls 13/05 |
 | `40011` | Construction revenue | **In Contract** | confirmed |
 | `40012` | Development revenue | **In Contract** | no balance currently — historical / future only |
-| `40014` | Additional services | **Out of Contract** | confirmed — the only OOC revenue code |
+| `40013` | Out of contract | **Out of Contract** | actual/report OOC revenue; client rule: "Revenue OO-contract total should equal to the sum of 40013 (account no.) in the FinanceOutput FY26 data set." |
+| `40014` | Additional services / recharged costs | **Out of Contract** | retained for OOC forecast only. Previously included in actual OOC revenue, then excluded because "40014 is recharged cost." |
 
-Only these four account codes feed the report's revenue measures.
+Only these five account codes feed the report's revenue measures.
 
 ### Cost classification — by NetSuite Account Code
 | Account Code | Account Name | Cost Category | Notes |
 |---|---|---|---|
-| `60201` | Subcontractor costs | **Subcontractor** | confirmed by Chris 13/05 |
+| `60201` | Subcontractor costs | **Subcontractor** | actual subcontractor reconciliation; client rule: "Total subcontractor costs should equal the sum of 60201." |
 | `60202` | Subcontractor costs | **Subcontractor** | confirmed by Chris 29/05 — was missing from the earlier list |
 | `60203` | Subcontractor costs | **Subcontractor** | confirmed |
 | `607xxx` (any 607-prefixed account) | Temporary staff / consultancy fees | **EXCLUDED** | these workers ARE on timesheets, so their cost is already counted via `fact_Timesheet`. Including them as cost here would double-count. (Chris, 29/05 meeting.) |
@@ -118,6 +132,7 @@ The dashboard's "Cost split" chart should expand to three columns: **Staff costs
   - `…01` = in-contract fixed-fee project (delivers the contracted scope)
   - `…02`, `…03`, `…04` … = out-of-contract additional work streams (per-instance scope adds)
 - Sector and region/location are held at **contract** level (in `crbb5_contractregister`) and roll up from there.
+- For the current profitability report sprint, the required roll-up is **Sector → Contract → Project**. Region split/filtering is deferred.
 
 ### Staff cost calculation — the floor-and-ceiling rule
 **Critical**: the staff cost measure cannot be a naive `Hours × Hourly Rate`. From the 21 April catch-up:
@@ -143,6 +158,9 @@ Naive `hours × rate` will overstate cost on overtime-heavy projects and underst
 | Out-of-contract revenue (additional services) | **Additional Services Forecast** spreadsheet (SharePoint Data folder) | manual file. **Delivered** — broken down by month + project code, so no YTD-actual subtraction is needed (each row is that month's forecast). |
 | Costs (staff) | **Jedox (API)** — % of each employee's time per contract × day rate | live API |
 | Costs (subcontractor) | **Subcontractor Forecast** spreadsheet (SharePoint Data folder) | manual file. **Delivered** — by month + project code. |
+
+Reporting note:
+- HARP may continue to be ingested from its own `ProjectHARP` staging query because the worksheet shape differs from the standard contract forecast sheet, but it should not appear as a separate report dataset or separate forecast column. In report measures it belongs inside the single **in-contract forecast** stream.
 
 This **resolves the ❌ in the dashboard assessment**: out-of-contract forecast revenue exists as a data feed, supplied as the **Additional Services Forecast** spreadsheet (now delivered to the SharePoint Data folder) — it isn't from the four `stg_EMS Fixed Fee Forecast_*` tables already in the model. Ingest it via a new staging table `stg_AdditionalServicesForecast`.
 
@@ -249,7 +267,7 @@ Client has agreed the Sheet 1 KPI layer as:
 With drill-down by Sector → Portfolio → Asset/Project → Contract.
 
 Client also asked the dashboard to:
-- Show **subcontractor costs (60201–60203) as a distinct KPI** feeding into Total Costs.
+- Show **subcontractor costs as a distinct KPI** feeding into Total Costs. Latest actual reconciliation uses account `60201` only: "Total subcontractor costs should equal the sum of 60201."
 - Separate **In-contract and Out-of-contract revenue** at the KPI layer (both feed Total Revenue but should be visible side-by-side).
 
 Both of these were already in the Sheet 1 design — confirmed as required, not optional.
@@ -402,7 +420,7 @@ Confirmed (structure now verified from the delivered file):
 - **Layout**: **WIDE monthly** — header row is **row 3** (title + blank above). Columns: `Netsuite N/C` (the account code, 60201), `Project Code`, `Department`, `Location`, then one value column per month-end (`1/31/2026`…`12/31/2026`).
 - `Netsuite N/C` → `Account Code`; `Project Code` joins `dim_Project`. Staging query must skip the title rows + promote row 3, then unpivot the month columns.
 
-Action: ingest into `fact_Cost[Type=Forecast, Category=Subcontractor]` via `stg_SubcontractorForecast`. See `powerquery/helpers/_Cost_Subcontractor_Forecast.pq`.
+Action: ingest into `fact_Cost[Type=Forecast, Category=Subcontractor]` via `stg_SubcontractorForecast`. See `Equitix.PowerQuery/helpers/_Cost_Subcontractor_Forecast.pq`.
 
 ### OOC revenue forecast (Additional Services) — DELIVERED
 
@@ -413,7 +431,7 @@ Structure verified from the delivered file:
 - Columns: `Supersector`, `Sector`, `Upstream Reports`, `Project Code`, `Department`, `Location`, then one value column per month-end. `Project Code` joins `dim_Project`; the file also carries its own `Supersector`/`Sector` names.
 - Because it is per-month, the earlier "whole-year minus YTD" approach is **not required** — full-year is a SUM. Staging query must skip the title/note rows + promote row 5, then unpivot.
 
-Ingest into `fact_Revenue[Type=Forecast, Contract Type=Out of Contract, Account Code=40014]`. See `powerquery/helpers/_Revenue_Forecast_OOC.pq`.
+Ingest into `fact_Revenue[Type=Forecast, Contract Type=Out of Contract, Account Code=40014]`. See `Equitix.PowerQuery/helpers/_Revenue_Forecast_OOC.pq`.
 
 ### `dogma_timesheet` → staff cost join — corrected
 
@@ -447,10 +465,10 @@ The client circulated an updated PoC Excel sheet (`Profitability Tables PoC v2.x
 | Group | Columns | Source |
 |---|---|---|
 | Revenue | `In Contract` | NetSuite — Account Codes 40010/40011/40012 |
-| | `Oo Contract` *(= Out-of-Contract)* | NetSuite — Account Code 40014 |
+| | `Oo Contract` *(= Out-of-Contract)* | NetSuite — Account Code 40013 |
 | | `Total Rev` | Sum |
 | Costs | `Staff Cost` | Timesheets × Day Rates |
-| | `Subcontractor Costs` | NetSuite — Account Codes 60201/60203 |
+| | `Subcontractor Costs` | NetSuite — Account Code 60201 |
 | | `Total Cost` | Sum |
 | | `Profit` | Total Rev − Total Cost |
 | | `%` | Profit / Total Rev |
@@ -467,7 +485,7 @@ Same row axis (Sector). Columns split actuals + forecast and roll up to full yea
 | | | `Oo Contract` | **Additional Services Forecast** spreadsheet (delivered, by month + project code) |
 | | | `Total Rev` | Sum |
 | Cost Act | (YTD actuals) | `Staff Cost` | Timesheets × Employee Day Rates |
-| | | `Subcontractor Costs` | Subcontractor actuals (NetSuite 60201/60203) |
+| | | `Subcontractor Costs` | Subcontractor actuals (NetSuite 60201) |
 | Cost For | (Remaining forecast) | `Staff Cost` | **Jedox × Employee Day Rates** |
 | | | `Subcontractor Costs` | **Subcontractor Forecast** spreadsheet (delivered, by month + project code) |
 | | | `Total Costs` | Sum |
@@ -539,7 +557,7 @@ Note: this PoC table layout is **narrower** than the earlier proposed dashboard 
 - `crbb5_item` (Billing Schedule Item, e.g. BSI-001016), `crbb5_billingreference`
 - `crbb5_baseannualfee`, `crbb5_currentannualfee`, `crbb5_indexmonth`, `crbb5_indexupliftdate`, `crbb5_inedxationbasis` *(typo — Indexation Basis)*, `crbb5_feetype`
 
-If the report ever needs contract billing method / start / end dates on `dim_Project`, join `crbb5_billingschedule` via `crbb5_project`. (Not needed for the current PoC tables.) This table is also the live Dataverse source for in-contract revenue forecast — the `31.12.2025` Excel sheet is the snapshot the forecast helper currently unpivots.
+If the report ever needs contract billing method / start / end dates on `dim_Project`, join `crbb5_billingschedule` via `crbb5_project`. (Not needed for the current PoC tables.) Standard in-contract forecast values now come from the `Contracts` sheet in `EMS Fixed Fee Forecast.xlsx`; the `31.12.2025` Excel sheet is retained as a legacy snapshot/reference only.
 
 **Business columns (original capture, mixed display/logical names):**
 `Base annual fee Σ`, `Base Currency`, `Base Fee Σ`, `Base Fee (Base) Σ`, `Base Index`, `Base to Current Σ`, `Billing End Date`, `Billing frequency p.a. Σ`, `Billing Method`, `Billing month zero`, `Billing Reference`, `Billing Schedule` (key), `Billing Start Date`, `Billing start month Σ`, `Calculation`, `Client Code`, `crbb5_basecurrency`, `crbb5_billingmethod Σ`, `crbb5_indexcyclethismonth`, `crbb5_indexthismonth`, `crbb5_invoicecyclethismonth`, `crbb5_project`, `Currency`, `Current Annual Fee Σ`, `Current Index`, `Current month Σ`, `Exchange Rate`, `Fee Type`, `Index cycle this month?`, `Index Day of Month Σ`, `Index Month Σ`, `Index this month?`, `Index Uplift Date`, `Inedxation Basis` *(typo: should be "Indexation")*, `Invoice amount current Σ`, `Invoice amount current (Base) Σ`, `Invoice cycle decimal Σ`, plus more below the panel-view fold (Netsuite Description, Notes, etc.)
@@ -665,16 +683,18 @@ Sample row: `Journal: JE15141 | 01 January 2025 | 31 January 2025 | 40010 | Oper
 Columns identical to `dim_Contracts`:
 `BaseAnnualFee Σ`, `BaseCurrencyName`, `Billing Schedule item`, `BillingEndDate`, `BillingMethodName`, `BillingStartDate`, `ConcessionExpiry`, `CurrentAnnualFee Σ`, `Entity`, `Exchange Σ`, `ForecastAmmount Σ`, `ForecastDate`, `GBP Value Σ`, `IndexMonth Σ`, `Monthly Fee Σ`, `MSA Reference`, `Project`, `Project Code`, `Project Type`, `Supersector`
 
-### 20. `stg_EMS Fixed Fee Forecast_31Dec2025` (wide/pivoted forecast snapshot)
+### 20. `stg_EMS Fixed Fee Forecast_31Dec2025` (legacy forecast snapshot)
 **Authoritative metadata columns (corrected from the latest data screenshots):**
 `Item` (Billing Schedule Item, e.g. BSI-001004), `Project` (the project **code**, e.g. EEC-01), `Project Name (Project) (Project)`, `Billing Method` (Annual Fixed Fee), `Base annual fee Σ`, `Current Annual Fee Σ`, `Currency` (British Pound / Euro), `Billing frequency p.a. Σ`, `Index Uplift Date`, `Index Month Σ`, `Index Day of Month Σ`, `Subsidiary (Project) (Project)` (EMS / ESS), `Billing Start Date` 📅, `Billing End Date` 📅, `Billing Reference` (e.g. EEC-01-1), `Index this month ?` (Yes/No), `Base Index`, `Current Index`, `Inedxation Basis` *(typo — Indexation; RPI/RPIX)*, `Exchange Σ` (1, or 1.15 for Euro), `Monthly Fee Σ`
 
-Then the **wide forecast columns**: one per month, date-named (`31/01/2026`, `28/02/2026`, … `31/12/2026`), each holding that month's fee. The in-contract forecast helper anchors on the metadata columns above and unpivots only these month columns. The **project code is the `Project` column** (not "Project Code"); subsidiary is `Subsidiary (Project) (Project)`.
+This sheet is retained as a legacy snapshot/reference only. The live standard in-contract forecast now comes from `stg_EMS Fixed Fee Forecast_Contracts1`, because that sheet carries the indexed monthly forecast schedule expected by the client.
 
 ### 21. `stg_EMS Fixed Fee Forecast_Actuals`
 `Account Name`, `Account No. Σ`, `Class: Class External ID`, `Memo`, `Period End Date`, `Sum of Amount Σ`, `Transaction Date`, `Transaction Ref.`
 
 ### 22. `stg_EMS Fixed Fee Forecast_Contracts1`
+This staging table now supplies the live standard in-contract forecast values. The wide forecast columns are one per month, date-named (`31/01/2025`, `28/02/2025`, ...), and hold the indexed forecast fee values expected by the client.
+
 **Authoritative column order (corrected from the latest data screenshots):**
 `MSA Reference`, `Project Code`, `Billing Schedule item`, `crbb5_billingmethod Σ`, `crbb5_billingmethodname`, `crbb5_billingstartdate` 📅, `crbb5_billingenddate` 📅, `crbb5_baseannualfee Σ`, `crbb5_basecurrency Σ`, `crbb5_basecurrencyname`, `crbb5_indexmonth Σ`, `crbb5_currentannualfee Σ`, `Entity`, `Project`, `Project Type`, `Monthly Fee Σ`, `Supersector`, `Concession expiry` 📅
 
@@ -692,7 +712,7 @@ Then **wide monthly forecast columns 31/01/2025 → 31/12/2035** (values vary by
 **Authoritative column list (corrected from the latest data screenshots):**
 `Nominal Code`, `Account Name`, `Account Type`, `Balance Sheet`, `Mapping` (null across the board)
 
-`Nominal Code` is the account code (`dim_Accounts_Live` renames it to `Account Code`). It is stored as **text** in the source and **not every value is a pure integer** (some carry alphanumeric content) — `dim_Accounts_Live` therefore keeps `Account Code` as text; an `Int64.Type` cast would error on refresh. Comparisons in the dim use quoted string values (`"40010"`, `"60201"`). For the dim→fact relationship to build, **every fact's `Account Code` must also land as text** — convert `Account No.` (numeric in the GL) with `Text.From` on ingest, and use `"40014"` / `type text` (not `40014` / `Int64.Type`) in forecast helpers.
+`Nominal Code` is the account code (`dim_Accounts_Live` renames it to `Account Code`). It is stored as **text** in the source and **not every value is a pure integer** (some carry alphanumeric content) — `dim_Accounts_Live` therefore keeps `Account Code` as text; an `Int64.Type` cast would error on refresh. Comparisons in the dim use quoted string values (`"40010"`, `"60201"`). For the dim→fact relationship to build, **every fact's `Account Code` must land as the same normalised text key** — use `_NormalizeAccountCode` for source columns such as `Account No.` and `Netsuite N/C`, and use `"40014"` / `type text` (not `40014` / `Int64.Type`) in forecast helpers that hard-code account codes.
 
 `Balance Sheet` is a T/F flag — `T` for balance-sheet accounts (Bank, AR, current assets, etc.), `F` for P&L (income/expense). `Account Type` values seen: Bank, Credit Card, Accounts Receivable, Other Current Asset, Expense, Income, Other Income.
 
@@ -771,8 +791,8 @@ fact_FinanceFY2026 (Transaction Line ID, TransactionLineKey, Transaction: Transa
 
 
 stg_EMS Fixed Fee Forecast_Actuals  →  fact_Actuals (identical schema)
-stg_EMS Fixed Fee Forecast_Contracts1  →  fact_Contracts (matching crbb5_* columns)
-stg_EMS Fixed Fee Forecast_31Dec2025  →  fact_ProjectHARP (date pivot)
+stg_EMS Fixed Fee Forecast_Contracts1  →  fact_Contracts (matching crbb5_* columns) and standard in-contract forecast after unpivot
+stg_EMS Fixed Fee Forecast_31Dec2025  →  legacy snapshot/reference
 stg_EMS Fixed Fee Forecast_Project HARP  →  fact_ProjectHARP (date pivot)
 ```
 
@@ -812,8 +832,8 @@ stg_EMS Fixed Fee Forecast_Project HARP  →  fact_ProjectHARP (date pivot)
 3. **`fact_Contracts` mixes `crbb5_*` raw column names with cleaned ones** — has both `crbb5_msareference` AND `MSA Reference`, both `crbb5_projectcode` AND `Project Code`, both `crbb5_projecttype` AND `Project Type`, etc. Pick one set and drop the duplicates. Fact tables should not carry raw Dataverse internal names.
 4. **`dim_Contracts` and `fact_Contracts` are out of sync** — `dim_Contracts` has `BaseAnnualFee` (clean), `fact_Contracts` has `crbb5_baseannualfee` (raw). Pick a single canonical column-naming convention across the model.
 5. **`dim_timesheet` retains `dogma_*` and `crbb5_*` prefixes** — `dogma_timesheetid`, `dogma_project`, `crbb5_isduplicate` etc. A dim layer should have clean business names. Rename these.
-6. **Two wide/pivoted staging tables**: `stg_EMS Fixed Fee Forecast_31Dec2025` and `stg_EMS Fixed Fee Forecast_Project HARP` have date-columns (`28/02/2026`, `30/04/2026`, ..., out to 2035). This is a brittle Excel-style layout. **Unpivot** these in Power Query to a long format with `(Project, ForecastDate, Amount)` columns before loading.
-7. **Four near-identical fixed-fee forecast staging tables** (`_31Dec2025`, `_Actuals`, `_Contracts1`, `_Project HARP`). The first and fourth are date-pivoted, the second is journal-style, the third is contract-attributes. They probably should be three differently-named tables — or one snapshot table with a `snapshot_date` column.
+6. **Two wide/pivoted forecast staging tables**: `stg_EMS Fixed Fee Forecast_Contracts1` and `stg_EMS Fixed Fee Forecast_Project HARP` have date-columns (`31/01/2025`, `28/02/2025`, ..., out to 2035). This is a brittle Excel-style layout. **Unpivot** these in Power Query to a long format with `(Project, ForecastDate, Amount)` columns before loading.
+7. **Four near-identical fixed-fee forecast staging tables** (`_31Dec2025`, `_Actuals`, `_Contracts1`, `_Project HARP`). `_Contracts1` and `_Project HARP` now carry forecast values, `_Actuals` is journal-style, and `_31Dec2025` is retained as a legacy snapshot/reference. They probably should be three differently-named tables — or one snapshot table with a `snapshot_date` column.
 8. **`Equitix_Measures` is a measure container** — make sure it is hidden from report view and that its name does not clash with the company.
 
 ### Data quality / naming
@@ -857,10 +877,10 @@ Evaluating the two-sheet design (YTD Actual + Full-Year Forecast Profitability) 
 |---|---|---|---|
 | KPI: Total actual revenue (YTD) | ✅ | `fact_FinanceFY2026[Sum of Amount]` filtered by `dim_Accounts[Account Type] = "Income"` | — |
 | KPI: In-contract revenue | ✅ | `fact_FinanceFY2026` filtered by `dim_Accounts[Account Code] IN { 40010, 40011, 40012 }` (Operational / Construction / Development revenue — confirmed by Chris 13/05) | `40012` Development revenue currently has no balance but should remain in the filter for future periods |
-| KPI: Out-of-contract revenue | ✅ | same, filtered by `dim_Accounts[Account Code] = 40014` (Additional services — confirmed by Chris 13/05) | only one OOC revenue account exists — confirmed |
+| KPI: Out-of-contract revenue | ✅ | same, filtered by `dim_Accounts[Account Code] = 40013` | 40014 was previously included, then excluded because "40014 is recharged cost." |
 | KPI: Total actual costs | ✅ | `fact_FinanceFY2026[Sum of Amount]` filtered by `dim_Accounts[Account Type] = "Expense"` | — |
 | KPI: Staff costs (timesheet-based) | ⚠️ | new `fact_Timesheet` (built from `dogma_timesheet`) joined to `dim_StaffCosts` and `dim_Employee` (new) via `Time@work Reference`. The hours × country-aware hourly rate calculation lives in the Power Query of `fact_Timesheet`, not in a measure on the raw `dogma_*` table | New `fact_Timesheet` and `dim_Employee` tables required (see Internal to-do). Hourly rate = `StaffCostPerDay / 7.5` for UK + Ireland, `/ 8` for Italy. Exclude `EMS 90` rows from contract/sector visuals. Exact replacement formula still pending on next call |
-| KPI: Subcontractor costs | ✅ | `fact_FinanceFY2026` filtered by `dim_Accounts[Account Code] IN { 60201, 60203 }` — confirmed by Chris 13/05 | exclude the temporary-staff account (those people book timesheets and would double-count) |
+| KPI: Subcontractor costs | ✅ | `fact_FinanceFY2026` filtered by `dim_Accounts[Account Code] = 60201` | client rule: "Total subcontractor costs should equal the sum of 60201." Exclude the temporary-staff account (those people book timesheets and would double-count) |
 | KPI: Actual profit | ✅ | DAX: `Revenue - Costs` | — |
 | KPI: Actual margin % | ✅ | DAX: `DIVIDE(Profit, Revenue)` | — |
 | Chart: Revenue split | ✅ | by `dim_Accounts[Contract Type]` | — |
@@ -912,7 +932,7 @@ Evaluating the two-sheet design (YTD Actual + Full-Year Forecast Profitability) 
 | As-at month | ⚠️ | new `dim_ForecastSnapshot` table — one row per snapshot date — joined to `fact_Revenue`/`fact_Cost` | requires us to add a `SnapshotDate` column to the forecast facts during Power Query, sourced from the staging file's snapshot name (`_31Dec2025`, etc.) |
 | Forecast version / scenario | ✅ | `dim_ForecastVersion[Version]` joined to the forecast facts | sourced from `crbb5_jedoxallocation[Version]` during ingest; confirm the full set of values with the client |
 | Sector | ✅ | as Sheet 1 | — |
-| Region / location | ✅ | `dim_Transaction[Location: Full Name]` | — |
+| Region / location | ⚠️ | deferred from the current profitability hierarchy | Do not expose Region as a slicer or visible hierarchy column in the current sprint; revisit in a future scope decision |
 | Contract / asset | ✅ | `dim_Contracts[MSA Reference]` | — |
 | Project / project code | ✅ | `dim_Project[crbb5_projectcode]` | — |
 | Revenue type | ⚠️ | `dim_Accounts[Contract Type]` works for actuals; needs to also resolve for forecast lines | requires forecast lines to carry an Account Code or Contract Type — currently the forecast staging tables do not |
@@ -1031,7 +1051,7 @@ d. **`fact_Contracts`** — carries both raw `crbb5_*` and cleaned columns. Repl
 ### Power Query / model build-out
 
 f. **Add a `dim_Date`** (2024–2035, Year/Month/Quarter/MonthYear/IsYTD/IsCurrentMonth flags). Required by every time slicer and YTD measure.
-g. **Unpivot the wide forecast staging tables** (`stg_EMS Fixed Fee Forecast_31Dec2025`, `stg_EMS Fixed Fee Forecast_Project HARP`) into long format `(Project Code, Forecast Date, Amount, Snapshot)`.
+g. **Unpivot the wide forecast staging tables** (`stg_EMS Fixed Fee Forecast_Contracts1`, `stg_EMS Fixed Fee Forecast_Project HARP`) into long format `(Project Code, Forecast Date, Amount, Snapshot)`.
 h. **Add a `Cost Category`** column to `dim_Accounts` (Staff / Subcontractor / Other) based on the confirmed code lists.
 i. **Add `Portfolio`** as a slicer-ready dimension — surface `crbb5_portfolio` on `dim_Project`.
 j. **Build the unique transaction-line key** in Power Query: `Transaction ID & "-" & Transaction Line ID` for `fact_FinanceFY2026`.
@@ -1045,11 +1065,11 @@ p. **(Covered by the Mandatory hiding rules above.)** Verify enforcement: no vis
 ### DAX measure build
 
 q. **Revenue measures**:
-   - `[Revenue] = CALCULATE(SUM(fact_FinanceFY2026[Sum of Amount]), dim_Accounts[Account Code] IN { 40010, 40011, 40012, 40014 })`
+   - `[Revenue] = CALCULATE(SUM(fact_FinanceFY2026[Sum of Amount]), dim_Accounts[Account Code] IN { 40010, 40011, 40012, 40013 })`
    - `[In-Contract Revenue] = CALCULATE([Revenue], dim_Accounts[Account Code] IN { 40010, 40011, 40012 })`
-   - `[Out-of-Contract Revenue] = CALCULATE([Revenue], dim_Accounts[Account Code] = 40014)`
+   - `[Out-of-Contract Revenue] = CALCULATE([Revenue], dim_Accounts[Account Code] = 40013)`
 r. **Cost measures**:
-   - `[Subcontractor Costs] = CALCULATE(SUM(fact_FinanceFY2026[Sum of Amount]), dim_Accounts[Account Code] IN { 60201, 60203 })`
+   - `[Subcontractor Costs] = CALCULATE(SUM(fact_FinanceFY2026[Sum of Amount]), dim_Accounts[Account Code] = 60201)`
    - `[Staff Costs]` — per the country-aware hours × hourly-rate formula, excluding `EMS 90`, awaiting the exact formula from Q1
    - `[Total Costs] = [Subcontractor Costs] + [Staff Costs] + [Other Costs]`
 s. **Profit / margin measures**:

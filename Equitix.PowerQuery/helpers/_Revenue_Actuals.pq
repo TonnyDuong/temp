@@ -2,15 +2,17 @@
 // _Revenue_Actuals  (helper — load disabled)
 // ---------------------------------------------------------------------
 // Purpose:      Revenue actuals from NetSuite GL, conformed to the
-//               fact_Revenue_Live schema. Filtered to the four revenue
+//               fact_Revenue_Live schema. Filtered to the revenue
 //               account codes only.
 // Grain:        One row per NetSuite revenue line.
-// Dependencies: stg_FinanceOutput FY26_FY2026
+// Dependencies: stg_FinanceOutput FY26_FY2026, _NormalizeAccountCode
 // Load:         DISABLED — right-click query → untick "Enable load"
 // ---------------------------------------------------------------------
 // Account codes included (confirmed by Chris):
 //   40010, 40011, 40012  →  Contract Type = "In Contract"
-//   40014                →  Contract Type = "Out of Contract"
+//   40013                →  Contract Type = "Out of Contract"
+//   40014 is excluded from actual OOC revenue; it remains the OOC
+//   forecast/additional-services account.
 //
 // Blank Location: Full Name rule:
 //   Subsidiary ends in "ESS"             →  "Italy"
@@ -26,9 +28,13 @@
 let
     Source = #"stg_FinanceOutput FY26_FY2026",
 
+    // Normalize to the shared five-character text key before filtering.
+    AccountCodeAsText = Table.TransformColumns(Source,
+        {{"Account No.", each #"_NormalizeAccountCode"(_), type nullable text}}),
+
     // Step 1 — keep only revenue rows
-    RevenueOnly = Table.SelectRows(Source, each
-        List.Contains({40010, 40011, 40012, 40014}, [#"Account No."])),
+    RevenueOnly = Table.SelectRows(AccountCodeAsText, each
+        List.Contains({"40010", "40011", "40012", "40013"}, [#"Account No."])),
 
     // Step 2 — default blank Location: Full Name
     FilledLocation = Table.ReplaceValue(
@@ -48,7 +54,7 @@ let
 
     // Step 3 — Contract Type from Account Code
     AddContractType = Table.AddColumn(FilledLocation, "Contract Type",
-        each if [#"Account No."] = 40014 then "Out of Contract" else "In Contract",
+        each if [#"Account No."] = "40013" then "Out of Contract" else "In Contract",
         type text),
 
     // Step 4 — unique line key (Transaction ID + Transaction Line ID)

@@ -5,7 +5,8 @@
 //               "Subcontractor Fees Forecast" file. Conformed to the
 //               fact_Cost_Live schema.
 // Grain:        One row per (Project Code, Month).
-// Dependencies: stg_SubcontractorForecast  (SharePoint Data folder)
+// Dependencies: stg_SubcontractorForecast  (SharePoint Data folder),
+//               _NormalizeAccountCode
 // Load:         DISABLED.
 // ---------------------------------------------------------------------
 // File layout (CONFIRMED from the delivered file):
@@ -37,7 +38,10 @@ let
 
     // Step 3 — Account Code from Netsuite N/C, then constants
     Renamed        = Table.RenameColumns(Typed, {{"Netsuite N/C", "Account Code"}}),
-    AddTWR         = Table.AddColumn(Renamed,        "TimeWorkReference", each null,            type text),
+    // Match dim_Accounts_Live text keys for fact_Cost_Live relationships.
+    AccountCodeAsText = Table.TransformColumns(Renamed,
+        {{"Account Code", each #"_NormalizeAccountCode"(_), type nullable text}}),
+    AddTWR         = Table.AddColumn(AccountCodeAsText, "TimeWorkReference", each null,         type text),
     AddCategory    = Table.AddColumn(AddTWR,         "Category",          each "Subcontractor", type text),
     AddType        = Table.AddColumn(AddCategory,    "Type",              each "Forecast",      type text),
     AddSnapshot    = Table.AddColumn(AddType,        "Snapshot Date",     each null,            type date),
