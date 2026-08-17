@@ -3,7 +3,7 @@
 // ---------------------------------------------------------------------
 // Purpose:      Screenshot-only reconciliation for the 2026 subcontractor
 //               actual variance between FinanceOutput FY26 and Power BI.
-// Grain:        One diagnostic row per comparison check.
+// Grain:        One diagnostic row per External ID / project code.
 // Dependencies: stg_FinanceOutput FY26_FY2026, dim_Project_Live,
 //               _NormalizeAccountCode, _CutoverDate
 // Load:         ENABLE during diagnosis only; remove or disable afterward.
@@ -16,7 +16,6 @@
 // =====================================================================
 let
     Source = #"stg_FinanceOutput FY26_FY2026",
-    Expected2026RawAmount = -243536.16,
 
     AccountCodeAsText = Table.TransformColumns(Source,
         {{"Account No.", each #"_NormalizeAccountCode"(_), type nullable text}}),
@@ -76,71 +75,162 @@ let
         "ProjectMatch", JoinKind.LeftAnti
     ),
 
-    SumAmount = (Rows as table) as number =>
+    SumAmount = (Rows as table) as nullable number =>
         let
             Amounts = List.RemoveNulls(Table.Column(Rows, "Sum of Amount"))
         in
             if List.IsEmpty(Amounts) then 0 else Number.Round(List.Sum(Amounts), 2),
 
-    Diagnostics = #table(
-        type table [
-            Check = text,
-            Rows = Int64.Type,
-            Amount = number,
-            #"Expected Raw Amount" = nullable number,
-            #"Difference to Expected" = nullable number,
-            Notes = text
-        ],
-        {
+    GroupByProject = (
+        Rows as table,
+        RowColumnName as text,
+        AmountColumnName as text
+    ) as table =>
+        Table.Group(
+            Rows,
+            {"Debug Project Code Normalized"},
             {
-                "2026 raw 60201 before exclusions",
-                Table.RowCount(Raw60201),
-                SumAmount(Raw60201),
-                null,
-                null,
-                "All 2026 GL rows where normalized Account No. = 60201."
-            },
-            {
-                "2026 after blank/EMS-04 exclusion before cutover",
-                Table.RowCount(AfterProjectExclusions),
-                SumAmount(AfterProjectExclusions),
-                null,
-                null,
-                "Matches the project/class exclusion rule before _CutoverDate is applied."
-            },
-            {
-                "2026 final after exclusions and cutover",
-                Table.RowCount(FinalAfterCutover),
-                SumAmount(FinalAfterCutover),
-                Expected2026RawAmount,
-                Number.Round(SumAmount(FinalAfterCutover) - Expected2026RawAmount, 2),
-                "This should match the raw Power BI subcontractor actual after refresh."
-            },
-            {
-                "2026 rows removed by blank/EMS-04 exclusion",
-                Table.RowCount(RemovedByProjectExclusions),
-                SumAmount(RemovedByProjectExclusions),
-                null,
-                null,
-                "Rows excluded before Class External ID is renamed to Project Code."
-            },
-            {
-                "2026 rows removed by cutover",
-                Table.RowCount(RemovedByCutover),
-                SumAmount(RemovedByCutover),
-                null,
-                null,
-                "If this amount explains the variance, the report is showing cutover-limited actuals."
-            },
-            {
-                "2026 final rows unmapped to dim_Project_Live",
-                Table.RowCount(UnmappedProjectRows),
-                SumAmount(UnmappedProjectRows),
-                null,
-                null,
-                "Rows here can appear in raw helper totals but drop from sector/contract/project visuals."
+                {RowColumnName, each Table.RowCount(_), Int64.Type},
+                {AmountColumnName, each SumAmount(_), type number}
             }
+        ),
+
+    RawGrouped = GroupByProject(
+        Raw60201,
+        "Raw 60201 Rows",
+        "Raw 60201 Amount"
+    ),
+
+    FinalGrouped = GroupByProject(
+        FinalAfterCutover,
+        "PQ Debug Rows",
+        "PQ Debug Amount"
+    ),
+
+    RemovedProjectGrouped = GroupByProject(
+        RemovedByProjectExclusions,
+        "Removed Blank/EMS-04 Rows",
+        "Removed Blank/EMS-04 Amount"
+    ),
+
+    RemovedCutoverGrouped = GroupByProject(
+        RemovedByCutover,
+        "Removed Cutover Rows",
+        "Removed Cutover Amount"
+    ),
+
+    UnmappedGrouped = GroupByProject(
+        UnmappedProjectRows,
+        "Unmapped Rows",
+        "Unmapped Amount"
+    ),
+
+    AllProjectCodes = Table.Distinct(Table.Combine({
+        Table.SelectColumns(RawGrouped, {"Debug Project Code Normalized"}),
+        Table.SelectColumns(FinalGrouped, {"Debug Project Code Normalized"}),
+        Table.SelectColumns(RemovedProjectGrouped, {"Debug Project Code Normalized"}),
+        Table.SelectColumns(RemovedCutoverGrouped, {"Debug Project Code Normalized"}),
+        Table.SelectColumns(UnmappedGrouped, {"Debug Project Code Normalized"})
+    })),
+
+    JoinRaw = Table.NestedJoin(
+        AllProjectCodes, {"Debug Project Code Normalized"},
+        RawGrouped, {"Debug Project Code Normalized"},
+        "Raw", JoinKind.LeftOuter
+    ),
+    ExpandRaw = Table.ExpandTableColumn(
+        JoinRaw,
+        "Raw",
+        {"Raw 60201 Rows", "Raw 60201 Amount"},
+        {"Raw 60201 Rows", "Raw 60201 Amount"}
+    ),
+
+    JoinFinal = Table.NestedJoin(
+        ExpandRaw, {"Debug Project Code Normalized"},
+        FinalGrouped, {"Debug Project Code Normalized"},
+        "Final", JoinKind.LeftOuter
+    ),
+    ExpandFinal = Table.ExpandTableColumn(
+        JoinFinal,
+        "Final",
+        {"PQ Debug Rows", "PQ Debug Amount"},
+        {"PQ Debug Rows", "PQ Debug Amount"}
+    ),
+
+    JoinRemovedProject = Table.NestedJoin(
+        ExpandFinal, {"Debug Project Code Normalized"},
+        RemovedProjectGrouped, {"Debug Project Code Normalized"},
+        "RemovedProject", JoinKind.LeftOuter
+    ),
+    ExpandRemovedProject = Table.ExpandTableColumn(
+        JoinRemovedProject,
+        "RemovedProject",
+        {"Removed Blank/EMS-04 Rows", "Removed Blank/EMS-04 Amount"},
+        {"Removed Blank/EMS-04 Rows", "Removed Blank/EMS-04 Amount"}
+    ),
+
+    JoinRemovedCutover = Table.NestedJoin(
+        ExpandRemovedProject, {"Debug Project Code Normalized"},
+        RemovedCutoverGrouped, {"Debug Project Code Normalized"},
+        "RemovedCutover", JoinKind.LeftOuter
+    ),
+    ExpandRemovedCutover = Table.ExpandTableColumn(
+        JoinRemovedCutover,
+        "RemovedCutover",
+        {"Removed Cutover Rows", "Removed Cutover Amount"},
+        {"Removed Cutover Rows", "Removed Cutover Amount"}
+    ),
+
+    JoinUnmapped = Table.NestedJoin(
+        ExpandRemovedCutover, {"Debug Project Code Normalized"},
+        UnmappedGrouped, {"Debug Project Code Normalized"},
+        "Unmapped", JoinKind.LeftOuter
+    ),
+    ExpandUnmapped = Table.ExpandTableColumn(
+        JoinUnmapped,
+        "Unmapped",
+        {"Unmapped Rows", "Unmapped Amount"},
+        {"Unmapped Rows", "Unmapped Amount"}
+    ),
+
+    FillNulls = Table.ReplaceValue(
+        ExpandUnmapped,
+        null,
+        0,
+        Replacer.ReplaceValue,
+        {
+            "Raw 60201 Rows",
+            "Raw 60201 Amount",
+            "PQ Debug Rows",
+            "PQ Debug Amount",
+            "Removed Blank/EMS-04 Rows",
+            "Removed Blank/EMS-04 Amount",
+            "Removed Cutover Rows",
+            "Removed Cutover Amount",
+            "Unmapped Rows",
+            "Unmapped Amount"
+        }
+    ),
+
+    AddRawVsPQVariance = Table.AddColumn(
+        FillNulls,
+        "Raw Less PQ Debug Amount",
+        each Number.Round([Raw 60201 Amount] - [PQ Debug Amount], 2),
+        type number
+    ),
+
+    Renamed = Table.RenameColumns(
+        AddRawVsPQVariance,
+        {{"Debug Project Code Normalized", "External ID"}}
+    ),
+
+    Sorted = Table.Sort(
+        Renamed,
+        {
+            {"Raw Less PQ Debug Amount", Order.Ascending},
+            {"PQ Debug Amount", Order.Ascending},
+            {"External ID", Order.Ascending}
         }
     )
 in
-    Diagnostics
+    Sorted
