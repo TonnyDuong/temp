@@ -43,15 +43,23 @@ let
         AmountColumnName as text
     ) as table =>
         let
-            AddExternalID = Table.AddColumn(
-                Rows,
-                "External ID",
-                each NormalizeProject(Record.Field(_, ProjectColumn)),
-                type text
-            ),
+            HasDebugExternalID = List.Contains(Table.ColumnNames(Rows), "Debug External ID"),
+            RowsWithoutDebugExternalID =
+                if HasDebugExternalID and ProjectColumn <> "Debug External ID"
+                then Table.RemoveColumns(Rows, {"Debug External ID"})
+                else Rows,
+            AddExternalID =
+                if HasDebugExternalID and ProjectColumn = "Debug External ID"
+                then RowsWithoutDebugExternalID
+                else Table.AddColumn(
+                    RowsWithoutDebugExternalID,
+                    "Debug External ID",
+                    each NormalizeProject(Record.Field(_, ProjectColumn)),
+                    type text
+                ),
             Grouped = Table.Group(
                 AddExternalID,
-                {"External ID"},
+                {"Debug External ID"},
                 {
                     {RowColumnName, each Table.RowCount(_), Int64.Type},
                     {AmountColumnName, each SumColumn(_, AmountColumn), type number}
@@ -93,7 +101,7 @@ let
 
     AddStagingExternalID = Table.AddColumn(
         AccountCodeAsText,
-        "External ID",
+        "Debug External ID",
         each NormalizeProject([#"Class: Class External ID"]),
         type text
     ),
@@ -108,13 +116,13 @@ let
     ),
 
     StagingIncluded = Table.SelectRows(StagingRaw60201, each
-        [External ID] <> "(BLANK)"
-        and [External ID] <> "EMS-04"
+        [Debug External ID] <> "(BLANK)"
+        and [Debug External ID] <> "EMS-04"
     ),
 
     RemovedByProjectExclusions = Table.SelectRows(StagingRaw60201, each
-        [External ID] = "(BLANK)"
-        or [External ID] = "EMS-04"
+        [Debug External ID] = "(BLANK)"
+        or [Debug External ID] = "EMS-04"
     ),
 
     RemovedByCutover = Table.SelectRows(StagingIncluded, each
@@ -127,22 +135,22 @@ let
 
     ProjectDimensionKeys = Table.Distinct(
         Table.SelectColumns(
-            Table.AddColumn(#"dim_Project_Live", "External ID", each
+            Table.AddColumn(#"dim_Project_Live", "Debug External ID", each
                 NormalizeProject([Project Code]),
                 type text),
-            {"External ID"}
+            {"Debug External ID"}
         )
     ),
 
     UnmappedProjectRows = Table.NestedJoin(
-        StagingFinalAfterCutover, {"External ID"},
-        ProjectDimensionKeys, {"External ID"},
+        StagingFinalAfterCutover, {"Debug External ID"},
+        ProjectDimensionKeys, {"Debug External ID"},
         "ProjectMatch", JoinKind.LeftAnti
     ),
 
     StagingRawGrouped = GroupByProject(
         StagingRaw60201,
-        "External ID",
+        "Debug External ID",
         "Sum of Amount",
         "Staging Raw 60201 Rows",
         "Staging Raw 60201 Amount"
@@ -150,7 +158,7 @@ let
 
     StagingFinalGrouped = GroupByProject(
         StagingFinalAfterCutover,
-        "External ID",
+        "Debug External ID",
         "Sum of Amount",
         "Staging Final Rows",
         "Staging Final Amount"
@@ -158,7 +166,7 @@ let
 
     RemovedProjectGrouped = GroupByProject(
         RemovedByProjectExclusions,
-        "External ID",
+        "Debug External ID",
         "Sum of Amount",
         "Removed Blank/EMS-04 Rows",
         "Removed Blank/EMS-04 Amount"
@@ -166,7 +174,7 @@ let
 
     RemovedCutoverGrouped = GroupByProject(
         RemovedByCutover,
-        "External ID",
+        "Debug External ID",
         "Sum of Amount",
         "Removed Cutover Rows",
         "Removed Cutover Amount"
@@ -174,20 +182,20 @@ let
 
     UnmappedGrouped = GroupByProject(
         UnmappedProjectRows,
-        "External ID",
+        "Debug External ID",
         "Sum of Amount",
         "Unmapped Rows",
         "Unmapped Amount"
     ),
 
     AllProjectCodes = Table.Distinct(Table.Combine({
-        Table.SelectColumns(HelperGrouped, {"External ID"}),
-        Table.SelectColumns(FactGrouped, {"External ID"}),
-        Table.SelectColumns(StagingRawGrouped, {"External ID"}),
-        Table.SelectColumns(StagingFinalGrouped, {"External ID"}),
-        Table.SelectColumns(RemovedProjectGrouped, {"External ID"}),
-        Table.SelectColumns(RemovedCutoverGrouped, {"External ID"}),
-        Table.SelectColumns(UnmappedGrouped, {"External ID"})
+        Table.SelectColumns(HelperGrouped, {"Debug External ID"}),
+        Table.SelectColumns(FactGrouped, {"Debug External ID"}),
+        Table.SelectColumns(StagingRawGrouped, {"Debug External ID"}),
+        Table.SelectColumns(StagingFinalGrouped, {"Debug External ID"}),
+        Table.SelectColumns(RemovedProjectGrouped, {"Debug External ID"}),
+        Table.SelectColumns(RemovedCutoverGrouped, {"Debug External ID"}),
+        Table.SelectColumns(UnmappedGrouped, {"Debug External ID"})
     })),
 
     JoinTables = List.Accumulate(
@@ -204,8 +212,8 @@ let
         (State as table, Current as record) as table =>
             let
                 Joined = Table.NestedJoin(
-                    State, {"External ID"},
-                    Current[Table], {"External ID"},
+                    State, {"Debug External ID"},
+                    Current[Table], {"Debug External ID"},
                     Current[Name], JoinKind.LeftOuter
                 ),
                 Expanded = Table.ExpandTableColumn(
@@ -257,8 +265,13 @@ let
         type number
     ),
 
-    Sorted = Table.Sort(
+    RenamedExternalID = Table.RenameColumns(
         AddHelperVsStagingVariance,
+        {{"Debug External ID", "External ID"}}
+    ),
+
+    Sorted = Table.Sort(
+        RenamedExternalID,
         {
             {"Helper Actual Amount", Order.Ascending},
             {"Fact Cost Actual Amount", Order.Ascending},
