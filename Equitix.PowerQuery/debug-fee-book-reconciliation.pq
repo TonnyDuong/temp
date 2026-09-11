@@ -14,8 +14,7 @@
 //               matrix itself is not required on the 2026 report.
 //
 // Grain:        One row per Upstream Report A reporting line.
-// Dependencies: stg_EMS Fixed Fee Forecast_Contracts1, dim_Project_Live,
-//               crbb5_project
+// Dependencies: stg_EMS Fixed Fee Forecast_Contracts1, dim_Project_Live
 // Load:         ENABLE during diagnosis only; remove or disable afterward.
 // ---------------------------------------------------------------------
 // ROUND 1 RESULT (recorded so the next reader does not repeat it).
@@ -30,27 +29,37 @@
 // The per-line multiples were 1.0475 (SI Scotland) up to 4.0000 (Highways),
 // so it is not a units or a duplication problem either.
 //
-// ROUND 2 HYPOTHESIS, which this version tests.
-// Highways reconciles at EXACTLY 4.0000x: 110,040.25 x 4 = 440,161.00.
-// A clean quarter is what an allocation fraction looks like, and
-// `crbb5_project` carries `crbb5_revenueops` / `crbb5_revenuefinance` —
-// fractions summing to 1 that split a project between the operations
-// reporting line (Upstream Report A) and the regional finance line
-// (Upstream Report B). See the 11 Sep 2026 decision log entry.
+// ROUND 2 TESTED AND REJECTED: the operations allocation fraction.
+// `crbb5_project` carries `crbb5_revenueops` / `crbb5_revenuefinance`,
+// fractions summing to 1 that split a project between the operations line
+// (Upstream Report A) and the regional finance line (Upstream Report B).
+// Applying `crbb5_revenueops` gave 18,457,968.60 against the workbook
+// 24,520,619.28 — undershooting by as much as the raw annual fee
+// overshoots — and put Highways on 301,941.64 rather than 110,040.25.
+// The fee book is not ops-apportioned. Do not retry this.
 //
-// If the fee book is apportioned by `crbb5_revenueops`, then assigning
-// 100% of each fee to Upstream Report A overstates every line by a
-// different amount — which is exactly the shape observed. `Model x Ops
-// Share` tests it. If that column reconciles, the finance/ops split is
-// not merely an open question about the report: it is already baked into
-// the fee book the client signed off.
+// ROUND 3 HYPOTHESIS, which this version tests.
+// Highways is high by EXACTLY 4.0000x on the unadjusted annual fee
+// (110,040.25 x 4 = 440,161.00), and that survived the currency fix. A
+// clean quarter of an annual run-rate is what a contract live for three
+// months of the year looks like.
+//
+// `crbb5_currentannualfee` is a full-year run-rate regardless of when the
+// contract starts or ends. The Contracts sheet also carries twelve
+// date-named 2026 columns holding the indexed monthly fee — the same
+// columns `_Revenue_Forecast_31Dec2025` unpivots. Summing those gives the
+// fee actually falling into 2026, pro-rated for mid-year starts and ends,
+// which would sit below the annual figure by a different amount per
+// sector. That is the shape observed.
 //
 // What to look at:
-//   - `Variance (Ops Share)` per line, and on the TOTAL row.
-//   - If `Model x Ops Share` reconciles and `Model Fee Book GBP` does
-//     not, the split is confirmed and Highways should land on 110,040.25.
-//   - If neither reconciles, the fee book is not derivable from the
-//     billing schedule and has to be requested from the client.
+//   - `Variance (2026)` per line, and on the TOTAL row.
+//   - If `Model 2026 Months GBP` reconciles, Highways lands on
+//     110,040.25 and the fee book is derivable from data already loaded.
+//   - If it does not, three shapes of the same source have now failed and
+//     the fee book should be requested from the client rather than
+//     derived. Record the result here before trying a fourth.
+//   - `Model Annual Fee GBP` is retained as the round-1 reference.
 // ---------------------------------------------------------------------
 // Currency: Debug_FeeBook_Coverage confirmed the Contracts sheet has
 // NEITHER an `Exchange` NOR a `GBP Value` column, so no conversion can
@@ -73,20 +82,31 @@
 let
     Source = #"stg_EMS Fixed Fee Forecast_Contracts1",
     ProjectDim = #"dim_Project_Live",
-    ProjectSource = #"crbb5_project",
 
     EuroRate = 1.15,
 
-    // Step 1 - narrow to metadata columns. The sheet is wide with one
-    //          column per forecast month; none of those are used here.
+    // Step 1 - find the 2026 month columns by parsing the column name, the
+    //          same way _Revenue_Forecast_31Dec2025 decides what to
+    //          unpivot. Headers may arrive as real dates or as "31/01/2026"
+    //          text, so both are tried.
     //          `Supersector` is carried but deliberately not grouped on:
     //          this query tests the row totals (workbook column H) first.
     //          Splitting out the six supersector columns is only worth
     //          doing once the row totals reconcile.
-    Wanted = List.Intersect({Table.ColumnNames(Source),
+    ParseHeaderDate = (Name as text) as nullable date =>
+        try Date.From(Name)
+        otherwise (try Date.FromText(Name, [Culture = "en-GB"]) otherwise null),
+
+    Columns2026 = List.Select(Table.ColumnNames(Source), each
+        let
+            Parsed = ParseHeaderDate(_)
+        in
+            Parsed <> null and Date.Year(Parsed) = 2026),
+
+    MetaColumns = List.Intersect({Table.ColumnNames(Source),
         {"Project Code", "Supersector", "crbb5_currentannualfee",
          "crbb5_basecurrencyname", "Entity"}}),
-    Narrowed = Table.SelectColumns(Source, Wanted),
+    Narrowed = Table.SelectColumns(Source, MetaColumns & Columns2026),
 
     // Step 2 - normalised join key, matching how dim_Project_Live is keyed.
     KeyedRows = Table.AddColumn(Narrowed, "Project Code Key",
@@ -117,30 +137,25 @@ let
     Expanded = Table.ExpandTableColumn(Joined, "Dim",
         {"Upstream Report A"}, {"Upstream Report A"}),
 
-    // Step 5 - attach the operations allocation fraction. Sourced from
-    //          crbb5_project directly because dim_Project_Live does not
-    //          surface it; adding it to the dimension is a model change
-    //          and is deliberately not done from a diagnostic query.
-    OpsKeyed = Table.AddColumn(
-        Table.SelectColumns(ProjectSource, {"crbb5_projectcode", "crbb5_revenueops"}),
-        "Project Code Key",
-        each Text.Upper(Text.Trim(Text.From([crbb5_projectcode] ?? ""))), type text),
-
-    JoinedOps = Table.NestedJoin(Expanded, {"Project Code Key"},
-        OpsKeyed, {"Project Code Key"}, "Ops", JoinKind.LeftOuter),
-    ExpandedOps = Table.ExpandTableColumn(JoinedOps, "Ops",
-        {"crbb5_revenueops"}, {"Ops Share"}),
-
-    // A missing fraction defaults to 1, i.e. wholly operations. That
-    // matches how the current report treats every project.
-    WithOpsFee = Table.AddColumn(ExpandedOps, "Fee Ops GBP",
+    // Step 5 - sum the 2026 month columns for each contract row. This is
+    //          the fee actually falling into the year, as against the
+    //          full-year run-rate in `crbb5_currentannualfee`. EUR rows are
+    //          converted on the same basis as the annual figure.
+    WithFee2026 = Table.AddColumn(Expanded, "Fee 2026 GBP",
         each
             let
-                Fee = [Fee GBP],
-                Share = try Number.From([Ops Share]) otherwise null
+                Row = _,
+                Monthly = List.Transform(Columns2026,
+                    (ColumnName) => try Number.From(Record.Field(Row, ColumnName))
+                                    otherwise null),
+                Total = List.Sum(List.RemoveNulls(Monthly)),
+                Currency = Text.Upper(Text.Trim(Text.From(
+                    Record.FieldOrDefault(Row, "crbb5_basecurrencyname", "") ?? ""))),
+                IsEuro = Text.Contains(Currency, "EUR")
             in
-                if Fee = null then null
-                else Fee * (if Share = null then 1 else Share),
+                if Total = null then 0
+                else if IsEuro then Total / EuroRate
+                else Total,
         type nullable number),
 
     SumColumn = (Rows as table, ColumnName as text) as number =>
@@ -165,38 +180,38 @@ let
 
     ComparisonRows = List.Transform(WorkbookFeeBook, (Entry) =>
         let
-            Line     = Entry[Line],
-            LineRows = Table.SelectRows(WithOpsFee, each [#"Upstream Report A"] = Line),
-            FullFee  = SumColumn(LineRows, "Fee GBP"),
-            OpsFee   = SumColumn(LineRows, "Fee Ops GBP")
+            Line      = Entry[Line],
+            LineRows  = Table.SelectRows(WithFee2026, each [#"Upstream Report A"] = Line),
+            AnnualFee = SumColumn(LineRows, "Fee GBP"),
+            Fee2026   = SumColumn(LineRows, "Fee 2026 GBP")
         in
-            [#"Reporting Line"        = Line,
-             #"Model Fee Book GBP"    = FullFee,
-             #"Model x Ops Share"     = OpsFee,
-             #"Workbook Fee Book"     = Entry[Amount],
-             #"Variance (Ops Share)"  = Number.Round(OpsFee - Entry[Amount], 2)]),
+            [#"Reporting Line"         = Line,
+             #"Model Annual Fee GBP"   = AnnualFee,
+             #"Model 2026 Months GBP"  = Fee2026,
+             #"Workbook Fee Book"      = Entry[Amount],
+             #"Variance (2026)"        = Number.Round(Fee2026 - Entry[Amount], 2)]),
 
     // TOTAL covers only the ten lines the workbook carries, so it stays
     // comparable to H40. Fee on any other reporting line is sized by
     // Debug_FeeBook_Coverage rather than inflating this total.
-    TotalFull = Number.Round(
-        List.Sum(List.Transform(ComparisonRows, each _[#"Model Fee Book GBP"])), 2),
-    TotalOps = Number.Round(
-        List.Sum(List.Transform(ComparisonRows, each _[#"Model x Ops Share"])), 2),
+    TotalAnnual = Number.Round(
+        List.Sum(List.Transform(ComparisonRows, each _[#"Model Annual Fee GBP"])), 2),
+    Total2026 = Number.Round(
+        List.Sum(List.Transform(ComparisonRows, each _[#"Model 2026 Months GBP"])), 2),
 
     TotalRow = [
-        #"Reporting Line"        = "TOTAL (listed lines)",
-        #"Model Fee Book GBP"    = TotalFull,
-        #"Model x Ops Share"     = TotalOps,
-        #"Workbook Fee Book"     = 24520619.28,
-        #"Variance (Ops Share)"  = Number.Round(TotalOps - 24520619.28, 2)],
+        #"Reporting Line"         = "TOTAL (listed lines)",
+        #"Model Annual Fee GBP"   = TotalAnnual,
+        #"Model 2026 Months GBP"  = Total2026,
+        #"Workbook Fee Book"      = 24520619.28,
+        #"Variance (2026)"        = Number.Round(Total2026 - 24520619.28, 2)],
 
     Output = Table.FromRecords(ComparisonRows & {TotalRow},
         type table [
-            #"Reporting Line"        = text,
-            #"Model Fee Book GBP"    = number,
-            #"Model x Ops Share"     = number,
-            #"Workbook Fee Book"     = number,
-            #"Variance (Ops Share)"  = number])
+            #"Reporting Line"         = text,
+            #"Model Annual Fee GBP"   = number,
+            #"Model 2026 Months GBP"  = number,
+            #"Workbook Fee Book"      = number,
+            #"Variance (2026)"        = number])
 in
     Output
