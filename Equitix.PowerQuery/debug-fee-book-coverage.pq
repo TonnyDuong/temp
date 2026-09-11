@@ -43,20 +43,30 @@ let
     SourceColumns = Table.ColumnNames(Source),
 
     Wanted = List.Intersect({SourceColumns,
-        {"Project Code", "Supersector", "crbb5_currentannualfee", "Entity", "Exchange"}}),
+        {"Project Code", "Supersector", "crbb5_currentannualfee",
+         "crbb5_basecurrencyname", "Entity", "Exchange"}}),
     Narrowed = Table.SelectColumns(Source, Wanted),
 
     KeyedRows = Table.AddColumn(Narrowed, "Project Code Key",
         each Text.Upper(Text.Trim(Text.From([Project Code] ?? ""))), type text),
 
+    // EUR fees are divided by the workbook rate. The 11 Sep run confirmed
+    // the sheet carries neither `Exchange` nor `GBP Value`, so the currency
+    // has to come from `crbb5_basecurrencyname`. Same treatment as
+    // debug-fee-book-reconciliation.pq - keep the two in step.
+    EuroRate = 1.15,
+
     WithFee = Table.AddColumn(KeyedRows, "Fee GBP",
         each
             let
-                Fee  = try Number.From([crbb5_currentannualfee]) otherwise null,
-                Rate = try Number.From(Record.FieldOrDefault(_, "Exchange", 1)) otherwise 1
+                Fee = try Number.From([crbb5_currentannualfee]) otherwise null,
+                Currency = Text.Upper(Text.Trim(Text.From(
+                    Record.FieldOrDefault(_, "crbb5_basecurrencyname", "") ?? ""))),
+                IsEuro = Text.Contains(Currency, "EUR")
             in
                 if Fee = null then null
-                else Fee * (if Rate = null or Rate = 0 then 1 else Rate),
+                else if IsEuro then Fee / EuroRate
+                else Fee,
         type nullable number),
 
     WithRawFee = Table.AddColumn(WithFee, "Fee Raw",
@@ -82,6 +92,12 @@ let
             if List.IsEmpty(Amounts) then 0 else Number.Round(List.Sum(Amounts), 2),
 
     Unmatched = Table.SelectRows(Expanded, each [Dim Match Count] = 0),
+    FannedOut = Table.SelectRows(Expanded, each [Dim Match Count] > 1),
+    MaxDimMatches =
+        let
+            Counts = List.RemoveNulls(Table.Column(Expanded, "Dim Match Count"))
+        in
+            if List.IsEmpty(Counts) then 0 else List.Max(Counts),
     NullLine  = Table.SelectRows(Expanded, each [Dim Match Count] > 0 and [#"Upstream Report A"] = null),
     InScope   = Table.SelectRows(Expanded, each [IsInScope] = true),
 
@@ -122,6 +138,16 @@ let
          Value = Text.From(List.Contains(SourceColumns, "Exchange"))],
         [Check = "GBP Value Column Present",
          Value = Text.From(List.Contains(SourceColumns, "GBP Value"))],
+        // Fan-out check. Already answered on the 11 Sep run - 323 sheet
+        // rows in, 323 rows out, so the expand does not duplicate. Kept
+        // as an explicit check so the next reader does not have to infer
+        // it from the row counts, and so a later change to
+        // dim_Project_Live that introduced duplicate project codes would
+        // show up here rather than as a silent overstatement.
+        [Check = "Rows Fanning Out On Join (dim match > 1)",
+         Value = Text.From(Table.RowCount(FannedOut))],
+        [Check = "Max Dim Matches For One Fee Row (expect 1)",
+         Value = Text.From(MaxDimMatches)],
         [Check = "Rows Failing Project Join",
          Value = Text.From(Table.RowCount(Unmatched))],
         [Check = "Fee On Rows Failing Join (GBP)",
