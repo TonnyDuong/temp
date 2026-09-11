@@ -18,7 +18,7 @@
 // =====================================================================
 let
     Today       = Date.From(DateTime.LocalNow()),
-    CutoffDay   = 5,
+    CutoffDay   = 12,
 
     // If on/after the 12th, previous month's actuals are ready.
     // If before the 12th, go back one more month.

@@ -1,0 +1,174 @@
+Transcript. Use arrow keys to navigate between transcript entries. Select an entry to navigate the media to the time of the entry.
+
+
+
+AI-generated content may be incorrect
+SN
+Sanjana Nagaraj
+0 minutes 3 seconds0:03
+Sanjana Nagaraj 0 minutes 3 seconds
+data for the time sheets and also the data was. And we have a couple of questions that we had flagged yesterday, Chris. Is this the right time to answer all of those?
+CR
+Chris Rolls
+0 minutes 9 seconds0:09
+Chris Rolls 0 minutes 9 seconds
+Yes.
+Chris Rolls 0 minutes 12 seconds
+Yeah, absolutely. So, I mean, I can follow up afterwards. Yeah, so you got it in writing as well. But yeah, so the difference between in contract and out of contract revenue from the actual data for the data you get from the NetSuite platform, the codes for 0010, 40011 and 40012
+SN
+Sanjana Nagaraj
+0 minutes 13 seconds0:13
+Sanjana Nagaraj 0 minutes 13 seconds
+Thanks.
+CR
+Chris Rolls
+0 minutes 33 seconds0:33
+Chris Rolls 0 minutes 33 seconds
+are in contract revenue streams. That's operational revenue, construction revenue and development revenue. Development revenue isn't, we haven't got any at the moment, but we have had in the past and we may do in the future. So they need to be included as the, you know, the three contract fixed fee revenue nominals. And then for 001
+Chris Rolls 0 minutes 54 seconds
+four is the out of contract additional services code. So they're the only four revenue codes from NetSuite that you need. In terms of how the forecasting works, we've got the contract fixed fee register, contract fixed fee forecast, which is your, you know, the contract.
+Chris Rolls 1 minute 15 seconds
+fees. And then for the additional services, we need to provide a data table for that, because that will be generated from an internal data source. And that will just it will just be a table. So we'll bring that together and send that to you as we all drop into a data file, because that's from one of the directors.
+Chris Rolls 1 minute 34 seconds
+forecast to who prepares that. And that's what they want to see. They want to see that matching to what they their expectations. So that's the first one. Subcontractor costs. I think we need to separate them from staff costs. So you have in your, you know, you have a column for subcontractors, a column for
+Chris Rolls 1 minute 53 seconds
+costs, you have staff costs and then total costs. So it will sort of expand that table slightly by a couple of columns, but everything else stays the same. In account codes, 60201, 60203, yes, they're the only ones you need to consider. There is another code for
+Chris Rolls 2 minutes 14 seconds
+temporary staff and contractors, but they book time sheets, so they will be included in staff costs. They would have costs against them, so we don't need to, otherwise we'll double count them if we include them again. So we exclude those. So no, no other rule, it's everything booked to those three codes.
+Chris Rolls 2 minutes 33 seconds
+They are the only sort of direct costs of delivering the project, from a sub-contractor point of view. And then, yeah, so we're talking about the FP&A file and then Dataverse. So Dataverse, if you, if within the, if you've got access to the
+TD
+Tonny Duong
+2 minutes 44 seconds2:44
+Tonny Duong 2 minutes 44 seconds
+And.
+CR
+Chris Rolls
+2 minutes 53 seconds2:53
+Chris Rolls 2 minutes 53 seconds
+Corporate finance workspace, I think we we shared that. Have you got access to that in our in our system?
+SN
+Sanjana Nagaraj
+2 minutes 59 seconds2:59
+Sanjana Nagaraj 2 minutes 59 seconds
+No, no Chris. I can share my screen and show what I've actually got access to. Maybe is it easier that way?
+CR
+Chris Rolls
+3 minutes3:00
+Chris Rolls 3 minutes
+Please, no, OK.
+Chris Rolls 3 minutes 6 seconds
+Yes, please, yeah, good.
+SN
+Sanjana Nagaraj
+3 minutes 7 seconds3:07
+Sanjana Nagaraj 3 minutes 7 seconds
+Yeah, sure.
+Sanjana Nagaraj 3 minutes 19 seconds
+Is my screen visible?
+TD
+Tonny Duong
+3 minutes 25 seconds3:25
+Tonny Duong 3 minutes 25 seconds
+Yes, Sanjana, yeah.
+SN
+Sanjana Nagaraj
+3 minutes 26 seconds3:26
+Sanjana Nagaraj 3 minutes 26 seconds
+Yeah, so Chris, the only thing I've got access to is this particular folder.
+CR
+Chris Rolls
+3 minutes 30 seconds3:30
+Chris Rolls 3 minutes 30 seconds
+Is that folder? OK, let me.
+SN
+Sanjana Nagaraj
+3 minutes 32 seconds3:32
+Sanjana Nagaraj 3 minutes 32 seconds
+Yes.
+CR
+Chris Rolls
+3 minutes 37 seconds3:37
+Chris Rolls 3 minutes 37 seconds
+Because you do, you do have access to the...
+Chris Rolls 3 minutes 41 seconds
+workspace. If I drop the link through, would that, would you be able to access through the link, do you think, to Power BI workspace?
+SN
+Sanjana Nagaraj
+3 minutes 51 seconds3:51
+Sanjana Nagaraj 3 minutes 51 seconds
+Yeah, but then that has to be to the third party discovery email address.
+CR
+Chris Rolls
+3 minutes 52 seconds3:52
+Chris Rolls 3 minutes 52 seconds
+It would be.
+Chris Rolls 3 minutes 57 seconds
+Yes, that's the one, yeah. So through there, that should have access to Dataverse and all the data tables through that workspace.
+SN
+Sanjana Nagaraj
+3 minutes 58 seconds3:58
+Sanjana Nagaraj 3 minutes 58 seconds
+Yes, okay.
+Sanjana Nagaraj 4 minutes 6 seconds
+Okay, so is like Dataverse a different platform where we have to fetch data directly from Dataverse to the Power BI?
+CR
+Chris Rolls
+4 minutes 11 seconds4:11
+Chris Rolls 4 minutes 11 seconds
+Correct.
+Chris Rolls 4 minutes 13 seconds
+Correct. So, when we, when we on those sort of EMS data table extracts file, we sent sort of at the very beginning, there was a number of tables, the sort of six or seven tables, you know, contract register project, building schedule, all the time sheet ones, bamboo and Jedox, those ones all living in Dataverse. So, that's all data that's live and being fed.
+SN
+Sanjana Nagaraj
+4 minutes 19 seconds4:19
+Sanjana Nagaraj 4 minutes 19 seconds
+Mm.
+Sanjana Nagaraj 4 minutes 29 seconds
+Right.
+CR
+Chris Rolls
+4 minutes 35 seconds4:35
+Chris Rolls 4 minutes 35 seconds
+from the systems, from different systems all the time. So that's the data we need to link up. We won't be the timesheet alone. It's got hundreds of thousands of rows. You couldn't put that into a spreadsheet, you'll just die, you'll crash. So it's, I've tried, so you can't do it. So that has to come from data first. So we need to make sure
+SN
+Sanjana Nagaraj
+4 minutes 37 seconds4:37
+Sanjana Nagaraj 4 minutes 37 seconds
+Laight.
+Sanjana Nagaraj 4 minutes 41 seconds
+Okay.
+Sanjana Nagaraj 4 minutes 49 seconds
+Yeah.
+CR
+Chris Rolls
+4 minutes 56 seconds4:56
+Chris Rolls 4 minutes 56 seconds
+you can access that. So that's the one where we were initially talking about whether we could create that, make that a fabric workspace, but we created, we kept it as a Power BI workspace instead. So from.
+SN
+Sanjana Nagaraj
+5 minutes 9 seconds5:09
+Sanjana Nagaraj 5 minutes 9 seconds
+Um...
+CR
+Chris Rolls
+5 minutes 11 seconds5:11
+Chris Rolls 5 minutes 11 seconds
+So that, that's I think if you, if you create, yeah, if you, if you...
+TD
+Tonny Duong
+5 minutes 13 seconds5:13
+Tonny Duong 5 minutes 13 seconds
+Yeah.
+CR
+Chris Rolls
+5 minutes 18 seconds5:18
+Chris Rolls 5 minutes 18 seconds
+Yeah, let me take that away and just double check internally to make sure I'm saying the right thing there. But as far as I'm aware, you should have access to it through that third party link. But let me just check with IT to make sure we can definitely make sure you've got access to those tables. Otherwise, you're going to, yeah, that's going to block everything.
+SN
+Sanjana Nagaraj
+5 minutes 32 seconds5:32
+Sanjana Nagaraj 5 minutes 32 seconds
+Yes, please. And yeah, yeah, and at the moment with SharePoint and connecting to the Power BI, we have connected the SharePoint folder. So any new data that comes in, that has to be in the SharePoint and with the exact same filing naming structures or the exact columns,
+Sanjana Nagaraj 5 minutes 51 seconds
+So that's the criteria for SharePoint, directly connecting it to Power BI. But then at the long term, I think it's definitely better to have the fabric environment set up. Only then we have, you know, if we just look at long term, then it's more robust.

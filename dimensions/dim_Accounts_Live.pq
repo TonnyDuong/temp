@@ -4,13 +4,14 @@
 // Purpose:      Account dimension with Contract Type and Cost Category
 //               classification columns.
 // Grain:        One row per Account Code.
-// Dependencies: stg_FinanceOutput FY26_CoA
+// Dependencies: stg_FinanceOutput FY26_CoA, _NormalizeAccountCode
 // Load:         enabled.
 // ---------------------------------------------------------------------
 // Account code classifications (CONFIRMED by Chris, 29 May meeting):
 //   Contract Type:
 //     40010 / 40011 / 40012  →  In Contract
-//     40014                  →  Out of Contract
+//     40013 / 40014          →  Out of Contract
+//     40013 added from the 24 Jun 2026 YPS-04 OOC actuals extract.
 //     (HARP currently posts to 40011 Construction; switches to 40010
 //      Operational after its 9-year construction phase ends.)
 //
@@ -26,14 +27,9 @@
 // "Staff" cost category does NOT appear here — it's stamped directly on
 // timesheet-derived rows in fact_Cost_Live (which have no Account Code).
 // ---------------------------------------------------------------------
-// TYPE NOTE: the source `Nominal Code` is TEXT (the CoA screenshot shows
-// the ABC icon). But fact_Revenue_Live and fact_Cost_Live carry
-// `Account Code` as Int64 (NetSuite `Account No.` is numeric, and the
-// forecast helpers set 40014 etc. as Int64). Power BI relationships are
-// type-strict — if this dim's Account Code stays text the relationship
-// dim_Accounts_Live[Account Code] → fact_*[Account Code] will not build.
-// Step 2 below CASTS to Int64 so the relationship works and the rest of
-// the comparisons can use unquoted integers.
+// TYPE NOTE: Account Code is kept as text here and in fact helpers.
+// _NormalizeAccountCode is the single shared join-key normalizer so facts
+// and this dimension do not drift on numeric/text account-code formats.
 // =====================================================================
 // =====================================================================
 // dim_Accounts_Live
@@ -47,7 +43,7 @@
 // Account code classifications (confirmed by Chris):
 //   Contract Type:
 //     40010 / 40011 / 40012  →  In Contract
-//     40014                  →  Out of Contract
+//     40013 / 40014          →  Out of Contract
 //
 //   Cost Category:
 //     60201 / 60203          →  Subcontractor
@@ -63,32 +59,35 @@ let
     // Step 1 — Nominal Code IS the Account Code; rename for consistency.
     Renamed = Table.RenameColumns(Source, {{"Nominal Code", "Account Code"}}),
 
-//Step 2
-//Typed= Table.TransformColumnTypes(Renamed, {{"Account Code", Int64.Type}}),
-
-    AccountCodeAsText= Table.TransformColumnTypes(
-        Renamed,
-        {{"Account Code", type text}}
-    ),
+    AccountCodeAsText = Table.TransformColumns(Renamed,
+        {{"Account Code", each #"_NormalizeAccountCode"(_), type nullable text}}),
 
     // Step 2 — Contract Type
     AddContractType = Table.AddColumn(AccountCodeAsText, "Contract Type", each
         if [Account Code] = "40010" then "In Contract"
         else if [Account Code] = "40011" then "In Contract"
         else if [Account Code] = "40012" then "In Contract"
+        else if [Account Code] = "40013" then "Out of Contract"
         else if [Account Code] = "40014" then "Out of Contract"
         else null,
         type text),
 
     // Step 3 — Cost Category
     AddCostCategory = Table.AddColumn(AddContractType, "Cost Category", each
-     if List.Contains({60201, 60202, 60203}, [Account Code])  then "Subcontractor"
-     else if Text.StartsWith([Account Code], "607") then "(exclude -- on timesheets"
+     if List.Contains({"60201", "60202", "60203"}, [Account Code])  then "Subcontractor"
+     else if Text.StartsWith([Account Code] ?? "", "607") then "(exclude -- on timesheets"
         
         else if [Account Type] = "Expense" then "Other Cost"
         else if [Account Type] = "Income"  then "(not a cost)"
         else if [Account Type] = "Other Income" then "(not a cost)"
         else null,
-        type text)
+        type text),
+
+    // Relationship keys cannot be blank on the one side of the model.
+    NonBlankAccountCodes = Table.SelectRows(AddCostCategory,
+        each [Account Code] <> null and [Account Code] <> ""),
+
+    // Enforce the documented grain: one row per Account Code for relationship keys.
+    Deduplicated = Table.Distinct(NonBlankAccountCodes, {"Account Code"})
 in
-    AddCostCategory
+    Deduplicated

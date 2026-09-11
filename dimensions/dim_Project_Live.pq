@@ -41,6 +41,7 @@
 //   Join key       = crbb5_contractregister[crbb5_contractregisterid]  (confirmed).
 //   Sector (name)  = crbb5_supersectorchoicename                        (confirmed).
 //   Portfolio      = crbb5_portfolio                                    (confirmed).
+//   Contract title = crbb5_title                                        (24 Jun 2026 client request).
 //   MSA Reference  = crbb5_msareference                                 (confirmed).
 //   Concession Exp = crbb5_concessionexpiry                             (confirmed).
 //   Project Type   = crbb5_project[crbb5_projecttypename] (the text name,
@@ -85,15 +86,16 @@ let
         "ContractRegister_Lookup", JoinKind.LeftOuter
     ),
     Expanded = Table.ExpandTableColumn(Merged, "ContractRegister_Lookup",
-        {"crbb5_supersectorchoicename", "crbb5_portfolio", "crbb5_msareference", "crbb5_concessionexpiry", "crbb5_contractstatus"},
-        {"Sector", "Portfolio", "MSA Reference", "Concession Expiry", "Contract Status"}
+        {"crbb5_supersectorchoicename", "crbb5_portfolio", "crbb5_title", "crbb5_msareference", "crbb5_concessionexpiry", "crbb5_contractstatus"},
+        {"Sector", "Portfolio", "Contract Title", "MSA Reference", "Concession Expiry", "Contract Status"}
     ),
+
      // Step 2b — IsInScope flag. TRUE if the contract status is in Chris's
     //           confirmed list for the profitability report. From his
     //           02 Jun 2026 email: "Live, Mobilised and Terminated. These 3
     //           stages all indicate a Live (or previously Live) contract."
     //           Pipeline (and any other status) is excluded.
-    AddIsInScope = Table.AddColumn(Expanded, "IsInScope",        
+    AddIsInScope = Table.AddColumn(Expanded, "IsInScope",
         each List.Contains({"Live", "Mobilised", "Mobilized", "Terminated"}, [Contract Status] ?? ""),
         type logical),
 
@@ -106,8 +108,18 @@ let
         {"Portfolio"}
     ),
 
-    // Step 4 — derive Contract Phase from MSA Reference prefix
-    AddContractPhase = Table.AddColumn(FilledPortfolio, "Contract Phase", each
+    // Step 4 — explicit Contract level for report hierarchies.
+    AddContract = Table.AddColumn(FilledPortfolio, "Contract",
+        each
+            let
+                ContractTitle = try Text.Trim(Text.From([Contract Title])) otherwise "",
+                MSAReference = try Text.Trim(Text.From([MSA Reference])) otherwise ""
+            in
+                if ContractTitle <> "" then ContractTitle else MSAReference,
+        type text),
+
+    // Step 5 — derive Contract Phase from MSA Reference prefix
+    AddContractPhase = Table.AddColumn(AddContract, "Contract Phase", each
         if [MSA Reference] = null then "Other"
         else if Text.StartsWith([MSA Reference], "EMS-MSA") then "Live"
         else if Text.StartsWith([MSA Reference], "EMSI-IT") then "Live"      // live Italian / ESS — distinct from legacy EMS-IT
@@ -116,7 +128,7 @@ let
         else "Other",
         type text),
 
-    // Step 5 — merged "<Project Code> - <Project Name>" label for report rows
+    // Step 6 — merged "<Project Code> - <Project Name>" label for report rows
     AddProjectDisplay = Table.AddColumn(AddContractPhase, "Project Display",
         each Text.From([Project Code]) & " - " & Text.From([Project Name]),
         type text),

@@ -6,7 +6,8 @@
 //               is NOT subcontractor (60201/60203) and NOT the temp-staff
 //               account (those staff book timesheets — double-count risk).
 // Grain:        One row per NetSuite expense line.
-// Dependencies: stg_FinanceOutput FY26_FY2026, dim_Accounts_Live
+// Dependencies: stg_FinanceOutput FY26_FY2026, dim_Accounts_Live,
+//               _NormalizeAccountCode
 // Load:         DISABLED.
 // ---------------------------------------------------------------------
 // Exclusions (CONFIRMED by Chris, 29 May meeting):
@@ -18,9 +19,13 @@
 let
     Source = #"stg_FinanceOutput FY26_FY2026",
 
+    // Normalize to the shared five-character text key before joining account metadata.
+    AccountCodeAsText = Table.TransformColumns(Source,
+        {{"Account No.", each #"_NormalizeAccountCode"(_), type nullable text}}),
+
     // Step 1 — join account type so we can filter to Expense only
     MergedAccountType = Table.NestedJoin(
-        Source, {"Account No."},
+        AccountCodeAsText, {"Account No."},
         #"dim_Accounts_Live", {"Account Code"},
         "Account_Lookup", JoinKind.LeftOuter
     ),
@@ -31,8 +36,8 @@ let
     //          and NOT temp-staff (any 607*xx code, already in timesheets)
     ExpensesOnly = Table.SelectRows(ExpandAccountType, each
         [Account Type] = "Expense"
-        and not List.Contains({60201, 60202, 60203}, [#"Account No."])
-        and not ([#"Account No."] >= 607000 and [#"Account No."] < 608000)
+        and not List.Contains({"60201", "60202", "60203"}, [#"Account No."])
+        and not Text.StartsWith([#"Account No."] ?? "", "607")
     ),
 
     FilledLocation = Table.ReplaceValue(

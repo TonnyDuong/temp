@@ -1,0 +1,10 @@
+let
+    Source = SharePoint.Files("https://eqmanserv.sharepoint.com/sites/EMS_FPA", [ApiVersion = 15]),
+    #"EMS Fixed Fee Forecast xlsx_https://eqmanserv sharepoint com/sites/EMS_FPA/Shared Documents/Profitability/Data/" = Source{[Name="EMS Fixed Fee Forecast.xlsx",#"Folder Path"="https://eqmanserv.sharepoint.com/sites/EMS_FPA/Shared Documents/Profitability/Data/"]}[Content],
+    #"Imported Excel Workbook" = Excel.Workbook(#"EMS Fixed Fee Forecast xlsx_https://eqmanserv sharepoint com/sites/EMS_FPA/Shared Documents/Profitability/Data/"),
+    #"Filtered Rows" = Table.SelectRows(#"Imported Excel Workbook", each ([Kind] <> "DefinedName")),
+    #"31 12 2025_Sheet" = #"Filtered Rows"{[Item="31.12.2025",Kind="Sheet"]}[Data],
+    #"Promoted Headers" = Table.PromoteHeaders(#"31 12 2025_Sheet", [PromoteAllScalars=true]),
+    #"Changed Type" = Table.TransformColumnTypes(#"Promoted Headers",{{"Item", type text}, {"Project", type text}, {"Project Name (Project) (Project)", type text}, {"Billing Method", type text}, {"Base annual fee", type number}, {"Current Annual Fee", type number}, {"Currency", type text}, {"Billing frequency p.a.", Int64.Type}, {"Index Uplift Date", type number}, {"Index Month", Int64.Type}, {"Index Day of Month", Int64.Type}, {"Subsidiary (Project) (Project)", type text}, {"Billing Start Date", type date}, {"Billing End Date", type date}, {"Billing Reference", type text}, {"Index this month ?", type text}, {"Base Index", type text}, {"Current Index", type text}, {"Inedxation Basis", type text}, {"Exchange", type number}, {"Monthly Fee", type number}, {"31/01/2026", type number}, {"28/02/2026", type number}, {"31/03/2026", type number}, {"30/04/2026", type number}, {"31/05/2026", type number}, {"30/06/2026", type number}, {"31/07/2026", type number}, {"31/08/2026", type number}, {"30/09/2026", type number}, {"31/10/2026", type number}, {"30/11/2026", type number}, {"31/12/2026", type number}})
+in
+    #"Changed Type"
