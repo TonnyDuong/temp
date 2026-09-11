@@ -175,3 +175,26 @@ Total Revenue YTD + Forecast =
 
 Total Revenue FY =
 [Total Revenue YTD + Forecast]
+
+AS Revenue =
+CALCULATE(
+    -SUM(fact_Revenue_Live[Amount]),
+    fact_Revenue_Live[Contract Type] = "Out of Contract",
+    fact_Revenue_Live[Type] IN { "Actual", "Adjustment" })
+
+AS Revenue Before Adjustment =
+CALCULATE(
+    -SUM(fact_Revenue_Live[Amount]),
+    fact_Revenue_Live[Contract Type] = "Out of Contract",
+    fact_Revenue_Live[Type] = "Actual")
+
+AS iXBRL Reclassification =
+CALCULATE(
+    -SUM(fact_Revenue_Live[Amount]),
+    fact_Revenue_Live[Contract Type] = "Out of Contract",
+    fact_Revenue_Live[Type] = "Adjustment")
+
+AS Adjustment Row Count =
+CALCULATE(
+    COUNTROWS(fact_Revenue_Live),
+    fact_Revenue_Live[Type] = "Adjustment")

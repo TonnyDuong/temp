@@ -63,15 +63,27 @@
 //     by the profitability report hierarchy. It is NOT the same thing as
 //     Upstream Report. The naming is deliberate — do not "correct" it.
 //
-//     TODO: the mapping from these two columns to a single reporting
-//     line is NOT yet confirmed and no derived `Sector Lead Reporting`
-//     column is built here. crbb5_project carries crbb5_revenuefinance
-//     and crbb5_revenueops, which are allocation FRACTIONS summing to 1
-//     (e.g. 0.28175 / 0.71825, 0.158 / 0.842, 0.5 / 0.5), so a project's
-//     revenue appears to split between a finance reporting line and an
-//     operations reporting line rather than sitting on one. Confirm the
-//     rule with the client before deriving the grouping — guessing it
-//     would mis-state every figure on the Additional Services report.
+//     RESOLVED 11 Sep 2026 by inspecting the populated values:
+//       Upstream Report A = the operations / sector reporting line, the
+//         `2.xx` series (2.00 Finance Only, 2.01 Social Infra Scotland,
+//         2.50 Renewables, ...) plus 1.07 Corporate Finance. This is the
+//         field the source workbook exposes as `Sector Lead Reporting`,
+//         and it is the Additional Services report's primary grouping.
+//         Group on `Upstream Report A`.
+//       Upstream Report B = a regional FINANCE reporting line, the
+//         `1.xx` series (1.01 London Finance, 1.03 Nottingham Finance,
+//         1.04 Manchester Finance, 1.05 Leeds/Newcastle Finance,
+//         1.06 Glasgow Finance, 1.02 Italy Finance). It does not appear
+//         in the source workbook at all.
+//
+//     This also explains crbb5_revenuefinance / crbb5_revenueops on
+//     crbb5_project: they are allocation fractions summing to 1 that
+//     split a project's revenue between the finance line (B) and the
+//     operations line (A). The current workbook ignores the split and
+//     reports each project wholly against A, so reproducing the
+//     signed-off report means grouping on A alone. Do NOT apply the
+//     fractions without an explicit client decision — see the
+//     Client Decision Log entry for 11 Sep 2026.
 // ---------------------------------------------------------------------
 // Column names (CONFIRMED against the crbb5_project column list): the
 // entity is exposed by LOGICAL name (crbb5_projectcode, crbb5_projectname,

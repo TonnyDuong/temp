@@ -99,3 +99,24 @@ Clean Power BI Desktop instructions:
 - Separate discrepancy to resolve with the client: `iXBRLProof` states iXBRL project fees of **62,070** as a hard-coded constant, but the GL-derived iXBRL rows total **-21,270.00**. The `+62,070.00` Chris posted to `1.07 Corporate Finance` is therefore not reproducible from the GL alone, so the automated rule will not land on the workbook's iXBRL line of `29,509.90` without an explanation of the difference.
 - Reconciliation caveat: this derived rule is net-nil by construction, whereas the manual `ARevenueADJUSTMENTS` tab netted to `+10,557.60` because it also carried entries compensating for revenue that the reporting-line mapping drops (`ZZZ-01` at `-10,357.60` and `SWH-01` on `2.71 Scotland Development` at `-200.00`). The automated reclassification therefore will not reproduce the workbook total until that unmapped revenue has a confirmed home.
 - Stakeholder note: memo-text matching was raised as a risk by Chris Rolls on the 11 Aug 2026 call ("that may or that could break"). The `40013` account filter narrows the failure mode so an unmatched memo under-collects rather than mis-allocates, but both stakeholders are on the thread and neither has been shown the other's position. Confirm with both before this ships.
+
+## 11 Sep 2026 - Additional Services Grouping Field, And GL Feed Missing July 2026
+
+Both findings are ours, from investigation. Neither is a client decision; the second needs a client action.
+
+### Grouping field resolved
+
+- `crbb5_contractregister` carries two reporting-line lookups to the Areas of Responsibility entity: `crbb5_upstreamreportaname` and `crbb5_upstreamreportbname`, surfaced in `dim_Project_Live` as `Upstream Report A` / `Upstream Report B`.
+- **`Upstream Report A` is the Additional Services report's primary grouping.** Its values are the `2.xx` operations/sector series plus `1.07 Corporate Finance`, matching the `Sector Lead Reporting` column on the source workbook's `Project` tab (1,246 projects, one value each, 16 distinct values).
+- `Upstream Report B` is a regional **finance** reporting line (`1.01 London Finance`, `1.03 Nottingham Finance`, `1.04 Manchester Finance`, `1.05 Leeds, Newcastle Finance`, `1.06 Glasgow Finance`, `1.02 Italy Finance`). It does not appear in the source workbook.
+- `crbb5_revenuefinance` / `crbb5_revenueops` on `crbb5_project` are allocation fractions summing to 1 that split a project's revenue between the finance line (B) and the operations line (A).
+- Current rule: group on `Upstream Report A` alone, because that is what the workbook the client has signed off does. **Open question for the client:** whether the finance/ops split should be applied. If it should, the present report overstates the sector lines and omits the regional finance lines entirely.
+- Reporting lines that exist in the data but have no row on the report: `2.71 Scotland Development` (142 projects), `4.01 Risk Management` (26), `3.12 Information Systems` (8), `1.01 London Finance` (2). `2.71` is the fourth-largest line by project count, which raises the significance of the existing open question about adding it.
+
+### GL feed is missing the July 2026 close
+
+- Period profile of account `40013` in the workbook's `NSRevenue` extract: Jan 167 rows, Feb 107, Mar 191, Apr 191, May 140, Jun 136, **Jul 466**. Total 1,398 rows, -995,256.87.
+- **313 of the 323 iXBRL-memo rows are in July 2026.** The model's `stg_FinanceOutput FY26_FY2026` matches only 5, and per-memo line counts across unrelated memos run at roughly two-thirds of the workbook's (48 vs 33, 32 vs 22, 16 vs 11), which is consistent with July being absent.
+- **This is the same root cause as Eve Dillon's 09 Sep 2026 report that YTD revenue shows 17.9m against an expected 20.7m.** One missing month's data explains both symptoms.
+- It is not an Excel filter and not a query defect. The outstanding action recorded on 04 Sep 2026 — "full report refresh including end-of-July month-end data before Equitix re-reviews July" — has not taken effect in the GL the model reads.
+- Consequence for the iXBRL reclassification: it cannot be reconciled or shipped until the July close is present in `FinanceOutput FY26.xlsx`. No code change is required.
