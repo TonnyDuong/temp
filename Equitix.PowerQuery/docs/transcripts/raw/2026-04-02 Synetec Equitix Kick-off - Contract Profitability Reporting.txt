@@ -1,0 +1,883 @@
+Synetec & Equitix Kick-off  Equitix Power BI Contract Profitability Reporting-20260402_150126-Meeting Recording
+2 April 2026, 02:01pm
+55m 22s
+
+Stavros Tsagkarakis started transcription
+
+Stavros Tsagkarakis   0:03
+Good, that's good. It's not too terrible. Yeah, the sun is shining, but a long weekend ahead of me.
+
+Jonjo Challands   0:09
+Remind me where, remind me where you're based. Are you based in London?
+
+Stavros Tsagkarakis   0:09
+Sargent.
+We're in London, yeah.
+
+Jonjo Challands   0:13
+Yeah, I was briefly recall. Yeah, it's suddenly the sun's come out and everyone feels a bit happier. So it's always good for a long weekend. But yeah, thanks. Thanks for thanks for the time and glad we could get this sorted. Sharif was very complimentary about you, actually, which is always good to hear. But
+
+   0:20
+I.
+
+Stavros Tsagkarakis   0:21
+Yeah.
+Ohh, that's good to hear. That's good to hear.
+
+Jonjo Challands   0:33
+But high expectations are always good as well. But no, I appreciate this. And I think since we last spoke, we have another couple of work streams we've kind of come up with that we'd love your help on if this school goes to plan. And let's see, let's see how this goes. But yeah, good to get this kicked off.
+
+Stavros Tsagkarakis   0:35
+Yeah.
+Wonderful. Very, very good.
+
+Jonjo Challands   0:53
+How do you normally do these? We're happy to take your lead and see what you require.
+
+Stavros Tsagkarakis   0:55
+Alright.
+Yeah, perfect, perfect. So we've set up just a, let me know if you can see my screen.
+Yeah.
+
+Chris Rolls   1:07
+Yeah.
+
+Jonjo Challands   1:07
+Yeah, yeah.
+
+Stavros Tsagkarakis   1:08
+Tatenda.
+Right, so I mean, thanks everybody for for joining like Thursday afternoon when the sun is out. I hope it ends your week on a highlight. So,
+Just to set the scene really, you know, the aim of today is, of course, to kick off the contract profitability reporting work.
+But, you know, we don't want to look at solving everything in one sitting. So the aim is to get.
+Yeah, mostly alignment on the profitability model.
+understand your data landscape, confirm the reporting hierarchy, and agree how we kind of build over the next few weeks with you.
+So...
+from a high level. I want to leave this session on, yeah, and be clear on being clear on what the reports need to show, what data feeds it, and where the main gaps are. And then of course, who are the key decision makers, right? So who are we working with going forward?
+How does that sound like to you guys in terms of today's purpose? Are you happy with that?
+
+Jonjo Challands   2:28
+Yeah, I'd maybe add one additional point from our perspective, and that's just to understand what you require in respect of access licencing and the setup that we need to allow. That then gives us
+
+Stavros Tsagkarakis   2:31
+Sure, yeah.
+Huiung.
+Support.
+Yeah.
+
+Jonjo Challands   2:44
+kind of guidance to go back to Sharif and say, can you please allow these permissions and this is what they need to say. But it will also allow us to just pick up on some risks that we might need to run past compliance. And I'm sure nothing will be a problem, but it's just about making sure we go through the steps. So yeah, otherwise happy to kind of follow this.
+
+Stavros Tsagkarakis   2:47
+Okay.
+Yeah.
+Oh, superb. Alright, that's great.
+So, yeah, we'll definitely make time for that. Thanks. Quite important, of course.
+You know, and we're not looking to kind of review every.
+you know, every table in the field in the dataverse or NetSuite. I think that will certainly come later. Today I want to focus on the business logic though.
+
+Jonjo Challands   3:25
+Sure.
+
+Stavros Tsagkarakis   3:29
+So, you know, starting with we need to agree what profitability means and how the hierarchy works that we were chatting about the last time we met. And then of course, which data sources feed that part of the model, right? Once we understand all of that stuff, then we deal with all the infrastructure.
+Uhh...
+Formalities that we need to work through, right, to get that right for you guys. You know, then we unlock, we're in a position where we unlock the build for this really, and we can move forward.
+
+Jonjo Challands   4:03
+Sure, sure.
+
+Stavros Tsagkarakis   4:05
+I think if we leave the session with those items covered, you know, we certainly move closer to that and that's what I'm aiming for.
+
+Jonjo Challands   4:13
+Excellent.
+
+Stavros Tsagkarakis   4:14
+So let's kick it right off. I think the, you know, for the most part, the questions that are on the screen right now are designed to really just kick off the conversation and not really to lead it, right? That I shouldn't be leading this. We need to hear a lot more from you guys, right? But from our perspective,
+You know, we do need to, you know, again, we don't need perfect answers.
+But we do need to know which definitions to build against, okay, and where the grey areas potentially are. So, for example...
+And.
+Revenue.
+could mean items invoiced, right? It could mean items recognized, it could mean contracted value, etc. and so on. Each one paints a very different picture. So, you know, every number in the final report flows from the definitions that we agree upon in this room today. So, can I hand over to you quickly just to walk us through?
+how you are thinking about contract infability today.
+
+Jonjo Challands   5:16
+Yeah.
+So, um...
+Am I all right to share my screen very briefly? Yeah. So I'll just share on a table, which is a kind of concept we, forgive me, there we go, a concept that we've agreed on internally as a proof of concept. It certainly doesn't have to look identical to this, but this is kind of what we were.
+
+Stavros Tsagkarakis   5:23
+Yes, please, go ahead. Yeah, go ahead.
+Thanks.
+Yeah.
+
+Jonjo Challands   5:40
+thinking. So there are two tables that we'd like to achieve. And broadly or at a high level, what those tables are showing are year to date actuals of profitability. And then building on that, you would have your forecast element as well showing what you're likely to hit.
+at the end of the year. So starting with this year to date table, we have revenue, cost and as a consequence profit. Revenue is all coming from NetSuite and broadly are in two categories. They are in contract revenue and out of contract.
+to revenue. So just for kind of explanation there, so in contract, we enter into contracts with our clients that are fixed costs, inflated fees, but fixed elements, we deliver a set scope and we receive the contracted fee for that service. That is what we consider to be in contract.
+But what can also happen on those contracts are we are asked to do something or it is necessary for us to do something that isn't captured by that scope. And we would typically charge an hourly rate or a daily rate or an agreed fixed price, much like your lawyer would for any work they do. And that was what we consider out of contract.
+There are several other categories of revenue that we have. So for example, it might be a construction development revenue, it might be mobilisation revenue, but we all broadly categorise them as in contract or out of contract.
+In terms of costs, the way that we envisage that working is going to be...
+timesheet based. So we ask all of our staff to fill in timesheets per half an hour of the bulk of items of what they spend their time on. And then every member of staff has a calculated day rate or hour rate that you would behind the scenes ultimately take number of hours worked for that.
+contract and times it by their hourly rate and that would be their cost. Both NetSuite and timesheets are done on a project code basis and basically that means for contract A that would have a
+a code, which is 01 for in contract and 02 for out of contract. And I'm massively oversimplifying that coding structure. But what it allows us to do is kind of have that contract isolated for the purpose of this is the revenue, this is the cost, this is the profit.
+And that contract will also have what we call an upstream report, which is aligned to sectors, it is aligned to regions, and ultimately allows us then to group, as you put it, in that hierarchy of within this sector, which is delivered from this region, which is delivered from this contract.
+And that's kind of how we see the year to date table working. Obviously, the parameters around that would be we would either manually or have an automated refresh date for each month to fall after we close our books so that it wouldn't give a false picture. So an example of that would be
+timesheets, as I don't know if you fill in timesheets at your business, but it can be massively variable as to whether someone does it on Friday at 5:00 or whether it takes 7 weeks of constant reminding for that person to finally submit seven weeks of timesheets in a row. So it's to avoid having actual timesheet data
+which is sporadic and variable in terms of the individuals versus real life up-to-date revenue data.
+I don't know if I need to stop at this point, have any questions or I can maybe move on to the next two.
+
+Chris Rolls   9:39
+Might just add a couple of things to that one, just on the, so the revenue is all revenue in NetSuite, so the accrued income as well, everything is booked to the project code that Jonjo mentioned, which allows us to bring it in to this table. The costs as well, the current way we bring, we also bring in subcontractors, which is a NetSuite code as well, and they also allocated
+
+Jonjo Challands   9:42
+Yeah, of course.
+
+Chris Rolls   10:01
+projects. So they are also included in costs as well as the time sheets, data, employee data as well.
+
+Stavros Tsagkarakis   10:09
+Thank you. That's great. Thanks, Chris.
+
+Sanjana Nagaraj   10:12
+Hi, sorry to interrupt. I have one question. When you mentioned the year-to-date table, so is this already existing or is this something that you have an example that you want us to show or this is just an outline that you are expecting us to build?
+
+Jonjo Challands   10:14
+Yeah, sure.
+Yeah, that's it.
+This is just a proof of concept. We have a solution at the moment that is not good enough, which is why we're talking to you. So we'd be happy to show you. I actually think it's probably contradictive to what we're trying to achieve here. We want to build this up from the ground. But this is a proof of concept.
+that we would want to achieve. And as I said at the start, this is just that, a proof of concept. It doesn't have to look exactly like this. There might be ways that you advise that might look a lot better and work better for us. It's simply just to give you an idea of what we're trying to show.
+
+Sanjana Nagaraj   11:06
+Right, okay, got it.
+
+Stavros Tsagkarakis   11:11
+Yeah, okay, so you're aiming for kind of a clear year-to-date view of the contract profitability. You know, Netsuite driving the revenue and the time sheets driving costs.
+
+Sanjana Nagaraj   11:11
+Thank you, that's it for me.
+
+Stavros Tsagkarakis   11:23
+Um...
+
+Jonjo Challands   11:23
+Yeah, sat behind the cost calculation is kind of two sources and forgive me, I probably should have stressed that a bit more, but you've got the output from the timesheet portal and also the summary of people's rates. So those are two separate files.
+
+Stavros Tsagkarakis   11:26
+Mm.
+Mhm.
+
+Jonjo Challands   11:43
+and ultimately it's one times the other. So employee one would put five hours to a certain project code and what the table would do would say, okay, that's five hours times their hourly rate of 100 and therefore the cost is 500. So it's two sources of data that are calculating to
+to get the output. From the NetSuite perspective, it's not that complex. It is simply one source data and it just, you obviously just have to amalgamate the project codes and the revenue.
+
+Stavros Tsagkarakis   12:19
+Yeah, fantastic.
+
+Jonjo Challands   12:20
+Did you want me to then expand on the second table as well?
+
+Stavros Tsagkarakis   12:24
+Before you go, and I just want to clear that you did say everything was coded at the contract level, right? So it draws up into sector and region.
+
+Jonjo Challands   12:25
+Yeah.
+Yeah, that's right. So we are in the midst of changing from a regional approach to a sector approach, and it's kind of also driving why we're doing this. So what we'd like to show is, I mean, I'm easy around showing everything in one line and then expanding. I don't really mind about that.
+But ultimately, we're trying to show each sector and how profitable each sector is. And within each sector, we should also show how profitable each contract is. So sector one could be social infra and it might be made-up of 10 contracts. And therefore, we should be able to see how
+
+Stavros Tsagkarakis   13:07
+Yeah.
+
+Jonjo Challands   13:14
+profitable each contract is, forgive me, there we go, and that would then group up into the sector. So we have sector leads that would be reliant upon the sector overall, and then you'd have senior managers within that sector that would be responsible for the contracts themselves.
+
+Stavros Tsagkarakis   13:23
+Yeah.
+That's great. I may be getting ahead of myself. You also mentioned in our first discussion that you wanted to draw down by asset.
+Is that right? Do I have that right?
+
+Jonjo Challands   13:48
+Yeah, so yes, and that's probably just my thought on terminology. Each contract will be reflected, will be one asset. So we have 200, just over 200 contracts, which would then ultimately come to 200 assets.
+
+Stavros Tsagkarakis   13:56
+I see, okay.
+Yeah.
+Fantastic, good. I just.
+
+Chris Rolls   14:06
+I can share a data map of the EMS data structure later or if it's relevant now, but so at the top level we've got contracts and then projects are children is a child table of contracts. Within contracts is a number of ways we can segment the data and sectors is one of them.
+
+Stavros Tsagkarakis   14:17
+Yeah.
+
+Chris Rolls   14:26
+is associated with that and also so is location as well. So it's all within that same contract table in Dataverse.
+
+Stavros Tsagkarakis   14:37
+I think that would be very useful if you can share that at some point. That would be great. Great. Andrew, anything from you before we move on?
+
+Chris Rolls   14:39
+Of course.
+
+Jonjo Challands   14:46
+So the second table, just to maybe simplify it a little, you've got exactly the same year to date element. So the original year to date revenue of in and out of contract is mirrored here. The timesheet cost data is mirrored in this column here.
+but we're adding a couple more bits. So as well as looking at what has happened to date, we're now looking ahead to what will happen for the rest of the year. That's from a number of other sources. So in contract revenue forecast will be coming from our billing schedule. That is a schedule that's kept on, I believe, Dataverse.
+
+Chris Rolls   15:26
+Yeah.
+
+Jonjo Challands   15:26
+And it basically shows what we expect to happen for the remainder of the year and beyond with signed contracts. And then we also have our out of contract revenue forecast. Now, this is not a system, it's a person. And that, I believe, needs a bit more thinking on our end about how we would bring that in.
+Why I say that is the spreadsheet or the records that Grant holds are not forecast looking at any given moment. They're just the whole year perspective. So he might have that the renewable sector will earn a total of 1 million.
+out of contract revenue, but then you'd have to deduct from that what's been recognised to date. So there's an additional kind of complexity into that. But additionally, that would be a manual input and it would have to be updated routinely by us and re kind of
+calibrated, if you will, to the to the report. And then there is an additional cost line, which is ultimately what what we think the costs are going to be. And the way that the way that we came up with to record this was we use a we use a platform called Jedox.
+Now, Jedox is a bespoke resourcing planning tool. I'm unsure if you've heard of it. I certainly hadn't before using it. But it allows us to input for every individual or every employee in the business, how much time in respect of a percentage are they spending on each of these contracts.
+And again, that is a forecast, look forward-looking tool. And the way that we would envisage this working is you would extract the data from Jedox. So using that employee one on project A, Jedox will say that our assumption is they'll spend 20% of their time working on this for the rest of the year.
+and then taking their day rate again, or hourly rate, and then multiplying the two to form a forward-looking cost forecast. And then on both revenue and cost, you would then add those two together to get total revenue, total cost. And the idea is that shows you
+the expected profit for the rest of the, or for the entire year. So that is, if we were saying today, we're saying, well, there's been actuals delivered to date for the first three months, and now we're going to calculate the next nine months. And then for the full 12 months of 2026, we expect
+the profit to be, probably to be X. So yeah, just a little bit more complexity in the forecast bit because there's more data to source, but I don't, I'd like to think none of that is too complex and obviously just getting to the bottom of the questions you have and making sure the granular detail is understood.
+I, I, my simple brain is telling me this, this is a relatively straightforward.
+task, I'll lean over to you for comment on that, because I'm not sure how accurate that is.
+
+Stavros Tsagkarakis   18:44
+I mean, so John, can I put that to you? Are you seeing this? Would you agree that it's, are there any complexities you see or do you think this is relatively straightforward?
+
+Sanjana Nagaraj   18:58
+Theoretically, it just feeds everything just at the point, but we definitely need to look at the data. And then once we have a look at that, we can accurately tell how complex or how straightforward it is. But then as far as I have heard the conversation now, I feel this is doable and
+
+Jonjo Challands   19:11
+Sure, yeah.
+
+Sanjana Nagaraj   19:18
+It, it, it sounds pretty straightforward.
+
+Jonjo Challands   19:21
+Right, OK.
+
+Sanjana Nagaraj   19:22
+Yeah.
+
+Jonjo Challands   19:25
+What would you like to discuss next then? I'm happy to be led by you, as I said. I'm happy to go into any of this detail more if needed.
+
+Stavros Tsagkarakis   19:31
+Yeah.
+I think, so what I had next was to discuss more the sector assets and contract hierarchy, but I think we've covered that quite extensively. I would like to understand just that, you know, the
+You know, make sure that we've understood which systems hold the data that we need, and then, you know, how do we get access to all of that?
+Was it?
+
+Jonjo Challands   20:03
+Yeah.
+So, NetSuite is the primary one for revenue. I think the preference there is given, well, I mean, Chris, do we have APIs that link it at the moment or is it a manual refresh by your team?
+
+Chris Rolls   20:18
+We have a manual refresh. We use solution 7 to extract data from NetSuite. So it will be a manual refreshed link that we don't have a direct API link.
+
+Jonjo Challands   20:26
+Okay, so, so...
+So to kick this off, we would provide an output for the first two months of the year, for example, which would show you the full list of revenue and we can maybe go through in another forum what each of the columns mean and how you would interpret that. So that feels pretty straightforward.
+The timesheet data, I don't know offhand, Chris. Is that something that's linked automatically?
+
+Chris Rolls   20:55
+Take the bus.
+It's in Dataverse, so you can get access to it in the same way we would the contract list.
+
+Jonjo Challands   20:59
+Okay.
+
+Stavros Tsagkarakis   20:59
+Yep.
+
+Chris Rolls   21:02
+Not for the same.
+
+Jonjo Challands   21:03
+Okay.
+
+Chris Rolls   21:04
+See ya.
+
+Jonjo Challands   21:05
+Okay, so it feels like one of the important access points would be to our dataverse environment. Is that right?
+
+Chris Rolls   21:11
+Correct, absolutely. Yeah, that's where the contract data is, billing schedule data, timesheet data, just on billing schedule data. The way billing schedule is a flat profile of revenue through the year, it doesn't change until it's updated. So we have a spreadsheet.
+
+Stavros Tsagkarakis   21:19
+Yeah.
+
+Chris Rolls   21:30
+Outside that does the indexation calculations for more accurate forecasting, so we that we could use that.
+
+Jonjo Challands   21:35
+Okay, so that's saying that there's an additional source of data to be interpreted into the profitability table to make sure that
+Our expectation of inflation will be captured, OK?
+Okay, so that's another manual refresh.
+
+Chris Rolls   21:57
+It is, yes, yep.
+
+Jonjo Challands   21:58
+Okay.
+Okay.
+
+Stavros Tsagkarakis   22:02
+Sanjana, did you have a question there?
+
+Sanjana Nagaraj   22:04
+Yeah, I've got one question. So when you said that data was, so one of, we've got access to time sheets from there, but there are other files that you are looking for. So are those just Excel sheets or is there any data source that we have to be fetching from?
+
+Jonjo Challands   22:23
+So I believe the employee rates is a manual spreadsheet that gets updated, well, both when someone new joins, but also annually. So for example, we have 250 employees, their rates have been calculated at the start of the year, but
+
+Sanjana Nagaraj   22:27
+Mhm.
+
+Jonjo Challands   22:42
+We've also hired 20 people since the start of the year. We need to add those on. So that would be a spreadsheet, a manual refresh spreadsheet that we'd provide. And then, as Chris was saying, there is the inflation assumptions we'd have to provide on a manual basis. Within Dataverse, there is the billing schedule itself.
+which is used for forecast data. There's the contract register, which would show the sector that each contract's in. There is a project list, I believe, Chris, which then shows what projects are related to which contracts. So
+
+Chris Rolls   23:15
+Yep.
+
+Jonjo Challands   23:21
+Maybe I should have touched on this earlier, but within a contract, you can have multiple projects because there might be multiple strands of out of contract work being done. So each contract will have its primary code, project code, which would be our fixed fee for the fixed scope.
+And then you might have project two, three, 4, 5, 6, 7, 8, because there's been over the years, there's been eight additional work streams that count as out of contract. So we can we can show maybe examples of that as we go through.
+And then I'm just thinking of a head to...
+Jedox, Jedox, presumably, Chris, is a is a manual output or is that an automatic? That's an API.
+
+Stavros Tsagkarakis   24:03
+Get up, yeah.
+
+Chris Rolls   24:03
+Yeah.
+API, we've got an, we do have an API link here, so we can get data extracted from there.
+
+Jonjo Challands   24:10
+Okay.
+
+Stavros Tsagkarakis   24:14
+So, you can extract that, Chris, and pass it on to us.
+
+Jonjo Challands   24:14
+The Genesis.
+
+Chris Rolls   24:19
+Yeah, I will, yeah, we can get that set up. Yes, we do have an API link.
+
+Jonjo Challands   24:19
+What?
+And then presumably, and forgive me my simple brain again here, but the access to our Power BI network to create a new environment or report or whatever it might be, that's something you'd need access to as well, presumably.
+
+Sanjana Nagaraj   24:42
+Yes, to the Power BI workspace.
+
+Stavros Tsagkarakis   24:43
+Yep.
+
+Jonjo Challands   24:45
+workspace. Okay, so unless I missed anything, that is access to our Dataverse platform and access to the Power BI workspace. Is there anything else that sticks out that you'd need access to?
+other than the manual refresh documents that we can provide.
+
+Andrew Settle   25:05
+So, Jonjo, would you not want a fabric instance for this? Are you just going to straight to Power BI?
+
+Sanjana Nagaraj   25:12
+We do need a fabric instance.
+So there's something called Fabrics, and Power BI is a part of Fabric. So we might have to need access to the Fabric tenant. Yeah.
+
+Jonjo Challands   25:25
+Yeah, that's fine. Okay, well, we'll get that kicked off with Sharif and just make sure that we're doing the right thing there.
+How do you want to work? How do you want the next steps? We're here to help and we're here to kind of give you as much time as you need and to point in the right direction. What's the way that you typically work?
+
+Stavros Tsagkarakis   25:46
+Okay, so I mean, that's my slide off the next, actually, in terms of what it is that I wanted to cover, and we need to chat about that, Jonjo, in the specific view that you bought in 10 days. Just want to make sure before we go there, though,
+
+Jonjo Challands   25:56
+Sure.
+
+Stavros Tsagkarakis   26:04
+So, uh...
+Are we clear, Sanjana, on the users here?
+
+Sanjana Nagaraj   26:14
+No, we missed that. So who all will be using the dashboard? Is it like just the two of you or there are like admins or the managers who will be accessing the dashboard?
+
+Jonjo Challands   26:26
+So we would expect the data to be viewed by a certain seniority level. So we have associate directors, directors, and well, that's it actually. So associate directors, that's maybe 40 people, I think, roughly.
+and we would expect them all to have viewing rights. We would also want myself and Chris initially, and then we can maybe exchange or add additional people to control the data behind the scenes. So that's the manual refresh process.
+the ability for admin, but expect there to be very minimal. But yeah, the audience is 40 people for viewing rights.
+
+Sanjana Nagaraj   27:15
+Yeah, I think all the 40 should have workspace access in the fabric, but initially, as I said, probably you and Chris can have access initially just to, you know, exchange dashboards.
+
+Jonjo Challands   27:26
+Yes, sounds good. We have existing reports within, I'm using your terminology here, but within a workspace that people of that seniority can see already. So whether that's an automatic switchover, I don't know, but we can figure that out.
+
+Sanjana Nagaraj   27:46
+Yeah.
+
+Stavros Tsagkarakis   27:49
+Okay, that's good. Then in the meantime, will you guys, who do we work with and who will be testing our, what would it be yourselves? Are you assigning somebody else to the project?
+
+Chris Rolls   27:49
+I think they.
+
+Jonjo Challands   27:59
+Do it.
+No, I think between the two of us, I'd like Chris to be the one that he knows that the source data and what it looks like better than anyone. To be completely transparent, there is an additional person joining our team, hopefully before the end of April, who
+
+Stavros Tsagkarakis   28:03
+No.
+
+Jonjo Challands   28:19
+who likely for future work streams, if not this one, will be involved in the touch, the go to person. But Chris for the time being, and then in terms of testing the outputs and final sign off, that will sit with myself and Chris. But yeah, I think Chris will be the go to person to speak to over the next few weeks.
+
+Stavros Tsagkarakis   28:34
+The.
+
+Jonjo Challands   28:38
+Yes.
+
+Stavros Tsagkarakis   28:40
+Okay, fantastic. Thank you. Just going back on some of the...
+other items that were discussed. So in terms of the frequency that of the refreshing of the data, right? So that's all good for just testing kind of MVP, but what do you guys have in mind for the future? Right, so how are we going to get that?
+In a place whereby it's working in a more robust way, um, and refreshing more regularly, you know, in an automated way, et cetera, and so on.
+
+Jonjo Challands   29:15
+Sure. So my vision is that we would provide monthly internal reports. And this is the first of many reports that we want to roll out. I have in my head at midpoint of the month, maybe I'll make it up, but let's say the 10th of every month.
+
+Stavros Tsagkarakis   29:24
+I see.
+
+Jonjo Challands   29:35
+which would be a few days after our ledger close, that we would either hit a button or it would be an automated update, or we would then have an opportunity to just quickly test that data and make sure we're happy with the accuracy and there's nothing missing. And it might be that it indicates there's a problem with our accounting that we have to reopen up or whatever that might be.
+
+Stavros Tsagkarakis   29:43
+Hmm.
+
+Jonjo Challands   29:55
+so a contingency period of maybe a day, and then we would go live. So that's, again, that's me having no systems experience whatsoever, but ultimately that's kind of the time frame I'd want. So every month by the 10th or 11th of each month, we'd be able to then send an e-mail to everyone and say, it's been updated. Please feel free to look at it at your own time.
+
+Stavros Tsagkarakis   30:00
+Emily.
+
+Jonjo Challands   30:16
+on your own time. Any questions, let us know, that kind of thing.
+
+Chris Rolls   30:20
+Our internal accounts are closed by sort of working day five at a group level. So, you know, after that point, we can refresh reports and cheque and make sure that the data is important. We do have that ability to kind of pause on the release because people using the, who'll be using the
+Support and all accountants, and we'll, you know, if there's any sort of errors in the data or anomalies, they will, we will know about it quickly, so we need to be able to review before we before we let it go live each time.
+
+Stavros Tsagkarakis   30:52
+That makes a lot of sense. Thank you. And I'm sure that prompts some questions from my team. From my end, though, I'd just like to understand and kind of this eases into the next point of discussion is, you know, we've kind of just bought an initial bank of 10 days. The initial deliverable, though, right? So do you, you know,
+Are we just trying to test this, make sure that it works, and you're going to pass us everything and we're going to create these reports for you? If you're happy with all of that, we then transition to that, you know, getting into the position where it can be used on a report can be generated monthly, right? So perhaps leaning in the way that you suggest there, Jonjo, if that makes sense to my team.
+That's the method of generating the reports there monthly, and that's great. Or do you want us to build it?
+For the future today already, like, I'm just trying to understand what what you're trying to achieve. Like, we need to get the most value out of these days, right? So, what can we do? What is most valuable to you?
+
+Jonjo Challands   31:44
+Yeah.
+So, um...
+With the caveat that I would rely on you to tell me the art of possibility here.
+My vision is that you would build the report to a scope that we're comfortable with and can sign off on, and then we would manage the monthly updates, whether that's manual refreshes, automated updates that it reads the source data. And then it allows us then to, assume we were all happy and the appetite's still there, to move on to the next phase of
+this environment to do the next report, and then the same thing would repeat again. And as I say, we've got a number of reports we want to roll out with your help. But I think if we can build, sign off and move on, and then there's no need for us to rely on you to do the monthly refresh, and I think that's the
+
+Stavros Tsagkarakis   32:37
+And.
+
+Jonjo Challands   32:47
+what you're asking, that would be the idea.
+
+Stavros Tsagkarakis   32:54
+That's good. Okay.
+Yeah, previously you had asked Jonjo, you know, what are the next steps and how do we go about things?
+So, um...
+You know, we've got a significant amount of work to cover here, I would say. You know, we've agreed to proceed with 10 days. You know, what I'm trying to lean towards is that we need to be realistic, right? Ten days doesn't necessarily mean that we can deliver everything. We could probably deliver most things for you in a version that...
+Works for you, right? So we need to deliver as much as we can, as much value as we possibly can, right, to the time that we have.
+I think, you know, we need to perhaps just give this some thought, maybe jot down a few ideas that we have internally, but ultimately, and present that to you, right, so that you can say, yeah, that sounds like a reasonable approach. But at the end of the day, it's a joint responsibility, right? It's yours and ours. We need to work together just to make sure that those days are pointed at
+The things that matter most at all, at all times, right?
+
+Jonjo Challands   34:04
+No.
+
+Stavros Tsagkarakis   34:06
+So...
+I think that that's probably, you know, a natural next step, right? Let us just put this, refine some of the thinking in this in this meeting, fire that over to you, you can say, yeah, that sounds like a reasonable approach, and then we we proceed on on that basis. Ideally, maybe.
+build a cheat sheet in terms of the approach for the project going forward, right? Not a set of deliverables, but more like an understanding of the approach.
+We typically with our projects like to meet with our clients at a minimum once a week, right? Whereby we, you know, let's say we set aside a Wednesday and we get together for 30 minutes whereby we show you some progress. Okay. That's done in a demonstration.
+
+Jonjo Challands   34:51
+True.
+
+Stavros Tsagkarakis   35:04
+sitting with this demonstration and an opportunity for you to give us some of your feedback on some of your testing or some immediate feedback on what you see in the demo. We need to agree what the right cadence is for this project, right? So I think we'll probably need some time, a period where we just set up all your infrastructure.
+get that all set up in a place where we can start building. And then once we do that, we can share some progress with you and then receive some initial feedback and then agree what the right cadence for this particular project is concerned, right? What I'm mindful of is not spending all your days
+
+Jonjo Challands   35:42
+Okay.
+
+Stavros Tsagkarakis   35:45
+kind of set any meetings when we could actually spend on delivering some give value items to you and for you just to comment on, where you could easily comment on via e-mail or whatever it is, but we'll figure that out as we progress.
+
+Jonjo Challands   35:58
+Yeah.
+So just to interject quickly, so that all sounds sensible and I appreciate the flexibility you had to accommodate the 10 days, that was very much a governance thing for us and a risk mitigation thing just to ease into this. So to appreciate where you're coming from. What we will do is
+
+Stavros Tsagkarakis   36:01
+Then, yeah, please go ahead, go ahead.
+Yeah.
+Sure.
+Mhm.
+
+Jonjo Challands   36:21
+collate all of the information that we have, the manual inputs, and I think we're already covered by the MDA area, aren't we? So we will fire that over to you as soon as possible. And hopefully that will help with kind of you seeing what we're talking about and what it looks like. And we can also get these
+
+Stavros Tsagkarakis   36:29
+We are.
+Right, yeah.
+
+Jonjo Challands   36:40
+three areas of access sorted in parallel to that. And then bringing that all together then gives us a bit more of a feel over, firstly, how long you need, what the cadence would be, as you say, but also it might give you a number of questions you need to ask on a forum like this. So yeah, completely on board and we'll take away those actions, no problem.
+
+Stavros Tsagkarakis   36:59
+Okay.
+Yeah, perfect, that works.
+Um...
+I know, is there anything from my team that you feel that Sanjana, put your hand up?
+
+Sanjana Nagaraj   37:14
+Yeah, so in the meantime, while we get the access, can you please share us the sample data, the Excel sheets that you have so that we can take a look and we can also predict how is it going to be like, the data inputs.
+
+Jonjo Challands   37:22
+Yeah.
+Sure. So does that include the?
+
+Sanjana Nagaraj   37:29
+Thank you.
+
+Jonjo Challands   37:34
+Would that include, for example, an extract of our billing schedule, which you'd have access to via the Fabrics license?
+Is it is it worthwhile sharing that in advance or or?
+
+Sanjana Nagaraj   37:41
+Oh.
+It's just a sample data, like few rows, probably 5 to 10 or 20 rows. That should be fine, just like a small data.
+
+Chris Rolls   37:51
+But.
+From the from the data first tables until we get the access set up, I'll just I'll do a sample data from each table so you can see the table layout as well and what data is it contained there and I'll share the data map as well. And I'll also point out that data map's got everything which we won't need, but I'll just point out the key tables that we're talking about from there.
+
+Jonjo Challands   37:58
+Fantastic. Yeah, yeah, fantastic.
+
+Stavros Tsagkarakis   38:00
+Perfect, perfect.
+
+Sanjana Nagaraj   38:10
+Yes, please. That would be really grateful to understand the data structure. So I think getting the sample data is very important for us.
+
+Chris Rolls   38:16
+Do.
+Just one thing, just so I've got some time. John John, is it worth us discussing the, because you know, one of the issues we've had with profitability has been where people book, you know, our day rate is worked out on 7 1/2 hours, you know, of working time. If someone's worked on a project for 12 hours of the day,
+if we do a simple kind of cost times time calculation, you end up having, you know, enhanced costs, you know, and the profitability looks lower. We've, we, yeah, so I can go on.
+
+Jonjo Challands   38:47
+Yeah, so, so, so...
+So to maybe summarise that in a more simplistic fashion, if my salary is 10,000 pounds a year, that's calculated in my rate as a 7 1/2 hour day, but there's nothing stopping me booking 12 hours a day, which means a simple calculation of hours times my hourly rate.
+would lead to me costing more than 10,000, but actually only costing the business 10,000. So the way that I think we got around that was to cap.
+somehow cap the number of, or the cost at a certain point, so that if I was to work 12 hours a day for the entire year, I would still only see a cost of my time of 10,000 pounds. So I hopefully the concept's understood. There is a little bit of thought that needs to go into that. And forgive me, Chris, I did forget.
+that I maybe we need to take it away and also just see how we've done it to date and we could mirror that.
+
+Chris Rolls   39:40
+No, that's.
+Yeah, we we can we can we can clarify that. There's a there's a floor and a ceiling, so that the you know the the cost of the individual is is equalised. But we let's let's does that make hope that makes sense?
+
+Jonjo Challands   39:55
+Does, does that makes does that concept make sense?
+
+Stavros Tsagkarakis   40:01
+Yeah.
+Yeah.
+
+Chris Rolls   40:03
+Yeah.
+
+Sanjana Nagaraj   40:05
+Next.
+
+Chris Rolls   40:05
+I'll confirm that because there's also a method of if someone doesn't book time, how we capture that cost as well. So I'll just, I think we take that away and we'll clarify that.
+
+Jonjo Challands   40:05
+Right.
+
+Stavros Tsagkarakis   40:12
+Yeah.
+
+Chris Rolls   40:16
+I have.
+
+Stavros Tsagkarakis   40:16
+Yeah, excellent.
+Excellent.
+Andrew, you've been quiet. Anything from your end?
+
+Andrew Settle   40:27
+The data project to send John as a speciality. Yeah, no, I think I think we're good. I think let's get the get the access and fabric stuff set up, because then we can start to make progress. Up to that point, it'll then be sort of just Jonjo, Jonjo, just understanding a bit more about the data that you.
+Colton, how it all fits together, but we kind of want the real data, so we can start to put things together.
+
+Jonjo Challands   40:51
+No.
+Who is it that we should be giving access to?
+
+Andrew Settle   40:58
+I think probably just give Sanjana access for now so that you can keep it limited because she'll be doing the work.
+If we need anybody else, then we can ask for that at the right point. But I think it's like this with Sanjana.
+And then, if we need help with any of the other developers coming in, just to help somebody pulling some of the data in, so he said one of the sources was available via an API, so you know, potentially we need to we could pull that straight into Fabric.
+
+Jonjo Challands   41:30
+Great. I was about to ask for your e-mail, so thank you for that. Yeah, sure, no problem. We can get that sorted. And if there's any other information we need or complexities around it, we'll be back in touch.
+
+Stavros Tsagkarakis   41:43
+Sounds good. Yeah, go ahead.
+
+Jonjo Challands   41:43
+I...
+I don't know if there's if you're interested in us. I don't know if there's anything else to cover. I was going to say if you're interested, I can very, very briefly at high level discuss these other ideas we've had to see if you just to keep you on your toes or what. But would that be of interest to you?
+
+Stavros Tsagkarakis   42:04
+That would very much be of interest to me. So yes, I'd love to hear what you have to say, Chris. I am just before there, just to put a neat bow on, you know, this particular work. I think if we can perhaps work towards, I'm not sure if, you know, anybody's taken leave next week from your end.
+
+Jonjo Challands   42:06
+Yeah, sure.
+
+Stavros Tsagkarakis   42:25
+But if not, it would be wonderful if we could work towards getting this information from you guys next week sometime, so that, you know, we can start.
+Yeah, scheduling this week in as soon as possible.
+
+Jonjo Challands   42:38
+Yeah, I suspect the initial provision of data will be very, very quick. I'm not suggesting it's this afternoon, but certainly Tuesday. I think me and Chris are off next Friday, but it's out of actually out of our hands once we've delivered that. I will cheque in with Sharif and his team
+
+Stavros Tsagkarakis   42:42
+Yeah.
+Okay, good.
+Yeah, yeah. Perfect. Yeah.
+Okay.
+
+Jonjo Challands   42:57
+today and just to get that motion going and I can keep an eye on that. But yeah, I don't see any reason why we can't deliver that.
+
+Stavros Tsagkarakis   42:58
+Yeah.
+Yes.
+Do you have everything you need from us in terms of your discussions with Sharif then going forward on this particular pizza?
+
+Chris Rolls   43:03
+That.
+
+Jonjo Challands   43:08
+But to the best of my knowledge, yes, I've got the e-mail and the name of the people we need to give access to, and I've got Dataverse, Power BI Workspace and the Fabrics. And he'll know all of that more than me, so that's absolutely fine.
+
+Stavros Tsagkarakis   43:10
+Okay if.
+Right.
+But.
+Yeah.
+Stupid.
+That.
+If there's anything else, just yeah, drop me an e-mail. Happy to. OK, great. OK, cool. That wraps that up.
+
+Jonjo Challands   43:26
+Yeah, I appreciate it. Thank you.
+Excellent. So yeah, I guess just I'll keep this as high level as I can, but we've grown very quickly, EMS, and this year has been a bit of an eye opener in terms of the governance structure from our finance perspective that we don't have. And
+Contract profitability has always been something we've done on the back of an envelope as opposed to a formal report. So this is a massive step forward. The obvious next areas for us is we've touched on out of contract revenue, where we're paid a set fee to deliver a set scope.
+but we also act outside of that scope and get paid a fair price for our fair day's work. We have KPIs and measures around that specific out of contract revenue. And the next report we have in mind is one that we do offline. And we just want to bring it in with your help to that same work, the Power BI workspace. And it's basically
+summarising what our targets are, what our KPI is for the year to deliver out additional services, because it is it's 50% of our profit that comes from this work. And it's kind of tracking that and being able to give the senior leaders in the business the opportunity to appraise sectors, contracts, staff.
+and keep an eye on whether we're on track or not. So that's the next piece of what we want to do. And then one eye on maybe a bit further,
+Our team is growing. So it's not just me and Chris. There's soon to be four people under Chris, sorry, five people under Chris. And we get, we're actually now about to go into a new jurisdiction. We're about to enter the Spanish market. We're setting up our new Spanish subsidiary and it's going to become vital for
+
+Stavros Tsagkarakis   45:10
+Gavin.
+
+Jonjo Challands   45:21
+for me and Chris to keep an eye on not just the consolidated group and how they're performing against their KPIs and budget, but the subsidiaries of each. And we have people in each of these countries that rely on that data and they aren't getting a clear and concise view of that data at the moment. So the vision I have is to bring a form of executive summary
+for each of those subsidiaries, for each of the people that are responsible. And maybe the top headline is, here's your profit versus budget. And then there's another box, say how you're doing on additional services. How are your most, here's your five most profitable contracts. Here's your five least profitable contracts. And it's kind of building on pieces
+
+Stavros Tsagkarakis   46:00
+Yeah.
+
+Jonjo Challands   46:04
+around the business. So it pulls in the additional services, pulls in the profit, pulls in the staff costs or staff churn and relevant KPI metrics to a neat one pager that we can say, here we go, you're in charge of our Italian business and here is your results for the month of February.
+
+Stavros Tsagkarakis   46:21
+Mm.
+
+Jonjo Challands   46:23
+That is a big piece, I feel. And obviously having snippets of data requires behind the scenes to have a full picture and full capability. And so breaking that down, there's going to be multiple areas that we'll need the likes of yourselves to help us with, assuming the appetite's there.
+And I just see this becoming quite a big work stream over the course of the year. So that's my ambition. That's kind of where I think we should be going. And we look to the likes of you to help, but also to give some guidance on what might look good and what might be needed in this respect. I'm sure there'll be
+
+Stavros Tsagkarakis   46:50
+Yeah, that's correct.
+
+Jonjo Challands   47:01
+an initial report that we rolled out that people say, well, I don't want to see that, but I want to see this and therefore there's some changes that are needed. Yeah, it kind of makes the role that we're trying to do a bit easier and a bit more effective. And we don't have any of that in place at the moment. I think on a monthly basis, we go through ledgers and go through
+detailed reports and I don't really want to do that. I want to see the high level data and leave the detail for other people.
+
+Stavros Tsagkarakis   47:26
+Yeah.
+Yeah.
+
+Jonjo Challands   47:30
+I appreciate this is just the start. It's an exciting start, but yeah, that's kind of where our thinking is going for the rest of the year.
+
+Stavros Tsagkarakis   47:32
+Yeah.
+Interesting that the on the auto contract revenue.
+You know, which is it represents about, what did you say, 50% of profit?
+
+Jonjo Challands   47:48
+Yeah.
+
+Stavros Tsagkarakis   47:48
+Yeah, you're tracking that offline. I think it makes a lot of sense to, you know, do what you're suggesting there. So, yeah, I mean, that makes a lot of sense. Also, very, very interesting, interesting, interesting to hear that you, you know, extending out to Spain. You know, that's very good. So, consolidated group view makes a lot of sense.
+
+Jonjo Challands   48:06
+Yeah.
+
+Stavros Tsagkarakis   48:13
+Yeah, I mean, we'd be very happy to help. I mean, that kind of reporting, when you're tracking KPIs and, you know, senior leadership can have a look at those KPIs and see how the business is performing against those KPIs. It makes a lot of sense, keeps everybody in control. So we'll be very happy to support you guys.
+
+Jonjo Challands   48:30
+Absolutely, yeah, we've tended to have very manual and reactive reports to our shareholders and their shareholders, but, you know, a real focus now needs to be how do we allow the people that are delivering our service, you know, the likes of the directors who oversee the actual service delivery, how do we allow them
+
+Stavros Tsagkarakis   48:36
+Yeah.
+
+Jonjo Challands   48:50
+internal reporting to monitor how their team are doing and where they need to focus. So yeah, big shift, big, big site in Spain is very exciting. Been living that for the last six months. So good to get that over the line. But yeah, we'll see where this goes.
+
+Stavros Tsagkarakis   49:02
+Yeah.
+So, on the this current piece of work on the the contract profitability reporting,
+What is, understanding that the initial allocation was a governance issue and that's perfectly understood. What are your, you know, I know you wanted to start on this yesterday, which is fine, we'll help out as soon as we can. We've got all these, you know, these bits and pieces sorted out with you. What is your timeline?
+in terms of delivery, just so that we can manage each other's expectations. What are you working towards?
+
+Jonjo Challands   49:41
+Yeah, sure.
+In a perfect world, we would be able to switch this on for everyone to see midway through May.
+
+Stavros Tsagkarakis   49:46
+Yeah.
+OK.
+
+Jonjo Challands   49:53
+So I'm not naive enough to think that is definitely going to happen. I think that let's see how this unfolds before we commit to that in terms of our stakeholders. But that's kind of where my mind is at the moment to say if we can work through this in April and start seeing how it unfolds and if everything is going well and we can
+
+Stavros Tsagkarakis   49:54
+Mhm.
+Yeah.
+Yeah.
+
+Jonjo Challands   50:15
+target the things we need to and speak routinely enough.
+
+Stavros Tsagkarakis   50:18
+Mm.
+
+Jonjo Challands   50:18
+May feels like a good opportunity to roll this out and say, look how good April was and look how good year to date is and here's what it looks like.
+
+Stavros Tsagkarakis   50:23
+Yeah.
+And then the other two, the other two reports, although they're in the pipeline, as a matter of interest, where do they sit in terms of your roadmap? Are they, you should, did you manage to say by the end of the year, so are you looking to pick these up within seven next three or four months or?
+How does that look?
+
+Jonjo Challands   50:46
+So the additional services report that we're doing, I'm a little less relaxed, sorry, a little more relaxed on because we are still doing it, but it would be good to see the automation of it kind of go to a system based approach. So that one, I'm, you know, the H1 focus,
+
+Stavros Tsagkarakis   50:51
+Bing.
+Yeah, yeah.
+Mm.
+Mhm.
+Okay.
+
+Jonjo Challands   51:05
+but kind of in the back of my mind thinking it's not the end of the world if that needs to get part.
+
+Stavros Tsagkarakis   51:06
+Mm.
+
+Jonjo Challands   51:11
+The exact summary stuff for the group and for our subsidiaries.
+The honest answer is as soon as possible. I want to have an impact on what we're showing our executive committee and I want that to be as quick as possible. But again, not naive enough to think that happens overnight and therefore, yeah, H2 focus probably on my mind for that. We have a solution in place.
+
+Stavros Tsagkarakis   51:22
+Mmh.
+Mm.
+Yeah.
+
+Jonjo Challands   51:39
+but it's extremely manual and it requires an initiative being taken by multiple people on multiple levels. And, you know, I have a bunch of notes that I could say to Chris, go away and summarise all these and it will take him a month to do and that's just not what we want. So, yeah, that certainly is
+
+Stavros Tsagkarakis   51:41
+Yeah.
+Yeah, yeah.
+Mm.
+
+Jonjo Challands   51:58
+probably a July thought process to commence. In H1, I'd really like to achieve this and the additional service report, but again with a bit more of a relaxed view around the additional services.
+
+Stavros Tsagkarakis   52:12
+I think from our end, Jonjo, you know, obviously we need to kind of win over your trust. And once we do that, and I know that we will, yeah, what works for a lot of our clients is that
+Because we like to work in an agile way. We don't like to lock down the scope, right? We like to lock down the business objectives, okay, what it is that you want to achieve, and then we work towards that together, right? But not locking down scope allows us to, allows you the freedom to say,
+Actually, you know, I wanted to do this, but now I want to do that right. I've changed my mind mid-flight, and then we don't get through complicated processes of change requests or anything like that. We just do it for you, you know, and what works.
+
+Jonjo Challands   52:54
+No.
+
+Stavros Tsagkarakis   53:02
+with clients similar to you that are going through this growth spurt, right, is that...
+you know, that there's like a bank of days that you're comfortable with that we repeat each month, right? And then we say, okay, fine, new purchase at five days a month or whatever it is. And you can use those five days on any one of these projects that you like, right? You want to run some of those in parallel, great, that's fine. You know, and then we agree on the priorities together as the
+
+Jonjo Challands   53:43
+Yeah.
+
+Stavros Tsagkarakis   53:43
+Constricted to anything, but something for you tomorrow over over the weekend, yeah.
+
+Jonjo Challands   53:47
+Absolutely, yeah. I think the rate that our thought process is developing, there'll be probably another couple of things by the time we finish this work stream. And you've come with very high recommendations from both Alec and Sharif. So let's see where this goes. Excited to work together. And the fact you're in London as well, at the right time, let's
+
+Stavros Tsagkarakis   53:55
+That's right.
+That.
+Is together, yeah.
+Yeah, me too.
+
+Jonjo Challands   54:09
+Grab a coffee or for a beer or whatever it might be, and make sure we get that sorted.
+
+Stavros Tsagkarakis   54:12
+Sounds sounds good to me, so...
+Sounds good to me. Let's try to do that over the next couple of weeks, Jonjo, once we, once we, you know, we start getting this project kicked off. I look forward. Right, guys, have a wonderful weekend. Thank you for a great session. Yeah, we'll talk in the new week. Thanks, take care. Bye, bye, bye.
+
+Jonjo Challands   54:19
+Fantastic.
+Sounds good. Excellent. Yeah, you too.
+
+Chris Rolls   54:26
+Thanks, everyone.
+
+Jonjo Challands   54:28
+Will do. Thanks, everyone. Take care. Bye.
+
+Chris Rolls   54:29
+But it just bye.
+
+Sanjana Nagaraj   54:29
+Thank you.
+Hey.
+
+Stavros Tsagkarakis stopped transcription

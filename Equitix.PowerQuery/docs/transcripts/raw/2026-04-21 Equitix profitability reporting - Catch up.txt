@@ -1,0 +1,222 @@
+Equitix profitability reporting  Catch up-20260421_160345-Meeting Recording
+21 April 2026, 03:03pm
+16m 29s
+
+Chris Rolls   0:03
+I know that we're currently handling it as well, so...
+In kind of example, you've got an employee who's on a cost rate of 500 pounds A day.
+In kind of example, you've got an employee who's on a cost rate of 500 pounds A day.
+So basically that would give you an estimated cost of each month. So in this example, it's 10,875. You're going to have, so that's your kind of expected cost of the employee each month. So essentially what we need the system to do is for, if the employee is active during that month,
+
+Andrew Settle stopped transcription
+
+Chris Rolls   0:38
+they'll have a cost of 10,875. So if they've got time sheets that they should have completed, they've got a cost and that's what we expect to see. The time sheets are weekly and obviously there's sales there. So I think we've got kind of some cases of joiners and leavers and things like that to consider. But just on the basic employee
+We've got, you know, the issue with shorter months, longer months to have to address as well. So in a February month, which, you know, got fewer working days, if everyone's booking their 7 1/2 hours a day, your cost is probably going to be lower than your cost, your average cost per month.
+So the kind of way of dealing with that from a thought point is to, you know, to be able to measure the difference between the actual cost we're seeing and the cost we expect and absorb that into a revised cost per hour rate.
+As well, so we can apply that to the to the projects and get us back to the 10875.
+You know, on the other side, if you've got more hours booked, then you decrease it. It's the same calculation, but it just is in reverse, so...
+it will just decrease the average cost per hour and then that will give you the, obviously that's a dynamic calculation. I don't know how easy that is to put together or to put through using the data that we've got, but that's the kind of the baseline
+you know, for an employee working a whole month, there's no special considerations to have to worry about.
+there. You've got this issue where you've got maybe an employee who's only got, has only submitted one time sheet or has, you know, or has, you know, got unsubmitted time sheets. What we do, what we have at the moment, we've got a project code called EMS 90.
+which is set up to capture, you know, to allocate time to time sheets that haven't been submitted by the employee. I'm not sure that was kind of a...
+A workaround for trying to deal with this issue of trying to balance out what, what you know, when people aren't submitting time sheets. It's supposed, you know, is to is to get something into that code or or so it could capture the cost of the unsubmitted time sheets. It won't be able to be allocated to projects because it's not.
+to a project. It was just to try and, you know, enable us to reconcile the system to say, you know, we are capturing all the costs of all the employees somewhere and how we do that. So I don't know whether that kind of project is useful to use or whether we there's another method to
+Do this, which is which is better, but essentially we want to equalize all the costs so that the cost for an active employee is the same each month, so we can, you know, more accurately reflect that in the profitability on the projects.
+
+Stavros Tsagkarakis   3:44
+OK.
+Johnny, do you have questions on there?
+
+Sanjana Nagaraj   3:48
+Yeah, so I was wondering if there's a glossary or something for all the data sources that we have received up until now, Chris. So that'll help us understand the data more.
+
+Chris Rolls   3:59
+Oh, yep, I can I can pull a glossary together.
+All the data provided, that's fine.
+
+Sanjana Nagaraj   4:08
+Thank you. And on that note, when you mentioned about the employee that has to be stagnant for every month for each particular employee, that means we have to be restricting that they can only do so many hours per month. And will that be changing per month or sorry, per year or how is it going to work?
+
+Chris Rolls   4:30
+So if an employee overbooks time to a project, so, you know, your standard work, standard working week is 37 1/2 hours. And sorry, before I forget, we haven't talked about employees who've got maybe sort of part-time workers that needs to be considered as well. But yeah, if 37 1/2 hours and someone's booked 60 hours to that project,
+then their cost is still the same to the business. So what the profitability is trying to do is to say, well, the cost of that time, yeah, we're going to absorb that extra back into, we're going to reduce their kind of cost per hour to equalize back to the total for the month, because in reality, they don't cost more.
+The issue we've had in the past with trying to do that when we've based it on just a standard cost per hour is when we have had projects go into kind of distress and people are working overtime. It looks like the project is very unprofitable, which I guess, you know, if you had to employ more staff to deliver that project, there's an argument to say that it is more unprofitable, but in reality, we don't have extra costs. We don't have extra costs in the business.
+So the project is still got, you know, it's still got a profit margin there, you know, in reality. And that's what we're trying to capture here is what's the actual profitability of these projects. There is a separate exercise to say what is costing us, what's the least efficient project to run, what's costing us the most time, but that could be a separate report. So that would be kind of a stage, you know, phase two.
+phase three project, you know, to give more useful information on the actual time cost to the business. But this is just to try and give back to the team, to the directors, what is these projects actually costing us at the moment.
+
+Sanjana Nagaraj   6:12
+Right, okay, got it.
+
+Stavros Tsagkarakis   6:16
+Yeah, that's pretty cool.
+
+Chris Rolls   6:19
+Yeah, I guess I guess it's, so this is a very, obviously this example is very simplistic. If you've got someone who leaves after the first month and they don't have any more time sheets, there wouldn't be any cost associated with those time sheets. So I don't know whether this becomes, rather than a cost per month, a cost per time sheet week, whether that's more.
+a better way of doing it. So then that it can be realized on a timesheet week basis rather than on a monthly basis. The reporting periods are monthly, which is why I've kind of presented it this way. And so when I think about it, I think about it monthly, but
+to capture kind of joiners, leavers, because otherwise we're going to have people who've done, you know, one week's work and cost, you know, the whole month's worth of cost. It probably, in the scheme of things, isn't a big problem if it's easier to do it monthly or it's best to do it monthly. And if they're active, they've just got a cost for that month.
+But it just means we fall a little bit further away from the actuals there. But yeah, that's kind of, so maybe I'm not sure how easy it is to do timesheet weeks rather than actual reporting periods.
+
+Sanjana Nagaraj   7:32
+So does it mean when we are working on the timesheet, do we have to display the reports on a weekly basis?
+
+Chris Rolls   7:39
+No, the reports is definitely a monthly basis. So the reporting periods are monthly. So that's why kind of everything's geared up towards a monthly reporting. I'm just thinking if you've got someone who's worked one week out or because they've left after week one, they've only got 1/4 of their cost, really. But if we do this absorption method, we're going to end up with
+
+Sanjana Nagaraj   7:41
+Okay.
+
+Chris Rolls   8:00
+you know, a whole month worth of costs going into one week. So whether there's a number of timesheets expected in a month, number of timesheet weeks, you know, that becomes monthly cost divided by timesheet weeks and then work it out from there if the times you're active or not. I don't know, that feels a bit overly complicated.
+to be honest.
+just even talking it through sounds a bit complex. So I don't know whether that's the right method to go on this, whether, you know, for simplicity to go on a cost per month, if you're active, you've got a cost and that's what it is. And then I think because
+Yeah, I think that's probably the right way to do it.
+No.
+Yeah.
+
+Sanjana Nagaraj   8:46
+Okay, I might have to go and do my research on that.
+
+Chris Rolls   8:50
+No, that's fine. That's no problem. It's just trying to get as close to the reality of what's happening as we can, really, and not to have these big variances, because that's what you know people people are being, you know, the people who lead the teams and departments are going to be using this as their...
+
+Sanjana Nagaraj   8:53
+Yeah.
+
+Chris Rolls   9:10
+you know, as part of their performance reviews and things like that. So it's going to be kind of important that we get this right for people as well to give them the right information back. So they just know how their projects are performing. So we want to get it as accurate as we can, but without it being so cumbersome and that it's going to sort of eat into those 10 days very quickly.
+
+Sanjana Nagaraj   9:25
+Okay.
+
+Chris Rolls   9:33
+So, the first kind of ask is to get something out that's that simple that can be built upon, but that's so I think just a basic, this feels like the right way to to start.
+for this approach. But yeah, so someone who hasn't submitted any time sheets, they're going to need to, that cost must still need to be measured. But it'll be it'll be on a non a non-profit, a non project code. So it'll be a like the EMS 90 or something like that.
+that won't be necessarily visible to the, that won't be visible to the contract leads and to the sector heads, but it will be, you know, it's something that we'll have there for to be able to extract the data for ourselves for our reconciliation purposes.
+
+Sanjana Nagaraj   10:27
+Okay.
+
+Chris Rolls   10:28
+Hopefully that kind of makes sense, so I waffle a bit there, but...
+
+Stavros Tsagkarakis   10:31
+Okay.
+
+Sanjana Nagaraj   10:32
+Yeah.
+
+Stavros Tsagkarakis   10:34
+Any questions around the subcontract cross inclusions, Sanjana?
+
+Sanjana Nagaraj   10:41
+Nothing at the moment, but then I just wanted to know if how frequently will the NetSuite and the data extracts will be taking place? Like is it on a monthly basis? You just mentioned the time sheets are done monthly, but what about the other data that we've got at the moment?
+
+Chris Rolls   10:58
+So the data, so some of the data, the spreadsheets and the would be updated monthly. There'll be a monthly update.
+The date for next week will be monthly as well. The contract register is live because it's in Dataverse. Anything in Dataverse, any Dataverse tables are live and current and like timesheets are constantly updated, that table. So that's everything in Dataverse is live and everything that's outside of all those.
+Jedox is live as well; that Jedox link is live data.
+The, I think we talked about, did we, did we discuss last time?
+Um, the API link to Jed Ox is that, um, it's on the list, isn't it?
+The join, I'm not sure if that is on this way, but yeah, so so projects, contracts are live, the user table, that's that's all live data, but the the time sheets is live, but yeah, next week data is going to be monthly update once the legends have closed, they'll be up.
+dated, refreshed, so the revenue data, the actual costs and actual revenue will be monthly refresh and the employee costs will be monthly refresh as well.
+
+Sanjana Nagaraj   12:22
+Okay.
+
+Chris Rolls   12:23
+I ideally would like to get a link from our HR bamboo system to do calculations and put them into a table, but there's some restrictions on that at the moment. So we have to do a manual update, you know, in a spreadsheet at the moment.
+
+Sanjana Nagaraj   12:39
+Okay. Also, one thing on the data. So do we have a link or something that will connect to a drive where we have all the data files so that we can access and pull it in the fabric?
+
+Chris Rolls   12:53
+Yes, it will be. So we'll keep it in the workspace, obviously the SharePoint and we'll do a guest, maybe a guest link is how we set that up to invite you in. So we can have that all in one place and we can keep those, the live ones refreshed them. But then that will be in the same, yeah, the same area as the actual.
+
+Sanjana Nagaraj   13:08
+Yeah.
+
+Chris Rolls   13:12
+I think that we've got a workspace called management information where it currently sits, EMS management information. So, but they're in separate folders within that workspace. So if we maybe put them in one place within that work, within that SharePoint file and then use that as a space. I think the workspace will be EMS Director, which is our current workspace for.
+But we might want to set up a completely new one. That's why I need to kind of just double back on what they're and how the setup is going to be in there. It might be easier just to start our brand new workspace and bring the data in there.
+
+Sanjana Nagaraj   13:45
+Yeah, perfect.
+Okay, and I think that's it for me.
+
+Stavros Tsagkarakis   13:56
+Yeah.
+Chris, from my end, around the weekly catch up cadence, I think once we can get access to those environments, if we can actually start working, it would make sense that we put in just a, at a minimum, a 30 minute catch up each week, you know. We can continue to do so, you know, in the meantime, and we can use it just to touch.
+
+Chris Rolls   14:11
+Yeah.
+
+Stavros Tsagkarakis   14:18
+Base, but I, I, I'm hoping that we'll get access from you guys pretty soon.
+
+Chris Rolls   14:22
+Yes.
+I want to get this, yeah, we need to get that set up this week. So it's, you know, there's, I don't think there should be any blockers to doing that. We just need to make sure, yeah, people are getting this set up for us.
+
+Stavros Tsagkarakis   14:28
+Okay.
+Bye.
+Yeah, yeah, yeah, yeah, and then I think we've got what we need right, Sanjana and Andrew, we can then proceed from our end. That's right.
+Yeah.
+
+Sanjana Nagaraj   14:47
+Yes.
+
+Stavros Tsagkarakis   14:47
+Okay.
+Good, and then did you have a chance to look at that note I sent you? I'd call it a working alignment note. Was there anything that kind of didn't match your understanding there in terms of how we see the project and so on?
+
+Chris Rolls   14:49
+Excellent.
+Not at the moment, I'll be honest, I've printed it, I've printed it, I've gone through it. There's the forecast revenue, I need to give you an update actually on the, so all of our forecast revenues in that contract is in that one file, with the exception of 1 project, which has a variable movement of contract revenues, our biggest
+
+Stavros Tsagkarakis   15:06
+All right, OK.
+Yeah.
+Yeah.
+
+Chris Rolls   15:22
+project, but it's based on, it's a variable element to the fee, which is why it's kept. So I've updated that file to add that on and the tables can be joined. It's in the same format, same, so you can just literally, you can append the tables together within, you know, to bring them into the same report. So it's fine. So it follows the same.
+Yeah, it's exactly the same headings and things, so it's in the same spreadsheet file now, so I'll re-share that as well, just so that can be part of the.
+
+Stavros Tsagkarakis   15:48
+Yes.
+
+Chris Rolls   15:58
+Part of the update, so that was my my one my one thought, but that was because we just just done that on our side to bring that in, but it has to be, yeah, it has to be kept separate because the other one's got, yeah, formulas behind it and that one's manual update.
+
+Stavros Tsagkarakis   15:58
+Perfect.
+Okay.
+So.
+
+Chris Rolls   16:14
+Cool.
+
+Stavros Tsagkarakis   16:15
+Good, I think we're in a really good place then.
+
+Chris Rolls   16:17
+Brilliant. Excellent.
+
+Stavros Tsagkarakis   16:19
+Well, good. Thank you for your time.
+
+Chris Rolls   16:20
+Excellent. No, thank you very much. Brilliant. Take care. Cheers. Thanks. Bye.
+
+Stavros Tsagkarakis   16:22
+All right, we'll chat soon. Thanks, Chris. Cha cha. Bye. Bye.
+
+Sanjana Nagaraj   16:24
+Thank you. Bye.
+
+Andrew Settle   16:24
+Cheers, babe.
+
+Andrew Settle stopped transcription

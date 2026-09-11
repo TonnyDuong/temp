@@ -1,0 +1,184 @@
+Equitix profitability reporting follow-up on files and clarifications-20260904_143136-Meeting Recording
+4 September 2026, 01:31pm
+Stavros Tsagkarakis started transcription
+Stavros Tsagkarakis   0:11
+Hi, Eve. Hi, Chris.
+Chris Rolls   0:13
+Hi, good afternoon, guys.
+Eve Dillon   0:14
+Hello.
+Stavros Tsagkarakis   0:15
+What are you guys doing?
+Chris Rolls   0:17
+Good, thank you. Good.
+Eve Dillon   0:18
+Good, thank you.
+Stavros Tsagkarakis   0:19
+Yes, that's good. It's Friday. It's Friday afternoon. You can complain.
+Chris Rolls   0:20
+Hi, how are you?
+Yes.
+Yeah, can't complain too much.
+Stavros Tsagkarakis   0:27
+Yeah, that's right. So just quickly, we fired over a few questions to you guys on some of the work, and I don't believe we've heard from you guys just yet. I thought it would be good for us to just jump on a call. Maybe we can cover some of those together today.
+If we've got any further questions, we could probably use this time to get those cleared up.
+Good. Tonny, can I hand over to you? They were your questions. Would you like to take us through them and see if we can get what we need?
+Tonny Duong   0:58
+Yep.
+Yeah, sure. So let me just share my screen just so all on the same page of what was sent.
+Can you see my screen?
+Chris Rolls   1:11
+Yep, this ***** not on screen movies on screen.
+Eve Dillon   1:11
+Yeah.
+Stavros Tsagkarakis   1:11
+Nice.
+Tonny Duong   1:12
+Yeah.
+Chris Rolls   1:16
+Cool, OK.
+Tonny Duong   1:16
+So previously there was a request to make an amendment to the subcontractors. So that was now done with the caveat that the THY was missing from the project. But once that's included, it should calculate to the expected amount that we see here.
+Eve Dillon   1:33
+Yeah, I dropped you an e-mail last Thursday to say it has, if you could just refresh the report because it is now included. And also we just want to refresh the report as that the end of July as well. I'll just cheque that the like transaction.
+Tonny Duong   1:42
+Mm.
+Eve Dillon   1:52
+data set is up to date. And then if so, yeah, if we could just do a full refresh of all the data in the report.
+Tonny Duong   1:54
+Mm.
+Yeah.
+Chris Rolls   2:00
+There was a, if I remember rightly, there was a mismatch between the project database and NetSuite, and NetSuite was amended to match to the project database. So it was TYH, I think, 01, wasn't it, project code, rather than T?
+Tonny Duong   2:00
+Yep.
+Chris Rolls   2:19
+HY and NetSuite was THY and or vice versa, whichever end it was. But anyway, it now matches and they link. So that was, I think, called the cause of the problem not coming through to the report. So yeah, if you just refresh now, it should it should work.
+Tonny Duong   2:36
+Okay, so we'll conduct an additional refresh and see you and let you know once it's done.
+Chris Rolls   2:40
+Perfect.
+Tonny Duong   2:41
+Yep. So in terms of the next work regarding that additional report, so before you send us an e-mail contained that Excel sheet, but we would need that sort of data in the SharePoint not given to us. It needs to be in the SharePoint on the machine.
+Chris Rolls   2:52
+Yeah.
+All right, OK.
+Tonny Duong   3:01
+so that the Power BI can pick it up and do whatever it needs to do.
+Chris Rolls   3:05
+The I wouldn't.
+I think the only data we need to provide is the adjustments data set, because all the other data that feeds into that report is available through the profitability model, I think. Is that right, Eve? Am I?
+Tonny Duong   3:22
+Okay.
+Chris Rolls   3:25
+I think that's correct.
+Eve Dillon   3:27
+Yeah, that's what we discussed last time.
+Chris Rolls   3:29
+Yeah, so everything's there except for the adjustments. It's there, it's just it needs to be brought into a separate report for just the additional services, the 40013 code. That's the nominal code they reside under. So it's just that code needs to be brought in.
+Tonny Duong   3:32
+Yeah.
+Yep.
+Okay.
+Chris Rolls   3:50
+And then everything else should be there. I think Grant's forecast is there as well, which is one of the data points, the 1.9 million. That's the forecast projection. That was included as the forecast.
+in the forecast model, I think in the profitability model in that part of this template. So the data should all be there except for the adjustments. So we can get that so far, but you know, what we should see is it's out by that adjustments amount. But yeah, we do need to set that up separately and put that into the data file.
+Tonny Duong   4:18
+Mm-hmm.
+Chris Rolls   4:28
+So that can avoid to the model.
+Tonny Duong   4:28
+Mhm.
+Yeah, so yeah, if you let us know once that adjustments has been put in, then we can um know what sort of data we can expect.
+Chris Rolls   4:34
+Yeah.
+Yeah, no problem at all.
+Tonny Duong   4:39
+And it will complete the report now.
+Chris Rolls   4:41
+I think it'll be quite basic; it just needs the project.
+The Projects in the monthly adjustment. We have a look and see what the data points are, but it shouldn't need too much because it will be a manual entry. It's just moving the revenue in the period.
+Tonny Duong   4:51
+Mhm.
+Yeah.
+All right. And lastly, I think it was mentioned before, but the drill down of that additional report, we'll keep it similar to how the other reports are done. If you want additional adjustments, we can discuss later, but for now, we'll just copy how it was working just so it's consistent across the three reports.
+Chris Rolls   5:07
+Yes.
+Yeah, I think that'll be.
+Tonny Duong   5:17
+No.
+Chris Rolls   5:17
+That'll be fine.
+Tonny Duong   5:18
+Okay. See ya.
+Chris Rolls   5:19
+We have a look and then think we want to do anything differently to that.
+Tonny Duong   5:24
+Mhm.
+Okay, so yeah, that's the four points. Now, is there anything that you want to raise before we discuss what to take away?
+Chris Rolls   5:25
+I think a moment is fine.
+Not for me. I think once the report's refreshed, the profitability one, I think Eva's going to do a quick record on that, aren't you, for the July data, just to, and then we don't expect anything to be out of alignment or changed, but we'll just do that quickly and then hopefully that one's.
+Tonny Duong   5:39
+Mhm.
+Chris Rolls   5:54
+Kind of done, and then we can move on with the initial services, or we can, yeah, that one, move on to that one next.
+Tonny Duong   5:56
+Yeah.
+Yeah, okay. So yeah, we'll do the refresh. We'll let you know once it's ready. If you could let us know once the adjustments is also uploaded. And then we'll finish off the report, the third report, and get that in for you guys.
+Chris Rolls   6:09
+Yeah.
+Jane.
+Tonny Duong   6:15
+No.
+Yeah, I think that's about it. My side.
+Chris Rolls   6:18
+Brilliant.
+Tonny Duong   6:20
+If we have any other questions, we'll let you know as we try to finalise the report. Yeah.
+Chris Rolls   6:27
+Brilliant.
+That sounds good.
+Tonny Duong   6:29
+Yeah, no, I think that's it for me, Service Andrew. Anything from you guys?
+Stavros Tsagkarakis   6:36
+Thanks, Tonny. Nice and easy. Is it worth...
+Perhaps doing a quick check-in next week sometime. Yep.
+Chris Rolls   6:46
+I think, yeah, or next, should we say next Friday? Is that does that does Friday work for everyone or?
+Stavros Tsagkarakis   6:52
+I think so. Yeah, works for us.
+Chris Rolls   6:54
+It works quite well, I think. Progress, progress check.
+Stavros Tsagkarakis   6:55
+Works for us, yeah, uh, same time, good.
+Chris Rolls   6:59
+Yeah, it should be.
+Yeah, no, same time works for me.
+Stavros Tsagkarakis   7:07
+Fantastic. Let me just have a look at my end. Sorry, Chris, just give me a second.
+Ah, there we go. I've actually been caught out. Is it said half past two? Yeah, should be able to do half past two fine on my end. I'll let you know if there's a problem, but I think that we could probably lock that up.
+Chris Rolls   7:31
+Pretty.
+Stavros Tsagkarakis   7:32
+OK, good.
+Chris Rolls   7:34
+That's good. Brilliant. We'll get that set up and we'll let you know. Yeah.
+Stavros Tsagkarakis   7:34
+Alright, guys, it was nice and easy.
+Perfect.
+Chris Rolls   7:39
+Okay.
+Stavros Tsagkarakis   7:40
+Thank you very much. Have a good weekend. Chat soon. You too. Bye. You too. Bye. Bye.
+Chris Rolls   7:40
+Thanks everyone. Have a lovely weekend. Cheers. Cheers.
+Tonny Duong   7:41
+Thank you. Bye.
+Eve Dillon   7:42
+Thanks, all. Enjoy your weekend. Bye.
+Chris Rolls   7:45
+Thanks, bye.
+Andrew Settle   7:46
+Bye.
+Stavros Tsagkarakis stopped transcription
