@@ -190,12 +190,46 @@ an independent dataset. It also omits two of the eight supersector values on the
 Chris confirmed the fee book **matrix** is not required for 2026. That removes the display,
 not the dependency: column `K` still needs the fee-book percentages.
 
-- **Candidate source, untested:** the `Contracts` sheet of `EMS Fixed Fee Forecast.xlsx`,
-  already loaded as `stg_EMS Fixed Fee Forecast_Contracts1`, carries `crbb5_currentannualfee`
-  and `Supersector`, and joins to `dim_Project_Live` for `Upstream Report A`. The same fees
-  also sit on `crbb5_billingschedule`, which is loaded as a source query and consumed by
-  nothing. `debug-fee-book-coverage.pq` and `debug-fee-book-reconciliation.pq` test whether
-  this reproduces 24,520,619.28. **Do not rely on the hypothesis until those have been run.**
+**Candidate source tested, not yet reproduced.** The `Contracts` sheet of
+`EMS Fixed Fee Forecast.xlsx`, already loaded as `stg_EMS Fixed Fee Forecast_Contracts1`,
+carries `crbb5_currentannualfee` and `Supersector` and joins to `dim_Project_Live` for
+`Upstream Report A`. The same fees also sit on `crbb5_billingschedule`, which is loaded as a
+source query and consumed by nothing. Results so far, from
+`debug-fee-book-coverage.pq` and `debug-fee-book-reconciliation.pq`:
+
+- **The join itself is sound.** 323 sheet rows in, 323 rows out, no fan-out; zero rows failed
+  the project join; zero landed without a reporting line; zero fell outside the contract-status
+  filter, so `IsInScope` is not a factor; `HAP-03` is absent, so HARP is not leaking in.
+  293 distinct projects, of which 29 carry more than one fee row.
+- **The sheet has neither an `Exchange` nor a `GBP Value` column**, so currency has to come from
+  `crbb5_basecurrencyname`. The workbook divides EUR by **1.15**: `SI Ireland`
+  486,435.4782608696, `SI Italy` 1,996,295.826086957 and `Renewables` 3,653,098.043369564 each
+  land on clean pence when multiplied back, and those are the only three Euro-exposed lines.
+  That rate is a point-in-time figure off the workbook, not a live rate.
+- **Round 1, annual run-rate rejected.** Summing `crbb5_currentannualfee` gives
+  **33,271,894.92** against 24,520,619.28. Every line is high, by multiples ranging from 1.0475
+  (`SI Scotland`) to exactly 4.0000 (`Highways`), so it is not a units or duplication problem.
+- **Round 2, operations apportionment rejected.** Applying `crbb5_revenueops` gives
+  **18,457,968.60** — undershooting by roughly as much as round 1 overshoots — and puts
+  `Highways` on 301,941.64 rather than 110,040.25. The fee book is not ops-apportioned. Note
+  this says nothing about whether *revenue* should be split on `crbb5_revenueops` — the
+  fractions allocate revenue between reporting lines, and the fee book is a different quantity.
+  The 11 Sep open question about the finance/ops split stands unchanged.
+- **Round 3, 2026 monthly columns, inconclusive.** `Highways` is high by exactly 4.0000x, which
+  is what a contract live for three months of a year looks like, and the workbook total is 73.7%
+  of the annual run-rate, or about 8.8 months. Summing the date-named 2026 columns tests that,
+  but the column detection matched nothing and returned 0.00 on every line.
+  `debug-fee-book-columns.pq` reads the actual headers to find out why.
+
+**Open, and the safe position until it closes:** the fee book has not been shown to derive from
+data we hold. The workbook figure sits between two quantities we can compute. Ask the client to
+confirm the basis rather than presenting a derived fee book.
+
+**Unrelated risk found on the way, not yet investigated.** `_Revenue_Forecast_31Dec2025` reads
+the same staging table and uses the same date parse (`Date.From`, then `Date.FromText` with
+`en-GB`), discarding anything that fails via its `DateRows` step. If those headers do not parse,
+that production helper contributes nothing to the in-contract forecast and fails silently.
+Confirm its row count is non-zero. No change has been made to it.
 
 ### `ExCoReporting` holds a third split, and the budget branch terminates there
 

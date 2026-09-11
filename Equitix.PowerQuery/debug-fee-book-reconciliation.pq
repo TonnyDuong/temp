@@ -93,9 +93,35 @@ let
     //          this query tests the row totals (workbook column H) first.
     //          Splitting out the six supersector columns is only worth
     //          doing once the row totals reconcile.
+    //          Round 3 first ran with only the two parses that
+    //          _Revenue_Forecast_31Dec2025 uses, matched no columns at all
+    //          and returned 0.00 on every line. The four attempts below
+    //          cover every shape debug-fee-book-columns.pq tests for, so
+    //          whichever one the headers turn out to be, this resolves.
+    //
+    //          The serial attempt is bounded to 40000-60000 (roughly 2009
+    //          to 2064) on purpose: without it a column named "2026" would
+    //          parse as serial 2026 and be silently treated as a date in
+    //          1905.
     ParseHeaderDate = (Name as text) as nullable date =>
-        try Date.From(Name)
-        otherwise (try Date.FromText(Name, [Culture = "en-GB"]) otherwise null),
+        let
+            Trimmed = Text.Trim(Name),
+            ViaDate = try Date.From(Trimmed) otherwise null,
+            ViaEnGB = if ViaDate <> null then ViaDate
+                      else try Date.FromText(Trimmed, [Culture = "en-GB"]) otherwise null,
+            ViaDateTime = if ViaEnGB <> null then ViaEnGB
+                          else try Date.From(DateTime.FromText(Trimmed, [Culture = "en-GB"]))
+                               otherwise null,
+            ViaSerial = if ViaDateTime <> null then ViaDateTime
+                        else
+                            let
+                                AsNumber = try Number.From(Trimmed) otherwise null
+                            in
+                                if AsNumber <> null and AsNumber >= 40000 and AsNumber <= 60000
+                                then try Date.From(AsNumber) otherwise null
+                                else null
+        in
+            ViaSerial,
 
     Columns2026 = List.Select(Table.ColumnNames(Source), each
         let
