@@ -215,21 +215,27 @@ source query and consumed by nothing. Results so far, from
   this says nothing about whether *revenue* should be split on `crbb5_revenueops` — the
   fractions allocate revenue between reporting lines, and the fee book is a different quantity.
   The 11 Sep open question about the finance/ops split stands unchanged.
-- **Round 3, 2026 monthly columns, inconclusive.** `Highways` is high by exactly 4.0000x, which
-  is what a contract live for three months of a year looks like, and the workbook total is 73.7%
-  of the annual run-rate, or about 8.8 months. Summing the date-named 2026 columns tests that,
-  but the column detection matched nothing and returned 0.00 on every line.
-  `debug-fee-book-columns.pq` reads the actual headers to find out why.
+- **Round 3, monthly columns, unresolved.** `Highways` is high by exactly 4.0000x, which is what
+  a contract live for three months of a year looks like, and the workbook total is 73.7% of the
+  annual run-rate, or about 8.8 months — so summing a monthly schedule is the obvious next test.
+  The query returned 0.00 on every line because its column detection matched nothing.
+  `debug-fee-book-columns.pq` was written to find out why and has not yet been read past its
+  first 18 rows, which are the metadata columns and correctly fail to parse as dates. The month
+  columns sit below that. **Read the rest of that output before drawing any conclusion.**
 
-**Open, and the safe position until it closes:** the fee book has not been shown to derive from
-data we hold. The workbook figure sits between two quantities we can compute. Ask the client to
-confirm the basis rather than presenting a derived fee book.
+**Not yet closed.** Two shapes of the candidate source have been rejected on real numbers
+(annual run-rate 33,271,894.92, ops-apportioned 18,457,968.60, against 24,520,619.28). The third
+has not actually been tested yet. Until it has, the safe position with the client is that the
+fee book has not been shown to derive from data we hold — which is true — rather than that it
+cannot.
 
-**Unrelated risk found on the way, not yet investigated.** `_Revenue_Forecast_31Dec2025` reads
-the same staging table and uses the same date parse (`Date.From`, then `Date.FromText` with
-`en-GB`), discarding anything that fails via its `DateRows` step. If those headers do not parse,
-that production helper contributes nothing to the in-contract forecast and fails silently.
-Confirm its row count is non-zero. No change has been made to it.
+**Correction, recorded so it is not repeated.** An earlier version of this entry claimed
+`_Revenue_Forecast_31Dec2025` was returning an empty table, on the reasoning that all of the
+Contracts sheet columns appeared in its `DeclaredNonDateColumns` anchor list and so nothing was
+left to unpivot. **That was wrong.** The helper returns rows normally — monthly forecast rows
+per project, `Type = Forecast`, `Contract Type = In Contract`, account `40010`. The claim came
+from reading the first 18 rows of a scrollable diagnostic output as though it were the complete
+column list. There is no defect here and it must not be raised with the client.
 
 ### `ExCoReporting` holds a third split, and the budget branch terminates there
 

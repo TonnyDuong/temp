@@ -52,13 +52,28 @@
 // which would sit below the annual figure by a different amount per
 // sector. That is the shape observed.
 //
+// ROUND 3 STATUS: not yet tested. The first attempt returned 0.00 on
+// every line because `Columns2026` matched nothing. The parse below has
+// since been widened to four shapes, but the run that would confirm it
+// has not happened yet.
+//
+// The month columns DO exist on this sheet — `_Revenue_Forecast_31Dec2025`
+// unpivots them and returns monthly forecast rows normally. An earlier
+// note here claimed otherwise, from reading only the first 18 rows of
+// debug-fee-book-columns.pq (the metadata columns, which correctly fail to
+// parse as dates) as if that were the whole column list. It is not; the
+// month columns follow at position 19 onward.
+//
+// So the open question is only what FORMAT those headers carry, and
+// whether the widened parse now picks them up. Read past row 18 of
+// debug-fee-book-columns.pq.
+//
 // What to look at:
 //   - `Variance (2026)` per line, and on the TOTAL row.
-//   - If `Model 2026 Months GBP` reconciles, Highways lands on
-//     110,040.25 and the fee book is derivable from data already loaded.
-//   - If it does not, three shapes of the same source have now failed and
-//     the fee book should be requested from the client rather than
-//     derived. Record the result here before trying a fourth.
+//   - If `Model 2026 Months GBP` reconciles, Highways lands on 110,040.25
+//     and the fee book is derivable from data already loaded.
+//   - If it is still 0.00, the parse is still missing the columns — fix
+//     the parse, do not conclude anything about the fee book.
 //   - `Model Annual Fee GBP` is retained as the round-1 reference.
 // ---------------------------------------------------------------------
 // Currency: Debug_FeeBook_Coverage confirmed the Contracts sheet has
