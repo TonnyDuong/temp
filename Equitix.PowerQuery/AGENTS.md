@@ -57,7 +57,7 @@ Use the docs for business intent, but verify against the `.pq` files before edit
 
 - `dimensions/`: one file per `dim_*_Live` query, load enabled unless the file clearly acts as a parameter table.
 - `facts/`: top-level `fact_*_Live` queries, built by combining helpers.
-- `helpers/`: load-disabled subqueries that normalize a single source into fact-compatible shape.
+- `helpers/`: subqueries that normalize a single source into fact-compatible shape. Load-disabled by default, except the five helpers that DAX measures reference as tables (`_Revenue_Actuals`, `_Cost_Staff_Actuals`, `_Cost_Staff_Forecast`, `_Cost_Subcontractor_Actuals`, `_Cost_Subcontractor_Forecast`) — those must stay load-enabled or their measures break.
 - `docs/`: business context, refactor sequencing, and schema notes that must stay in sync with code changes.
 
 ## Current Build Shape
@@ -81,7 +81,7 @@ When adding a new source:
 
 - Keep the `_Live` suffix until a deliberate Phase 6-style swap-over is requested.
 - Preserve the header block at the top of each `.pq` file and update it when dependencies, grain, or business rules change.
-- Helpers should remain load-disabled in Power BI Desktop.
+- Helpers remain load-disabled in Power BI Desktop unless a DAX measure references the helper as a table. Check `Equitix_Measures.txt` before changing a helper's load setting; five helpers are load-enabled for that reason and are listed under Folder Rules.
 - Use friendly output column names that match the existing fact and dimension contracts.
 - Keep revenue and cost facts append-friendly: new helpers should match the established schema instead of introducing one-off columns.
 

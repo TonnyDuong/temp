@@ -4,24 +4,24 @@ This log captures concise client decisions that explain current Power Query and 
 
 ## 02 Apr 2026 - Historical Kick-off Transcript And Slides Logged
 
-- Source note: [[transcripts/2026-04-02 - Synetec Equitix Kick-off - Contract Profitability Reporting]].
-- Kick-off deck note: [[transcripts/2026-04-02 - Equitix Kickoff Slides]].
-- Raw transcript archive: [[transcripts/raw/2026-04-02 Synetec Equitix Kick-off - Contract Profitability Reporting.docx]] and searchable extract [[transcripts/raw/2026-04-02 Synetec Equitix Kick-off - Contract Profitability Reporting.txt]].
-- Raw deck archive: [[transcripts/raw/2026-04-02 Equitix Kickoff Slides.pptx]].
+- Source note: [[2026-04-02 - Synetec Equitix Kick-off - Contract Profitability Reporting]].
+- Kick-off deck note: [[2026-04-02 - Equitix Kickoff Slides]].
+- Raw transcript archive: [[2026-04-02 Synetec Equitix Kick-off - Contract Profitability Reporting.docx]] and searchable extract [[2026-04-02 Synetec Equitix Kick-off - Contract Profitability Reporting.txt]].
+- Raw deck archive: [[2026-04-02 Equitix Kickoff Slides.pptx]].
 - Historical context only: this kick-off captured the original YTD actuals plus full-year forecast profitability concept, source landscape, access needs, deck prompts, and early open questions.
 - Do not use this entry to supersede later decisions. Current rules remain the later dated entries below, especially actual OOC revenue `40013` only, actual subcontractor reconciliation `60201` only, the simplified staff-cost calculation, and the deferred Region hierarchy.
 
 ## 21 Apr 2026 - Historical Staff-Cost Equalisation Transcript Logged
 
-- Source note: [[transcripts/2026-04-21 - Equitix Profitability Reporting Catch Up]].
-- Raw transcript archive: [[transcripts/raw/2026-04-21 Equitix profitability reporting - Catch up.docx]] and searchable extract [[transcripts/raw/2026-04-21 Equitix profitability reporting - Catch up.txt]].
+- Source note: [[2026-04-21 - Equitix Profitability Reporting Catch Up]].
+- Raw transcript archive: [[2026-04-21 Equitix profitability reporting - Catch up.docx]] and searchable extract [[2026-04-21 Equitix profitability reporting - Catch up.txt]].
 - Historical context only: this catch-up captured the early monthly staff-cost equalisation/floor-and-ceiling idea and the `EMS 90` unsubmitted-timesheet placeholder discussion.
 - Do not use this entry to supersede the later simplified staff-cost rule. Current staff actual cost remains booked hours multiplied by country-aware hourly rate, with no monthly cap, floor, or ceiling.
 
 ## 13 May 2026 - Historical OOC Forecast And Subcontractor Transcript Logged
 
-- Source note: [[transcripts/2026-05-13 - Equitix Profitability Reporting Weekly Check-in]].
-- Raw transcript archive: [[transcripts/raw/2026-05-13 Equitix Profitability Reporting Weekly Check-in.docx]] and searchable extract [[transcripts/raw/2026-05-13 Equitix Profitability Reporting Weekly Check-in.txt]].
+- Source note: [[2026-05-13 - Equitix Profitability Reporting Weekly Check-in]].
+- Raw transcript archive: [[2026-05-13 Equitix Profitability Reporting Weekly Check-in.docx]] and searchable extract [[2026-05-13 Equitix Profitability Reporting Weekly Check-in.txt]].
 - Historical context only: this weekly check-in captured the expected Additional Services/OOC forecast file, early actual revenue code split, early subcontractor-code discussion, temp-staff double-counting concern, and Dataverse/Power BI workspace access notes.
 - Do not use this entry to supersede later decisions. Current rules remain actual OOC revenue `40013` only, OOC forecast via Additional Services Forecast, and actual subcontractor reconciliation `60201` only with later exclusions.
 
@@ -70,8 +70,8 @@ Clean Power BI Desktop instructions:
 
 ## 04 Sep 2026 - Additional Services Report Scope And TYH-01 Root Cause
 
-- Source note: [[transcripts/2026-09-04 - Equitix Profitability Reporting Follow-up Call]].
-- Raw transcript archive: [[transcripts/raw/2026-09-04 Equitix Profitability Reporting Follow-up Call.docx]] and searchable extract [[transcripts/raw/2026-09-04 Equitix Profitability Reporting Follow-up Call.txt]].
+- Source note: [[2026-09-04 - Equitix Profitability Reporting Follow-up Call]].
+- Raw transcript archive: [[2026-09-04 Equitix Profitability Reporting Follow-up Call.docx]] and searchable extract [[2026-09-04 Equitix Profitability Reporting Follow-up Call.txt]].
 - Root cause: a project-code mismatch between the project database and NetSuite, not a missing project or missing sector in `crbb5_projects`. Equitix amended NetSuite to match the project database and confirmed by email on 27 Aug 2026. This supersedes the 26 Aug 2026 email hypothesis.
 - Correct project code is `TYH-01`. The 18 Aug and 26 Aug 2026 emails referred to it as `THY-01`; use `TYH-01` in future correspondence and queries.
 - Verified 04 Sep 2026 after the full refresh: `TYH-01` is present in the report and the subcontractor totals reconcile.
@@ -94,5 +94,8 @@ Clean Power BI Desktop instructions:
 - Generation method: "The intention is that this is generated automatically within Power Query rather than being maintained through a separate adjustment input file."
 - Implementation: `helpers/_Revenue_Adjustment_iXBRL.pq`, appended into `fact_Revenue_Live` and carrying `Type = "Adjustment"` so the movement is visible in drill-through rather than netted into the actuals.
 - Open with the client: whether the rule also applies to prior-year GL data. The specification is stated for FY26 only.
+- Rule validated 11 Sep 2026 against the 11 Aug workbook: of 311 sector-side amounts on the manual `ARevenueADJUSTMENTS` tab, **309 trace to a NetSuite `40013` line whose `Memo` contains `iXBRL`**. Eve's specification is therefore the correct rule, and the memo marker is genuinely present in the source data. The remaining 2 have no memo marker; because the rule is anchored on `40013` they simply stay on their original project, which is the safe direction to fail in.
+- Feed shortfall found the same day, and it is a data issue rather than a logic one: the workbook's `NSRevenue` extract holds **1,398** `40013` rows totalling **-995,256.87**, of which **323 rows totalling -21,270.00** carry an iXBRL memo. The model's `stg_FinanceOutput FY26_FY2026` matches only **5** rows totalling **-400.00**. Check `FinanceOutput FY26.xlsx` for a saved Excel filter or a partial extract before changing any query logic.
+- Separate discrepancy to resolve with the client: `iXBRLProof` states iXBRL project fees of **62,070** as a hard-coded constant, but the GL-derived iXBRL rows total **-21,270.00**. The `+62,070.00` Chris posted to `1.07 Corporate Finance` is therefore not reproducible from the GL alone, so the automated rule will not land on the workbook's iXBRL line of `29,509.90` without an explanation of the difference.
 - Reconciliation caveat: this derived rule is net-nil by construction, whereas the manual `ARevenueADJUSTMENTS` tab netted to `+10,557.60` because it also carried entries compensating for revenue that the reporting-line mapping drops (`ZZZ-01` at `-10,357.60` and `SWH-01` on `2.71 Scotland Development` at `-200.00`). The automated reclassification therefore will not reproduce the workbook total until that unmapped revenue has a confirmed home.
 - Stakeholder note: memo-text matching was raised as a risk by Chris Rolls on the 11 Aug 2026 call ("that may or that could break"). The `40013` account filter narrows the failure mode so an unmatched memo under-collects rather than mis-allocates, but both stakeholders are on the thread and neither has been shown the other's position. Confirm with both before this ships.

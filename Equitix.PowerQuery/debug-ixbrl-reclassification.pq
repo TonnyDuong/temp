@@ -59,8 +59,30 @@ let
             each Text.Upper(Text.Trim(Text.From(_)))),
         "EMS-04"),
 
+    Rows40013 = Table.SelectRows(AccountCodeAsText,
+        each [#"Account No."] = "40013"),
+
+    MonthsPresent = Text.Combine(
+        List.Sort(List.Distinct(
+            List.Transform(
+                List.RemoveNulls(Table.Column(Rows40013, "Period End Date")),
+                each Date.ToText(Date.From(_), "yyyy-MM")))), ", "),
+
     Checks = Table.FromRecords({
-        [Check = "Matched GL Lines",
+        // Feed-integrity checks. The workbook's NSRevenue tab is the
+        // authoritative NetSuite 40013 extract for Jan-Jul 2026 and holds
+        // 1,398 rows totalling -995,256.87, of which 323 rows totalling
+        // -21,270.00 carry an iXBRL memo. If the rows/total below fall
+        // short, the GL feed is incomplete and no memo rule can work:
+        // check FinanceOutput FY26.xlsx for a saved Excel filter first
+        // (see "Missing Data Troubleshooting" in README.md).
+        [Check = "All 40013 Lines (workbook has 1398)",
+         Value = Text.From(Table.RowCount(Rows40013))],
+        [Check = "All 40013 Total (workbook has -995256.87)",
+         Value = Text.From(SumColumn(Rows40013, "Sum of Amount"))],
+        [Check = "40013 Period Months Present",
+         Value = MonthsPresent],
+        [Check = "Matched GL Lines (workbook has 323)",
          Value = Text.From(Table.RowCount(MatchedRows))],
         [Check = "Gross Amount Matched (raw GL sign)",
          Value = Text.From(SumColumn(MatchedRows, "Sum of Amount"))],

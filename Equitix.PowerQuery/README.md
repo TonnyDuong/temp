@@ -107,7 +107,7 @@ Queries depend on each other. If you're pasting them in for the first time, crea
    - `dimensions/dim_Transaction_Live.pq` (depends on `stg_FinanceOutput FY26_FY2026`)
    - `dimensions/dim_ForecastSnapshot_Live.pq` (standalone)
    - `dimensions/dim_ForecastVersion_Live.pq` (depends on `crbb5_jedoxallocation`)
-3. **Helpers** (load-disabled — these are sub-queries that get appended into the facts)
+3. **Helpers** (sub-queries that get appended into the facts; load-disabled except the five listed below)
    - `helpers/_Revenue_*.pq` — note `_Revenue_Forecast_OOC` depends on `stg_AdditionalServicesForecast` (delivered SharePoint file, by month + project code)
    - `helpers/_Revenue_Adjustment_iXBRL.pq` — Additional Services iXBRL reclassification, derived from `stg_FinanceOutput FY26_FY2026` (no input file). Emits `Type = "Adjustment"` rows that net to zero overall
    - `helpers/_Cost_*.pq` — note `_Cost_Subcontractor_Forecast` depends on `stg_SubcontractorForecast` (delivered SharePoint file, by month + project code)
@@ -120,7 +120,22 @@ Queries depend on each other. If you're pasting them in for the first time, crea
 
 - The header comment in each `.pq` lists its dependencies and any open questions.
 - `TODO:` comments mark places where a column name or value needs to be verified against the actual source data before going live.
-- For helpers, the **load** setting must be disabled in Power BI Desktop (right-click the query → uncheck "Enable load"). The `.pq` files contain the M code only; the load flag is set in the PBI UI.
+- For helpers, the **load** setting is normally disabled in Power BI Desktop (right-click the query → uncheck "Enable load"), because the helper's rows already reach the model through the fact that appends it. Loading it as well duplicates those rows in the semantic model and lets a report author build a visual on the helper by mistake. The `.pq` files contain the M code only; the load flag is set in the PBI UI.
+
+> **Exception — five helpers must stay load-enabled.** DAX measures reference
+> these as tables, and a measure can only reference a table that is present in
+> the model. Disabling load on any of them breaks the measure that depends on it:
+>
+> | Helper | Referenced by |
+> |---|---|
+> | `_Revenue_Actuals` | `_Revenue Act Oo-Contract Raw` |
+> | `_Cost_Staff_Actuals` | `_Staff Cost Actual Raw` |
+> | `_Cost_Staff_Forecast` | `_Staff Cost Forecast Raw` |
+> | `_Cost_Subcontractor_Actuals` | `_Subcontractor Actual Raw` |
+> | `_Cost_Subcontractor_Forecast` | `_Subcontractor Forecast Raw` |
+>
+> Every other helper is load-disabled. Before disabling load on a helper, check
+> `Equitix_Measures.txt` for a direct table reference to it.
 - For dimensions and facts, leave **load** enabled (default).
 
 ## Missing Data Troubleshooting

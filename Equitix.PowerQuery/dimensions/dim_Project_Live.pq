@@ -50,6 +50,28 @@
 //   Billing Method / Start / End dates are NOT on crbb5_contractregister
 //     (they live on crbb5_billingschedule). Dropped here; add a
 //     crbb5_billingschedule join later only if the report needs them.
+//   Upstream Report A / B = crbb5_upstreamreportaname and
+//     crbb5_upstreamreportbname (confirmed 11 Sep 2026 against the
+//     crbb5_contractregister column list). Both are lookups to the
+//     Areas of Responsibility entity; the *name* columns carry the
+//     label. Added for the Additional Services report, whose primary
+//     grouping is the field the source workbook calls
+//     `Sector Lead Reporting` and Chris Rolls calls `Upstream Ops`.
+//
+//     NOTE: `Sector` above is the SUPERSECTOR (sourced from
+//     crbb5_supersectorchoicename) and is the client-tested field used
+//     by the profitability report hierarchy. It is NOT the same thing as
+//     Upstream Report. The naming is deliberate — do not "correct" it.
+//
+//     TODO: the mapping from these two columns to a single reporting
+//     line is NOT yet confirmed and no derived `Sector Lead Reporting`
+//     column is built here. crbb5_project carries crbb5_revenuefinance
+//     and crbb5_revenueops, which are allocation FRACTIONS summing to 1
+//     (e.g. 0.28175 / 0.71825, 0.158 / 0.842, 0.5 / 0.5), so a project's
+//     revenue appears to split between a finance reporting line and an
+//     operations reporting line rather than sitting on one. Confirm the
+//     rule with the client before deriving the grouping — guessing it
+//     would mis-state every figure on the Additional Services report.
 // ---------------------------------------------------------------------
 // Column names (CONFIRMED against the crbb5_project column list): the
 // entity is exposed by LOGICAL name (crbb5_projectcode, crbb5_projectname,
@@ -86,8 +108,10 @@ let
         "ContractRegister_Lookup", JoinKind.LeftOuter
     ),
     Expanded = Table.ExpandTableColumn(Merged, "ContractRegister_Lookup",
-        {"crbb5_supersectorchoicename", "crbb5_portfolio", "crbb5_title", "crbb5_msareference", "crbb5_concessionexpiry", "crbb5_contractstatus"},
-        {"Sector", "Portfolio", "Contract Title", "MSA Reference", "Concession Expiry", "Contract Status"}
+        {"crbb5_supersectorchoicename", "crbb5_portfolio", "crbb5_title", "crbb5_msareference", "crbb5_concessionexpiry", "crbb5_contractstatus",
+         "crbb5_upstreamreportaname", "crbb5_upstreamreportbname"},
+        {"Sector", "Portfolio", "Contract Title", "MSA Reference", "Concession Expiry", "Contract Status",
+         "Upstream Report A", "Upstream Report B"}
     ),
 
      // Step 2b — IsInScope flag. TRUE if the contract status is in Chris's
