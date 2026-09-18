@@ -40,21 +40,27 @@
 let
     Source = #"stg_FinanceOutput FY26_FY2026",
 
-    AccountCodeAsText = Table.TransformColumns(Source,
+    // Only journals can carry the offsetting legs, so drop invoices and
+    // credit notes first, then buffer so SharePoint is read once rather
+    // than once per step that references this table.
+    JournalsOnly = Table.Buffer(Table.SelectRows(Source, each
+        Text.StartsWith([#"Transaction Ref."] ?? "", "Journal"))),
+
+    AccountCodeAsText = Table.TransformColumns(JournalsOnly,
         {{"Account No.", each #"_NormalizeAccountCode"(_), type nullable text}}),
 
     IsIXBRLMemo = (memo) => Text.Contains(Text.Lower(memo ?? ""), "ixbrl"),
 
     // Step 1 - journals with at least one iXBRL memo line
-    AffectedJournalIds = List.Distinct(Table.Column(
-        Table.SelectRows(AccountCodeAsText, each
-            Text.StartsWith([#"Transaction Ref."] ?? "", "Journal")
-            and IsIXBRLMemo([Memo])),
-        "Transaction: Transaction ID")),
+    AffectedJournals = Table.Distinct(Table.SelectColumns(
+        Table.SelectRows(AccountCodeAsText, each IsIXBRLMemo([Memo])),
+        {"Transaction: Transaction ID"})),
 
-    // Step 2 - every line of those journals, whatever its account or memo
-    AllLegs = Table.SelectRows(AccountCodeAsText, each
-        List.Contains(AffectedJournalIds, [#"Transaction: Transaction ID"])),
+    // Step 2 - every line of those journals, whatever its account or memo.
+    //          An inner join instead of a per-row List.Contains lookup.
+    Joined = Table.NestedJoin(AccountCodeAsText, {"Transaction: Transaction ID"},
+        AffectedJournals, {"Transaction: Transaction ID"}, "Match", JoinKind.Inner),
+    AllLegs = Table.RemoveColumns(Joined, {"Match"}),
 
     WithLegType = Table.AddColumn(AllLegs, "Leg Type", each
         let
