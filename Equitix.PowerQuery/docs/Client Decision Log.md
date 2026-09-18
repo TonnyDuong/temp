@@ -343,9 +343,19 @@ file already in the SharePoint Data folder and already ingested as `stg_Addition
 targets it was being reverse-engineered to produce are already in a file the model ingests. The
 fee-book diagnostics stay in the repo as a record of what was ruled out.
 
-- Verification outstanding: `debug-as-target-reconciliation.pq` sums
-  `stg_AdditionalServicesForecast` by `Upstream Reports` and compares to `K28:K37`. Finance Only is
-  the line Chris quoted from memory and the one he will check.
+- **Verified 18 Sep 2026.** `debug-as-target-reconciliation.pq` sums
+  `stg_AdditionalServicesForecast` by `Upstream Reports` and compares to `K28:K37`. All ten sector
+  lines match to within 0.06 and the total is **1,958,074.80 against 1,958,075**. Finance Only is
+  236,231.04 against 236,231.02. The residuals are the workbook's rounding, not ours: `K28:K37` is
+  pasted percentage times 1,958,075, while the model sums the monthly values directly. Use the
+  model's figures; do not reproduce the workbook's rounding.
+- `1.07 Corporate Finance` has no target in either source (model 0, workbook blank), so its
+  left-to-achieve is simply the negative of its year to date.
+- Sanity point to raise, not a defect: `2.30 Highways` has a target of **8,787.12** against a year to
+  date of 115,576.95, and `2.60 Environmental Services` **138,788.40** against 225,312.13. Both are
+  already well past target, so "left to achieve" will show large negatives. The figures match the
+  client's own workbook, but check with Chris that the Highways target is intended before it is on a
+  page in front of ExCo.
 
 ### 2027 extension
 

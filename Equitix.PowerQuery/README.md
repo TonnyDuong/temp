@@ -115,6 +115,7 @@ Queries depend on each other. If you're pasting them in for the first time, crea
    - `facts/fact_Timesheet_Live.pq` (depends on `dogma_timesheet`, `dim_StaffCosts_Live`)
    - `facts/fact_Revenue_Live.pq` (depends on the `_Revenue_*` helpers)
    - `facts/fact_Cost_Live.pq` (depends on the `_Cost_*` helpers and `fact_Timesheet_Live`)
+   - `facts/fact_AdditionalServicesTarget_Live.pq` (depends on `stg_AdditionalServicesForecast`) — full-year Additional Services target, kept out of `fact_Revenue_Live` so revenue totals are unaffected. Relate `[Date]` to `dim_Date_Live[Date]` and `[Project Code]` to `dim_Project_Live[Project Code]`
 
 ## Notes on each script
 

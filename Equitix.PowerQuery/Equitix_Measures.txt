@@ -198,3 +198,9 @@ AS Adjustment Row Count =
 CALCULATE(
     COUNTROWS(fact_Revenue_Live),
     fact_Revenue_Live[Type] = "Adjustment")
+
+AS Target =
+SUM(fact_AdditionalServicesTarget_Live[Amount])
+
+AS Left to Achieve =
+[AS Target] - [AS Revenue]
