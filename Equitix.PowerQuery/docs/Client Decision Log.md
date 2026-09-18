@@ -140,6 +140,12 @@ Verification result, not a client decision. Recorded because it closes several o
 
 ## 11 Sep 2026 - Additional Services Bottom Table: Source Trace And Target Inputs
 
+> **Partly overtaken by the catch-up call later the same day** — see "11 Sep 2026 - Catch-up Call"
+> at the end of this log. The bottom table was cut to a single block, `Current Estimate` was put
+> out of scope, and the per-sector target source was named as the Additional Services Forecast
+> file. **The fee-book investigation below is no longer on the delivery path.** The `ZZZ-01`,
+> `ExCoReporting` and unmapped-revenue findings still stand.
+
 Findings from investigation, not client decisions. Recorded because they define what
 the second half of the Additional Services report still needs and what it does not.
 Source workbook: `26.07 EMS Revenue NS JC LIVE updated v2.xlsx`, `For JC file` rows 26-45.
@@ -274,3 +280,95 @@ its targets:
 
 Neither defect is raised with the client; the budget split is not currently the basis of the
 deliverable.
+
+## 11 Sep 2026 - Catch-up Call: Top Table Accepted, Bottom Table Scope Cut
+
+Client decisions from the Equitix / Synetec catch-up, 11 Sep 2026 13:31. Present: Chris Rolls,
+Eve Dillon, Stavros Tsagkarakis, Tonny Duong, Andrew Settle. These supersede the bottom-table
+scope agreed on 11 Aug 2026.
+
+### Top table accepted
+
+- Figures tie to the source workbook. Walked through Finance Only `146,009` and the total
+  `995,256` live against the sheet. Chris: "Excellent."
+- **The MD and Operations Director have seen it and are happy.** Chris wants it launched, first to
+  ExCo and then wider.
+- Sign-off is gated on the 12th-of-month refresh bringing August in. Eve checks Monday, then signs
+  off the first two reports.
+- Eve's outstanding "totals not adding up" query was self-diagnosed on the call as the same
+  cutover timing, not a defect: "it's because of the 12th, the 12th of the month issue that the
+  August isn't pulling in yet."
+- Chris to come back separately with styling feedback. Next call Friday 18 Sep 2026.
+
+### Bottom table cut to one block
+
+Of the four blocks on `For JC file` table 2, only one is in scope:
+
+- `Forecast v Sector Targets` - **ignore**.
+- `Sector Targets v Accrued / Invoiced` - **ignore**.
+- `Forecast v Accrued / Invoiced` - **build this one**. Chris: "these three boxes at the bottom are
+  very similar or almost identical... that middle forecast versus accrued invoice is probably the
+  one we want to include."
+- The fee book matrix was already out of scope for 2026.
+
+**Rename it.** Chris: "it should be called, rather than accrued or invoiced, but forecast versus
+year to date."
+
+Required columns are **Additional Services Target, Year to Date, and the delta as what is left to
+achieve**. Chris: "I've done 200,000, I've got a target of 400,000, I need to get 200,000 in six
+months... they want to see what's remaining." A per-month run-rate was floated and explicitly
+deferred. The block moves to its own report page given the data volume.
+
+### `Current Estimate` is out of scope
+
+Chris: "that current estimate will be not to worry about. That's something they look at."
+
+This closes the revisable-sector-target question. It also collapses the Forecast versus Sector
+Targets distinction: **the target is the forecast.** They were only two inputs because the
+revisable estimate existed, and it is now excluded.
+
+### Additional Services Target source confirmed - it is not the fee book
+
+Chris named the source on the call and opened it live: **`Additional Services Forecast.xlsx`**, the
+file already in the SharePoint Data folder and already ingested as `stg_AdditionalServicesForecast`.
+
+- The target is **the sum of the monthly columns grouped by sector**. Chris: "those cells there from
+  column G to R... it's a sum of those... they're related to their sector and the project code
+  obviously it doesn't matter."
+- He quoted **Finance Only as 236,231**, which is `For JC file` `K28` = **236,231.02** to the penny.
+- The same file already drives the `Revenue out of contract forecast` column on the YTD+Forecast
+  report, carrying the 1.9m figure.
+
+**Consequence: the fee-book line of enquiry is closed for delivery purposes.** The per-sector
+targets it was being reverse-engineered to produce are already in a file the model ingests. The
+fee-book diagnostics stay in the repo as a record of what was ruled out.
+
+- Verification outstanding: `debug-as-target-reconciliation.pq` sums
+  `stg_AdditionalServicesForecast` by `Upstream Reports` and compares to `K28:K37`. Finance Only is
+  the line Chris quoted from memory and the one he will check.
+
+### 2027 extension
+
+Adding 2027 means extending the date range rightwards in the forecast file. Confirmed workable
+because the model unpivots. Chris: "we'll just go off to the right-hand side."
+
+### Not raised on this call - all still open
+
+- **Streetlighting reads `8,781.84` against the workbook `19,139.44`**, because `ZZZ-01` revenue
+  sits in an explicit unallocated row rather than being folded in. The total is unchanged, but it
+  is a visible difference and **they sign off on Monday**. Raise by email before sign-off.
+- `ZZZ-01` at `10,357.60` and the `201,889.94` of July revenue with no project code, and where
+  unmapped revenue should go.
+- Whether the finance/ops split should apply.
+- Whether the 11 Aug workbook is still the reconciliation baseline.
+- Whether the iXBRL rule applies to prior-year GL.
+- Memo-text matching as a fragile key, with Chris and Eve still not having seen each other's
+  position.
+
+### New ask, not yet a requirement
+
+Chris raised wanting profitability output available to other reports elsewhere in the tenant - an
+ops-team report for the **contract review committee** comparing last year's and this year's profit.
+Either it stays in the same workspace, or the data is packaged and pushed via **dataflows** to
+another workspace. Chris: "it's something that hasn't quite crystallised yet, which is why it's
+probably a bit vague, the ask." Expect a firmer request later.

@@ -76,9 +76,19 @@
 //     the parse, do not conclude anything about the fee book.
 //   - `Model Annual Fee GBP` is retained as the round-1 reference.
 // ---------------------------------------------------------------------
-// Currency: Debug_FeeBook_Coverage confirmed the Contracts sheet has
-// NEITHER an `Exchange` NOR a `GBP Value` column, so no conversion can
-// come from the sheet itself. The workbook clearly converts: SI Ireland
+// Currency: Debug_FeeBook_Coverage found no `Exchange` or `GBP Value`
+// column on the STAGING TABLE. The source workbook does have an `Exchange`
+// column — it sits to the right of a `BLANK` column, past `Concession
+// expiry` — so the staging query is not surfacing it under that name,
+// probably because its header falls outside the promoted header row and it
+// arrives as `ColumnNN`. Note `_Revenue_Forecast_31Dec2025` discards
+// anything named `BLANK` or starting with `Column` as junk, so it drops
+// that rate too. Worth picking up properly if a production query ever
+// needs the conversion.
+//
+// The rate itself is unconfirmed. The source file appears to show 1.1 on
+// EUR rows, but the workbook fee book carries an unmistakable /1.15
+// signature: SI Ireland
 // 486,435.4782608696, SI Italy 1,996,295.826086957 and Renewables
 // 3,653,098.043369564 each land on clean pence when multiplied by 1.15
 // (559,400.80 / 2,295,740.20 / 4,201,062.75), and those are the only three
@@ -138,16 +148,46 @@ let
         in
             ViaSerial,
 
-    Columns2026 = List.Select(Table.ColumnNames(Source), each
+    // Identifying month columns by parsing the header has now failed twice,
+    // so stop relying on it. Anchor on the known metadata names instead and
+    // treat everything else as a month column — the same approach
+    // _Revenue_Forecast_31Dec2025 uses, which demonstrably works on this
+    // table. The parse is then only used to NARROW to 2026, and if it finds
+    // nothing the query falls back to every month column rather than
+    // silently returning zero.
+    KnownMetaColumns = {
+        "MSA Reference", "Project Code", "Billing Schedule item", "Billing Schedule Item",
+        "crbb5_billingmethod", "crbb5_billingmethodname",
+        "crbb5_billingstartdate", "crbb5_billingenddate",
+        "crbb5_baseannualfee", "crbb5_basecurrency", "crbb5_basecurrencyname",
+        "crbb5_indexmonth", "crbb5_currentannualfee",
+        "Entity", "Project", "Project Type", "Monthly Fee",
+        "Supersector", "SuperSector", "Concession expiry", "Concession Expiry",
+        "Exchange", "GBP Value", "BLANK"},
+
+    CandidateMonthColumns = List.Select(Table.ColumnNames(Source), each
+        not List.Contains(KnownMetaColumns, _) and not Text.StartsWith(_, "Column")),
+
+    Parsed2026 = List.Select(CandidateMonthColumns, each
         let
             Parsed = ParseHeaderDate(_)
         in
             Parsed <> null and Date.Year(Parsed) = 2026),
 
+    UsingParsedYear = List.Count(Parsed2026) > 0,
+    MonthColumns = if UsingParsedYear then Parsed2026 else CandidateMonthColumns,
+
+    // Surfaced on the TOTAL row so the next run says what it actually did.
+    // "ALL YEARS" means the header parse still failed and the figures span
+    // every year on the sheet, so they are NOT comparable to the workbook —
+    // fix the parse before reading the variance.
+    MonthColumnNote = " [" & Text.From(List.Count(MonthColumns)) & " month cols, "
+        & (if UsingParsedYear then "2026 only" else "ALL YEARS - parse failed") & "]",
+
     MetaColumns = List.Intersect({Table.ColumnNames(Source),
         {"Project Code", "Supersector", "crbb5_currentannualfee",
          "crbb5_basecurrencyname", "Entity"}}),
-    Narrowed = Table.SelectColumns(Source, MetaColumns & Columns2026),
+    Narrowed = Table.SelectColumns(Source, MetaColumns & MonthColumns),
 
     // Step 2 - normalised join key, matching how dim_Project_Live is keyed.
     KeyedRows = Table.AddColumn(Narrowed, "Project Code Key",
@@ -186,7 +226,7 @@ let
         each
             let
                 Row = _,
-                Monthly = List.Transform(Columns2026,
+                Monthly = List.Transform(MonthColumns,
                     (ColumnName) => try Number.From(Record.Field(Row, ColumnName))
                                     otherwise null),
                 Total = List.Sum(List.RemoveNulls(Monthly)),
@@ -241,7 +281,7 @@ let
         List.Sum(List.Transform(ComparisonRows, each _[#"Model 2026 Months GBP"])), 2),
 
     TotalRow = [
-        #"Reporting Line"         = "TOTAL (listed lines)",
+        #"Reporting Line"         = "TOTAL (listed lines)" & MonthColumnNote,
         #"Model Annual Fee GBP"   = TotalAnnual,
         #"Model 2026 Months GBP"  = Total2026,
         #"Workbook Fee Book"      = 24520619.28,
