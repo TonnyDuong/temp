@@ -402,3 +402,57 @@ ops-team report for the **contract review committee** comparing last year's and 
 Either it stays in the same workspace, or the data is packaged and pushed via **dataflows** to
 another workspace. Chris: "it's something that hasn't quite crystallised yet, which is why it's
 probably a bit vague, the ask." Expect a firmer request later.
+
+## 18 Sep 2026 - Catch-up Call: Forecast vs YTD Demoed, Sector View And Drill-down Added
+
+Client decisions from the Equitix / Synetec catch-up, 18 Sep 2026 13:31. Present: Chris Rolls,
+Eve Dillon, Stavros Tsagkarakis, Tonny Duong, Andrew Settle.
+
+### Forecast vs YTD accepted as shown
+
+- The page was demoed with August loaded and the variance calculated as year to date minus target,
+  following the Excel sheet. No objection, so the sign decision recorded above stands.
+
+### `ZZZ-01` stays visible until Equitix remaps it
+
+- Chris: the Z code is "only for budgeting purposes, really it shouldn't be used for actuals".
+- **Keep the blank reporting-line row on the report for now.** Chris: "leave it as it is, Tonny,
+  because it reminds us there's a problem." Filtering it now would mean "the numbers don't add up".
+- Chris will have the `ZZZ-01` actuals remapped to proper project codes, expected in September.
+  Once the blank row reads 0, filter it out of the report.
+- This supersedes the open question on where `ZZZ-01` revenue should go. The Streetlighting
+  difference against the workbook resolves when the source is remapped; no model change.
+
+### Sector view: build both
+
+- Keep the `Upstream Report A` view; it is the format recipients get this year.
+- **Add a sector-based report filtered by Upstream Report** ("a report that has the sectors by
+  sector and then a filter by upstream report"; "sector reports and sub sector" also mentioned).
+  Which sector field (and whether sub-sector) is still to confirm.
+- Future: the Upstream Report filter is replaced by a **sector lead** field, likely the contract's
+  operations lead, once the contract register carries it. That is with Equitix's Development
+  Steering Committee (next meeting Wed 23 Sep 2026).
+- The short `Sector Reporting` labels question is superseded by this; do not relabel the existing
+  view.
+
+### Drill-down on Forecast vs YTD
+
+- Chris wants the same Contract / Project drill-down as the other pages, "to keep it consistent",
+  if possible.
+- Constraint: each sector's target sits on one placeholder project (see 18 Sep mapping check), so
+  below sector level the target and variance are not meaningful. Keep them at sector level and let
+  the drill-down show year to date.
+
+### iXBRL reclassification rule confirmed
+
+- Chris restated the rule: lower-case the NetSuite `Memo`, match "ixbrl", remap to `EMS-04`, which
+  reports as `1.07 Corporate Finance`. Missing the odd untagged line is acceptable: "that is how we
+  currently check for them".
+- `_Revenue_Adjustment_iXBRL` already implements exactly this (account `40013`, lower-cased memo
+  contains `ixbrl`, reallocated to `EMS-04`). No change needed; confirm to the client with the
+  per-line movements. This closes the memo-text-matching concern.
+
+### Scope
+
+- Chris: once these changes are through, the Additional Services work is "pretty much done".
+- Next call Friday 25 Sep 2026.

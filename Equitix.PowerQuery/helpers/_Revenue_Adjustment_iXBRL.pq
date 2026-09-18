@@ -51,6 +51,9 @@
 // reallocation land on the same project code), so they correctly stay
 // where they are and are not double counted.
 // ---------------------------------------------------------------------
+// The Step 1 match rule is duplicated in facts/fact_iXBRL_Lines_Live.pq,
+// the evidence table for this reclassification. Change both together.
+// ---------------------------------------------------------------------
 // TODO: confirm with the client whether this rule should also apply to
 //   prior-year GL data. The 10 Sep specification is stated for FY26 only
 //   and this query reads the FY26 staging table.
