@@ -1,90 +1,108 @@
 // =====================================================================
 // Debug_iXBRL_Journal_Legs  (temporary diagnostic query)
 // ---------------------------------------------------------------------
-// Purpose:      Show every line of every GL journal that carries at
-//               least one iXBRL memo line, to check whether finance's own
-//               iXBRL journals and the automated reclassification double
-//               count.
+// Purpose:      Check whether finance's own iXBRL journals and the
+//               automated reclassification double count.
 //
 //               fact_iXBRL_Lines_Live showed finance posting iXBRL
 //               journals straight to EMS-04 (e.g. JE36048, Jun 2026:
 //               "IXBRL Recharges 2025" 40,800 and "IXBRL Recharges
 //               Jan-Mar26" 22,890). Those lines self-cancel under the
-//               rule. The question is where the OTHER side of each
-//               journal sits. If it is account 40013 on a sector project
-//               with no "ixbrl" in its memo, finance has already moved
-//               that revenue to EMS-04 and _Revenue_Adjustment_iXBRL
-//               moves the underlying invoices again.
+//               rule. The question is where the OTHER side of them sits.
+//               If it is account 40013 on a sector project that the rule
+//               cannot see, finance has already moved that revenue to
+//               EMS-04 and _Revenue_Adjustment_iXBRL moves the underlying
+//               invoices again.
 //
-// Grain:        One row per GL line in an affected journal.
+// Scope:        Only journals with an iXBRL-memo line on EMS-04, i.e.
+//               finance's own iXBRL postings. A first version took every
+//               journal with any iXBRL line and flagged every other line
+//               in it; the large month-end accrual journals (JE15259 and
+//               similar) then produced hundreds of unrelated rows.
+//
+// Grain:        One row per affected journal.
 // Dependencies: stg_FinanceOutput FY26_FY2026, _NormalizeAccountCode
 // Load:         ENABLE during diagnosis only; remove or disable afterward.
 // ---------------------------------------------------------------------
-// How to read `Leg Type`:
-//   - "EMS-04, stays": on EMS-04 already; the rule leaves it put.
-//   - "40013 sector, rule also moves": iXBRL memo on another project, so
-//     the rule reclassifies it to EMS-04 as well. Fine for the total, but
-//     it cancels finance's journal on that line rather than adding to it.
-//   - "40013 sector, NOT moved by rule": THE RISK CASE. Finance's journal
-//     reduces this sector's revenue and the rule does not see it, so if
-//     the same revenue's invoices are also matched, the sector is reduced
-//     twice. Sum `GL Amount` of these rows per journal: if it offsets the
-//     EMS-04 lines, the double count is real.
-//   - "Other account": balance sheet, accrual or other P&L. No overlap
-//     with the reclassification.
+// Columns (raw GL sign: revenue credits negative):
+//   EMS-04 iXBRL             40013 lines on EMS-04 with an iXBRL memo.
+//   iXBRL Other Account      iXBRL-memo lines on any non-40013 account
+//                            (balance sheet, accrued income 13009, ...).
+//   iXBRL Sector Moved       iXBRL-memo 40013 lines on other projects;
+//                            the rule reclassifies these too.
+//   Unexplained Offset       EMS-04 iXBRL + iXBRL Other Account +
+//                            iXBRL Sector Moved. The iXBRL lines of a
+//                            journal should balance among themselves.
 //
-// `GL Amount` is raw GL sign: revenue credits are negative, so a journal
-// moving revenue INTO EMS-04 shows negative on EMS-04's 40013 line and
-// positive (a debit) on the line it came from.
+// How to read it:
+//   - Unexplained Offset = 0 and the offset sits in iXBRL Other Account:
+//     finance's journal pairs EMS-04 with a balance-sheet account. No
+//     overlap with the rule, no double count.
+//   - Unexplained Offset = 0 and the offset sits in iXBRL Sector Moved:
+//     the rule moves the sector side back onto EMS-04, cancelling
+//     finance's journal on those lines. Totals fine; worth noting.
+//   - Unexplained Offset <> 0: the EMS-04 iXBRL lines are balanced by
+//     lines WITHOUT an iXBRL memo. Open that journal in the staging
+//     table and look at its non-iXBRL 40013 lines — that is the
+//     double-count risk.
 // =====================================================================
 let
     Source = #"stg_FinanceOutput FY26_FY2026",
 
-    // Only journals can carry the offsetting legs, so drop invoices and
-    // credit notes first, then buffer so SharePoint is read once rather
-    // than once per step that references this table.
+    // Only journals can carry the offsetting legs. Buffer so SharePoint
+    // is read once.
     JournalsOnly = Table.Buffer(Table.SelectRows(Source, each
         Text.StartsWith([#"Transaction Ref."] ?? "", "Journal"))),
 
     AccountCodeAsText = Table.TransformColumns(JournalsOnly,
         {{"Account No.", each #"_NormalizeAccountCode"(_), type nullable text}}),
 
-    IsIXBRLMemo = (memo) => Text.Contains(Text.Lower(memo ?? ""), "ixbrl"),
+    IXBRLLines = Table.SelectRows(AccountCodeAsText, each
+        Text.Contains(Text.Lower([Memo] ?? ""), "ixbrl")),
 
-    // Step 1 - journals with at least one iXBRL memo line
-    AffectedJournals = Table.Distinct(Table.SelectColumns(
-        Table.SelectRows(AccountCodeAsText, each IsIXBRLMemo([Memo])),
-        {"Transaction: Transaction ID"})),
-
-    // Step 2 - every line of those journals, whatever its account or memo.
-    //          An inner join instead of a per-row List.Contains lookup.
-    Joined = Table.NestedJoin(AccountCodeAsText, {"Transaction: Transaction ID"},
-        AffectedJournals, {"Transaction: Transaction ID"}, "Match", JoinKind.Inner),
-    AllLegs = Table.RemoveColumns(Joined, {"Match"}),
-
-    WithLegType = Table.AddColumn(AllLegs, "Leg Type", each
-        let
-            project = [#"Class: Class External ID"],
-            is40013 = [#"Account No."] = "40013"
-        in
-            if not is40013 then "Other account"
-            else if project = "EMS-04" then "EMS-04, stays"
-            else if IsIXBRLMemo([Memo]) then "40013 sector, rule also moves"
-            else "40013 sector, NOT moved by rule",
+    // Step 1 - classify each iXBRL-memo line
+    Classified = Table.AddColumn(IXBRLLines, "Bucket", each
+        if [#"Account No."] <> "40013" then "Other"
+        else if [#"Class: Class External ID"] = "EMS-04" then "EMS04"
+        else "Sector",
         type text),
 
-    Output = Table.SelectColumns(WithLegType, {
-        "Transaction Ref.", "Transaction Line ID", "Period End Date",
-        "Account No.", "Account Name", "Class: Class External ID", "Memo",
-        "Sum of Amount", "Leg Type"}),
+    // Step 2 - one row per journal
+    SumBucket = (rows as table, bucket as text) as number =>
+        Number.Round(List.Sum(List.RemoveNulls(Table.Column(
+            Table.SelectRows(rows, each [Bucket] = bucket), "Sum of Amount"))) ?? 0, 2),
 
-    Renamed = Table.RenameColumns(Output, {
-        {"Class: Class External ID", "Project Code"},
-        {"Sum of Amount",            "GL Amount"}}),
+    PerJournal = Table.Group(Classified,
+        {"Transaction Ref.", "Period End Date"},
+        {{"Lines", each _, type table}}),
 
-    Sorted = Table.Sort(Renamed, {
-        {"Period End Date", Order.Ascending},
-        {"Transaction Ref.", Order.Ascending},
-        {"Transaction Line ID", Order.Ascending}})
+    WithSums = Table.AddColumn(PerJournal, "Sums", (row) =>
+        let
+            L = row[Lines],
+            e = SumBucket(L, "EMS04"),
+            o = SumBucket(L, "Other"),
+            s = SumBucket(L, "Sector")
+        in
+            [
+                EMS04    = e,
+                Other    = o,
+                Sector   = s,
+                Offset   = Number.Round(e + o + s, 2),
+                Accounts = Text.Combine(List.Sort(List.Distinct(List.Transform(
+                    Table.SelectRows(L, each [Bucket] = "Other")[#"Account No."],
+                    Text.From))), ", ")
+            ]),
+
+    Expanded = Table.ExpandRecordColumn(WithSums, "Sums",
+        {"EMS04", "Other", "Sector", "Offset", "Accounts"},
+        {"EMS-04 iXBRL", "iXBRL Other Account", "iXBRL Sector Moved",
+         "Unexplained Offset", "Other Accounts Used"}),
+
+    // Step 3 - keep finance's own iXBRL postings to EMS-04
+    Affected = Table.SelectRows(Expanded, each [#"EMS-04 iXBRL"] <> 0),
+
+    Output = Table.RemoveColumns(Affected, {"Lines"}),
+
+    Sorted = Table.Sort(Output, {{"Period End Date", Order.Ascending}})
 in
     Sorted
