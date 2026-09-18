@@ -155,6 +155,15 @@ First checks for missing actuals or forecast rows:
 
 If rows are present in staging but missing later, continue with query-step checks in the affected helper, especially account-code filters, cutover-date filters, and joins to dimensions.
 
+## Report page layout
+
+Every report page uses the same canvas so pages display at the same scale when switched between:
+
+- **Canvas size:** custom, 1600 × 900 px (Format page → Canvas settings).
+- **Vertical alignment:** Middle, so the page is centred in the viewer.
+
+Set both on any new page before adding visuals; visuals do not rescale when the canvas size changes afterwards.
+
 ## Naming convention
 
 Every query name carries the **`_Live`** suffix so the new model can coexist with the existing one during development. After Phase 5 verification, run Phase 6 (swap-over) to drop the suffix.

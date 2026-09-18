@@ -202,5 +202,5 @@ CALCULATE(
 AS Target =
 SUM(fact_AdditionalServicesTarget_Live[Amount])
 
-AS Left to Achieve =
-[AS Target] - [AS Revenue]
+AS Variance to Target =
+[AS Revenue] - [AS Target]

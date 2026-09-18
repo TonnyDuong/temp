@@ -349,11 +349,17 @@ fee-book diagnostics stay in the repo as a record of what was ruled out.
   236,231.04 against 236,231.02. The residuals are the workbook's rounding, not ours: `K28:K37` is
   pasted percentage times 1,958,075, while the model sums the monthly values directly. Use the
   model's figures; do not reproduce the workbook's rounding.
+- **Mapping verified 18 Sep 2026** by `debug-as-target-mapping.pq`: all ten forecast projects are in
+  `dim_Project_Live`, in scope, and on the same `Upstream Report A` as the file's `Upstream Reports`.
+  Each sector's entire target sits on **one placeholder project code** (`JBL-02` Finance Only,
+  `BLP-03` England North, `ABH-02` Highways, and so on), so the target exists only at sector level.
+  The Contract and Project Display slicers must not filter the Forecast vs Year to Date table, or
+  any contract selection blanks the target.
 - `1.07 Corporate Finance` has no target in either source (model 0, workbook blank), so its
-  left-to-achieve is simply the negative of its year to date.
+  variance to target equals its year to date.
 - Sanity point to raise, not a defect: `2.30 Highways` has a target of **8,787.12** against a year to
   date of 115,576.95, and `2.60 Environmental Services` **138,788.40** against 225,312.13. Both are
-  already well past target, so "left to achieve" will show large negatives. The figures match the
+  already well past target, so they show large positive variances. The figures match the
   client's own workbook, but check with Chris that the Highways target is intended before it is on a
   page in front of ExCo.
 
@@ -374,6 +380,20 @@ because the model unpivots. Chris: "we'll just go off to the right-hand side."
 - Whether the iXBRL rule applies to prior-year GL.
 - Memo-text matching as a fragile key, with Chris and Eve still not having seen each other's
   position.
+- **Resolved 18 Sep 2026 (our decision, to confirm with Chris) — sign of the delta.** The workbook's
+  `Forecast v Accrued / Invoiced` block shows year to date minus target (short = negative, red;
+  ahead = positive, green). The model first shipped `AS Left to Achieve` as target minus year to
+  date. It is replaced by **`AS Variance to Target` = `[AS Revenue] - [AS Target]`**, column label
+  "Variance to Target", red below zero and green at or above. Reasons: it is the standard finance
+  revenue-variance convention (actual minus budget, favourable positive), it reads cleanly for
+  sectors already past target, and it matches the sheet the client's readers already use. Chris
+  described the column as "what is left to achieve"; that is the same figure negated, available if
+  he asks for it.
+- **Added 18 Sep 2026 — sector display labels.** The workbook carries a mapping from `Upstream Report A`
+  to a short `Sector Reporting` label (`2.01 Social Infra Scotland` → `SI Scotland`,
+  `1.07 Corporate Finance` → `iXBRL`, and so on). Both Additional Services pages show the raw line, as
+  accepted on 11 Sep. Ask Chris whether to switch; if yes, `2.71 Scotland Development` and the blank
+  row are not in his mapping and need a label or to be hidden. Not requested, so not implemented.
 
 ### New ask, not yet a requirement
 
