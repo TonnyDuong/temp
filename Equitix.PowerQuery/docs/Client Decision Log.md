@@ -431,13 +431,18 @@ Eve Dillon, Stavros Tsagkarakis, Tonny Duong, Andrew Settle.
   Which sector field (and whether sub-sector) is still to confirm.
 - **Clarified and implemented, 25 Sep 2026.** "Both" means both labels in the tables: the raw
   `Upstream Report A` line (header **Mapping**) and the workbook's short **Sector Reporting**
-  label, side by side, on both Additional Services pages. The supersector (`Sector`, as on the
-  profitability pages) is added to the drill-down below Mapping, for now.
+  label, on both Additional Services pages. The supersector (`Sector`, as on the profitability
+  pages) is added to the drill-down below them, for now.
   - `dim_Project_Live[Sector Reporting]` holds the workbook's eleven-row mapping, keyed on the
     line's numeric prefix. Lines not in the mapping (`1.01 London Finance`,
     `2.71 Scotland Development`) show their raw name; the blank `ZZZ-01` row stays blank.
-  - Monthly Actuals rows: `[Sector Reporting]` → `[Upstream Report A]` (display name "Mapping") →
-    `[Sector]` → `[Contract]` → `[Project Display]`. Columns and values unchanged.
+  - Both labels share one row field, `dim_Project_Live[Sector Reporting - Mapping]`
+    (`SI Scotland - 2.01 Social Infra Scotland`). The matrix's stepped layout applies to every row
+    level or none, so two side-by-side label columns would force Sector, Contract and Project into
+    columns of their own too. Agreed 25 Sep 2026 to combine them instead.
+  - Monthly Actuals rows: `[Sector Reporting - Mapping]` → `[Sector]` → `[Contract]` →
+    `[Project Display]`, stepped layout on. Columns and values unchanged. Sort
+    `Sector Reporting - Mapping` by `Upstream Report A` so lines keep their 2.00 → 2.60 order.
   - Forecast vs YTD: the same rows, with the values set out under the drill-down entry below.
   - This supersedes the earlier "do not relabel the existing view" note: the raw line stays, and
     the short label is added alongside it rather than replacing it.
@@ -456,10 +461,10 @@ Eve Dillon, Stavros Tsagkarakis, Tonny Duong, Andrew Settle.
   the drill-down show year to date.
 - **Implemented.** `AS Target` and `AS Variance to Target` return blank when
   `dim_Project_Live[Sector]`, `[Contract]` or `[Project Display]` is in scope, so they show on the
-  Sector Reporting and Mapping rows and the total only. `AS Revenue` is unchanged and shows at
-  every level. Reporting-line and total figures are unchanged. Visual:
-  - Rows: `dim_Project_Live[Sector Reporting]` → `[Upstream Report A]` → `[Sector]` →
-    `[Contract]` → `[Project Display]`
+  reporting-line rows and the total only. `AS Revenue` is unchanged and shows at every level.
+  Reporting-line and total figures are unchanged. Visual:
+  - Rows: `dim_Project_Live[Sector Reporting - Mapping]` → `[Sector]` → `[Contract]` →
+    `[Project Display]`
   - Values: `AS Target`, `AS Revenue` (year to date), `AS Variance to Target`
   - A Project slicer still filters the target to the selected project, so selecting a project
     other than the sector's placeholder shows no target.

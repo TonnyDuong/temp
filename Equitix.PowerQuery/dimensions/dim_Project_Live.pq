@@ -95,6 +95,11 @@
 //     keeps its label. Lines not in the mapping (1.01 London Finance,
 //     2.71 Scotland Development) show their raw name, as agreed; a null
 //     Upstream Report A stays null.
+//   Sector Reporting - Mapping = both labels in one column
+//     ("SI Scotland - 2.01 Social Infra Scotland"), the row field on both
+//     Additional Services pages. Agreed 25 Sep 2026 in place of two
+//     side-by-side columns, which the matrix cannot combine with a
+//     stepped drill-down beneath them.
 // ---------------------------------------------------------------------
 // Column names (CONFIRMED against the crbb5_project column list): the
 // entity is exposed by LOGICAL name (crbb5_projectcode, crbb5_projectname,
@@ -202,6 +207,18 @@ let
                 Text.BeforeDelimiter(Text.Trim([Upstream Report A]), " "),
                 [Upstream Report A]),
         type text),
-    #"Filtered Rows" = Table.SelectRows(AddSectorReporting, each ([Sector] <> null))
+
+    // Step 8 — combined "<Sector Reporting> - <Upstream Report A>" row label.
+    //          A matrix cannot show two row fields side by side and keep the
+    //          levels below them stepped, so both names share one label.
+    //          Unmapped lines already show their raw name, so they are not
+    //          repeated.
+    AddSectorReportingMapping = Table.AddColumn(AddSectorReporting, "Sector Reporting - Mapping",
+        each
+            if [Upstream Report A] = null then null
+            else if [Sector Reporting] = [Upstream Report A] then [Upstream Report A]
+            else [Sector Reporting] & " - " & [Upstream Report A],
+        type text),
+    #"Filtered Rows" = Table.SelectRows(AddSectorReportingMapping, each ([Sector] <> null))
 in
     #"Filtered Rows"
