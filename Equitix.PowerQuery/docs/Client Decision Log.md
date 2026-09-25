@@ -429,6 +429,18 @@ Eve Dillon, Stavros Tsagkarakis, Tonny Duong, Andrew Settle.
 - **Add a sector-based report filtered by Upstream Report** ("a report that has the sectors by
   sector and then a filter by upstream report"; "sector reports and sub sector" also mentioned).
   Which sector field (and whether sub-sector) is still to confirm.
+- **Clarified and implemented, 25 Sep 2026.** "Both" means both labels in the tables: the raw
+  `Upstream Report A` line (header **Mapping**) and the workbook's short **Sector Reporting**
+  label, side by side, on both Additional Services pages. The supersector (`Sector`, as on the
+  profitability pages) is added to the drill-down below Mapping, for now.
+  - `dim_Project_Live[Sector Reporting]` holds the workbook's eleven-row mapping, keyed on the
+    line's numeric prefix. Lines not in the mapping (`1.01 London Finance`,
+    `2.71 Scotland Development`) show their raw name; the blank `ZZZ-01` row stays blank.
+  - Monthly Actuals rows: `[Sector Reporting]` → `[Upstream Report A]` (display name "Mapping") →
+    `[Sector]` → `[Contract]` → `[Project Display]`. Columns and values unchanged.
+  - Forecast vs YTD: the same rows, with the values set out under the drill-down entry below.
+  - This supersedes the earlier "do not relabel the existing view" note: the raw line stays, and
+    the short label is added alongside it rather than replacing it.
 - Future: the Upstream Report filter is replaced by a **sector lead** field, likely the contract's
   operations lead, once the contract register carries it. That is with Equitix's Development
   Steering Committee (next meeting Wed 23 Sep 2026).
@@ -442,6 +454,15 @@ Eve Dillon, Stavros Tsagkarakis, Tonny Duong, Andrew Settle.
 - Constraint: each sector's target sits on one placeholder project (see 18 Sep mapping check), so
   below sector level the target and variance are not meaningful. Keep them at sector level and let
   the drill-down show year to date.
+- **Implemented.** `AS Target` and `AS Variance to Target` return blank when
+  `dim_Project_Live[Sector]`, `[Contract]` or `[Project Display]` is in scope, so they show on the
+  Sector Reporting and Mapping rows and the total only. `AS Revenue` is unchanged and shows at
+  every level. Reporting-line and total figures are unchanged. Visual:
+  - Rows: `dim_Project_Live[Sector Reporting]` → `[Upstream Report A]` → `[Sector]` →
+    `[Contract]` → `[Project Display]`
+  - Values: `AS Target`, `AS Revenue` (year to date), `AS Variance to Target`
+  - A Project slicer still filters the target to the selected project, so selecting a project
+    other than the sector's placeholder shows no target.
 
 ### iXBRL reclassification rule confirmed
 

@@ -200,7 +200,17 @@ CALCULATE(
     fact_Revenue_Live[Type] = "Adjustment")
 
 AS Target =
-SUM(fact_AdditionalServicesTarget_Live[Amount])
+IF(
+    ISINSCOPE(dim_Project_Live[Sector])
+        || ISINSCOPE(dim_Project_Live[Contract])
+        || ISINSCOPE(dim_Project_Live[Project Display]),
+    BLANK(),
+    SUM(fact_AdditionalServicesTarget_Live[Amount]))
 
 AS Variance to Target =
-[AS Revenue] - [AS Target]
+IF(
+    ISINSCOPE(dim_Project_Live[Sector])
+        || ISINSCOPE(dim_Project_Live[Contract])
+        || ISINSCOPE(dim_Project_Live[Project Display]),
+    BLANK(),
+    [AS Revenue] - [AS Target])

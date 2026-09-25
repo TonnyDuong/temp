@@ -84,6 +84,17 @@
 //     signed-off report means grouping on A alone. Do NOT apply the
 //     fractions without an explicit client decision — see the
 //     Client Decision Log entry for 11 Sep 2026.
+//   Sector Reporting = the short sector label for each Upstream Report A
+//     line, from the `Mapping` / `Sector Reporting` table in the client's
+//     Additional Services workbook (2.01 Social Infra Scotland -> SI
+//     Scotland, 1.07 Corporate Finance -> iXBRL, ...). Requested by Chris
+//     Rolls on 18 Sep 2026 ("I think we want both"): the Additional
+//     Services tables show the raw line and the short label side by side.
+//     The workbook is not ingested, so the eleven rows are held in Step 7.
+//     Matched on the line's numeric prefix ("2.01") so a renamed line
+//     keeps its label. Lines not in the mapping (1.01 London Finance,
+//     2.71 Scotland Development) show their raw name, as agreed; a null
+//     Upstream Report A stays null.
 // ---------------------------------------------------------------------
 // Column names (CONFIRMED against the crbb5_project column list): the
 // entity is exposed by LOGICAL name (crbb5_projectcode, crbb5_projectname,
@@ -168,6 +179,29 @@ let
     AddProjectDisplay = Table.AddColumn(AddContractPhase, "Project Display",
         each Text.From([Project Code]) & " - " & Text.From([Project Name]),
         type text),
-    #"Filtered Rows" = Table.SelectRows(AddProjectDisplay, each ([Sector] <> null))
+
+    // Step 7 — short Sector Reporting label from the client's mapping,
+    //          keyed on the Upstream Report A numeric prefix
+    SectorReportingMap = [
+        #"2.00" = "Finance Only",
+        #"2.01" = "SI Scotland",
+        #"2.02" = "SI England North",
+        #"2.03" = "SI England South",
+        #"2.04" = "SI Ireland",
+        #"2.05" = "SI Italy",
+        #"2.30" = "Highways",
+        #"2.40" = "Streetlighting",
+        #"2.50" = "Renewables",
+        #"2.60" = "Environmental",
+        #"1.07" = "iXBRL"
+    ],
+    AddSectorReporting = Table.AddColumn(AddProjectDisplay, "Sector Reporting",
+        each
+            if [Upstream Report A] = null then null
+            else Record.FieldOrDefault(SectorReportingMap,
+                Text.BeforeDelimiter(Text.Trim([Upstream Report A]), " "),
+                [Upstream Report A]),
+        type text),
+    #"Filtered Rows" = Table.SelectRows(AddSectorReporting, each ([Sector] <> null))
 in
     #"Filtered Rows"
