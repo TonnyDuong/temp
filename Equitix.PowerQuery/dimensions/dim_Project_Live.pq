@@ -44,6 +44,10 @@
 //   Contract title = crbb5_title                                        (24 Jun 2026 client request).
 //   MSA Reference  = crbb5_msareference                                 (confirmed).
 //   Concession Exp = crbb5_concessionexpiry                             (confirmed).
+//   Subsector      = crbb5_sectorchoicename, the contract's subsector,
+//                     surfaced as the Subsector report filter. The *name*
+//                     column is used, as for Sector, because
+//                     crbb5_sectorchoice is the numeric choice ID.
 //   Project Type   = crbb5_project[crbb5_projecttypename] (the text name,
 //                     e.g. Operational / Construction — NOT the numeric
 //                     crbb5_projecttype choice ID).
@@ -137,9 +141,9 @@ let
     ),
     Expanded = Table.ExpandTableColumn(Merged, "ContractRegister_Lookup",
         {"crbb5_supersectorchoicename", "crbb5_portfolio", "crbb5_title", "crbb5_msareference", "crbb5_concessionexpiry", "crbb5_contractstatus",
-         "crbb5_upstreamreportaname", "crbb5_upstreamreportbname"},
+         "crbb5_upstreamreportaname", "crbb5_upstreamreportbname", "crbb5_sectorchoicename"},
         {"Sector", "Portfolio", "Contract Title", "MSA Reference", "Concession Expiry", "Contract Status",
-         "Upstream Report A", "Upstream Report B"}
+         "Upstream Report A", "Upstream Report B", "Subsector"}
     ),
 
      // Step 2b — IsInScope flag. TRUE if the contract status is in Chris's

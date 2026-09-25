@@ -444,6 +444,9 @@ Eve Dillon, Stavros Tsagkarakis, Tonny Duong, Andrew Settle.
     `[Project Display]`, stepped layout on. Columns and values unchanged. Sort
     `Sector Reporting - Mapping` by `Upstream Report A` so lines keep their 2.00 → 2.60 order.
   - Forecast vs YTD: the same rows, with the values set out under the drill-down entry below.
+  - The "filter by upstream report" is a **Mapping** slicer on `dim_Project_Live[Upstream Report A]`
+    (dropdown, multi-select, select all), synced across both Additional Services pages so one
+    selection applies to both.
   - This supersedes the earlier "do not relabel the existing view" note: the raw line stays, and
     the short label is added alongside it rather than replacing it.
 - Future: the Upstream Report filter is replaced by a **sector lead** field, likely the contract's
@@ -466,8 +469,8 @@ Eve Dillon, Stavros Tsagkarakis, Tonny Duong, Andrew Settle.
   - Rows: `dim_Project_Live[Sector Reporting - Mapping]` → `[Sector]` → `[Contract]` →
     `[Project Display]`
   - Values: `AS Target`, `AS Revenue` (year to date), `AS Variance to Target`
-  - A Project slicer still filters the target to the selected project, so selecting a project
-    other than the sector's placeholder shows no target.
+  - The page keeps no Contract or Project slicer (see the 18 Sep mapping check above). The Mapping
+    slicer filters whole reporting lines, so it keeps each line's target intact.
 
 ### iXBRL reclassification rule confirmed
 
@@ -482,3 +485,43 @@ Eve Dillon, Stavros Tsagkarakis, Tonny Duong, Andrew Settle.
 
 - Chris: once these changes are through, the Additional Services work is "pretty much done".
 - Next call Friday 25 Sep 2026.
+
+## 25 Sep 2026 - YTD Profitability Launch Requests
+
+Final requests for the YTD profitability report before it launches to the business. These apply
+to the profitability report, not the Additional Services pages.
+
+### Subsector filter
+
+- Requirement: add the contract register's sector choice as a report filter named **Subsector**.
+- **Implemented.** `dim_Project_Live[Subsector]` from `crbb5_sectorchoicename`, the label column.
+  `crbb5_sectorchoice` itself is the numeric choice ID, the same pattern as `Sector`, which uses
+  `crbb5_supersectorchoicename`.
+- Slicer: `dim_Project_Live[Subsector]`, blanks excluded (all filters are to exclude blanks).
+
+### Period label in place of the date
+
+- Requirement: replace the date with "Period to MMM YYYY" for the selected year. For 2026 it
+  currently reads "Period to Aug 2026", and for 2025 "Period to Dec 2025".
+- **Implemented** as the `Reporting Period` measure. It takes the latest `Actual` date in
+  `fact_Revenue_Live`, which already stops at `_CutoverDate`, and caps it at 31 December of the
+  selected `Reporting Year`. Past years therefore read December, the current year reads the last
+  closed month, and a year with no actuals yet returns blank.
+- The existing `System Date` measure is left in place; the report card is switched to
+  `Reporting Period` in Desktop.
+
+### Decided, not yet built
+
+- **`AAA` projects stay in the totals.** The Project filter hides projects with no revenue and no
+  cost for the selected year, rather than filtering on the `AAA` prefix. The stray `AAA` codes
+  carry time only and are being cleaned up at source.
+- **The Year filter shows only years with actuals loaded**, so a new year appears once its first
+  month of actuals is in. **Implemented** in the `Reporting Year` calculated table: the existing
+  lower bound of 2024 is kept, and the upper bound is the year of the latest `Actual` date in
+  `fact_Revenue_Live`, the same date `Reporting Period` uses. The table is recalculated on refresh.
+  `_Selected Reporting Year` now falls back to the latest year in `Reporting Year` when no single
+  year is selected, instead of the current calendar year, which is not in the list between
+  1 January and the first load of that year's actuals.
+- **Target profitability percentages come from a client-maintained sheet, "Target Profitability",
+  in the SharePoint Data folder**, one row per year. Its layout is to be read before the staging
+  query is written.
