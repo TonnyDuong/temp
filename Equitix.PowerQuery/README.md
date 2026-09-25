@@ -90,6 +90,7 @@ The `.pq` files under `sources/` are the Power Query source/staging queries that
 | `stg_Staff Costs Summary` | `Staff Costs Summary.xlsx`, `Sheet1` |
 | `stg_AdditionalServicesForecast` | `Additional Services Forecast.xlsx`, `AdditionalServices Forecast` sheet |
 | `stg_SubcontractorForecast` | `Subcontractor forecast.xlsx`, `Sheet1` |
+| `stg_TargetProfitability` | `Target Profitability.xlsx`, first sheet |
 | `Equitix_Measures` | Empty placeholder query for the measure container |
 
 ## Build order
@@ -107,6 +108,7 @@ Queries depend on each other. If you're pasting them in for the first time, crea
    - `dimensions/dim_Transaction_Live.pq` (depends on `stg_FinanceOutput FY26_FY2026`)
    - `dimensions/dim_ForecastSnapshot_Live.pq` (standalone)
    - `dimensions/dim_ForecastVersion_Live.pq` (depends on `crbb5_jedoxallocation`)
+   - `dimensions/dim_TargetProfitability_Live.pq` (depends on `stg_TargetProfitability`; no relationships)
 3. **Helpers** (sub-queries that get appended into the facts; load-disabled except the five listed below)
    - `helpers/_Revenue_*.pq` — note `_Revenue_Forecast_OOC` depends on `stg_AdditionalServicesForecast` (delivered SharePoint file, by month + project code)
    - `helpers/_Revenue_Adjustment_iXBRL.pq` — Additional Services iXBRL reclassification, derived from `stg_FinanceOutput FY26_FY2026` (no input file). Emits `Type = "Adjustment"` rows that net to zero overall

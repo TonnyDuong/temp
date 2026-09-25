@@ -515,6 +515,9 @@ to the profitability report, not the Additional Services pages.
 - **`AAA` projects stay in the totals.** The Project filter hides projects with no revenue and no
   cost for the selected year, rather than filtering on the `AAA` prefix. The stray `AAA` codes
   carry time only and are being cleaned up at source.
+  **Implemented** as the `Project Has Activity` measure: 1 when `Total Revenue YTD` or
+  `Total Costs YTD` is non-zero for the selected year, otherwise blank. The Project slicer carries
+  a visual-level filter `Project Has Activity` is 1. Totals are unaffected.
 - **The Year filter shows only years with actuals loaded**, so a new year appears once its first
   month of actuals is in. **Implemented** in the `Reporting Year` calculated table: the existing
   lower bound of 2024 is kept, and the upper bound is the year of the latest `Actual` date in
@@ -525,3 +528,12 @@ to the profitability report, not the Additional Services pages.
 - **Target profitability percentages come from a client-maintained sheet, "Target Profitability",
   in the SharePoint Data folder**, one row per year. Its layout is to be read before the staging
   query is written.
+  **Implemented.** The sheet has a title, an "FY" row, then a header row "Gross margin required"
+  with one column per year (2024, 2025, 2026) and one row per target (Breakeven, Approved budget,
+  20% EBITDA). `stg_TargetProfitability` reads the file's first sheet, and
+  `dim_TargetProfitability_Live` finds the header row by its label and unpivots every year column,
+  so a new year added to the right needs no change. Measures `Target Margin` (the selected year's
+  value per target) and `Target Profitability Title`. Visual below the main table:
+  - Title: text box or card bound to `Target Profitability Title`
+  - Table: Rows `dim_TargetProfitability_Live[Target]`, sorted by `[Target Order]`; Values
+    `Target Margin`, format `0.##%` so 46% and 37.07% both display as entered

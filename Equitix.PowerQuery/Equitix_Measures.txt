@@ -197,6 +197,19 @@ Total Revenue YTD + Forecast =
 Total Revenue FY =
 [Total Revenue YTD + Forecast]
 
+Project Has Activity =
+IF([Total Revenue YTD] <> 0 || [Total Costs YTD] <> 0, 1)
+
+Target Margin =
+VAR SelectedYear = [_Selected Reporting Year]
+RETURN
+CALCULATE(
+    SUM(dim_TargetProfitability_Live[Target Margin]),
+    dim_TargetProfitability_Live[Year] = SelectedYear)
+
+Target Profitability Title =
+"Target profitability FY" & [_Selected Reporting Year]
+
 AS Revenue =
 CALCULATE(
     -SUM(fact_Revenue_Live[Amount]),
