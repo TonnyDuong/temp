@@ -643,3 +643,28 @@ All of these were agreed on 25 Sep (see above) and are restated as outstanding:
 ### Both Additional Services pages
 
 - Sized to fit the screen space available in a Power BI app.
+
+## 02 Oct 2026 - Launch Feedback: Year Filter And 2025 Staff Costs
+
+Source: Chris Rolls email, 02 Oct 2026, replying to the target profitability deployment.
+
+### YTD profitability Year filter shows all years
+
+- Chris: "the Year filter still shows all years."
+- The deployed `Reporting Year` table predates the 25 Sep definition. The slicer offered 2029 and
+  the title read "Target profitability FY2029" while `Reporting Period` was blank, so the table held
+  years beyond the latest actual. No code change: the calculated table in Desktop is replaced with
+  the definition in `Equitix_Measures.txt` (2024 to the latest actual year).
+
+### 2025 staff costs missing
+
+- Chris: "staff costs are not being brought in for 2025, but there are day rates for 2025 within
+  the data file."
+- **Cause:** `fact_Timesheet_Live` kept 2026 timesheet lines only, so 2025 rates had no hours to
+  multiply.
+- **Fixed:** `fact_Timesheet_Live` keeps 2025 onwards. The Staff Costs Summary file holds rates from
+  2025, so earlier years would cost 0.
+- **Fixed with it:** `stg_Staff Costs Summary` typed the `2025` column as a whole number, which would
+  round 2025 day rates to whole pounds. It is now `type number`, the same as `2026`.
+- Expect 2025 Profit and Margin % to fall once staff cost is included, and a longer refresh from the
+  second year of timesheets.

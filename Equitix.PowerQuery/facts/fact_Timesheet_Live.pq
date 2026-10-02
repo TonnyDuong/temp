@@ -21,6 +21,11 @@
 // EMS 90 flag:
 //   Internal placeholder for unsubmitted timesheets. Flagged here for
 //   exclusion in contract/sector/project visuals (via measure filters).
+//
+// Year scope:
+//   2025 onwards. The client reported 2025 staff costs missing although
+//   2025 day rates are in the Staff Costs Summary file (02 Oct 2026).
+//   That file holds rates from 2025, so earlier hours would cost 0.
 // =====================================================================
 let
     Source = #"dogma_timesheet",
@@ -33,12 +38,12 @@ let
     NotDuplicate = Table.SelectRows(Source, each [crbb5_isduplicate] <> true),
     NotMarkToDelete = Table.SelectRows(NotDuplicate, each [crbb5_marktodelete] <> true),
 
-    // Step 2 — filter to 2026 only
-    Year2026Only = Table.SelectRows(NotMarkToDelete, each Date.Year([dogma_date]) = 2026),
+    // Step 2 — filter to 2025 onwards
+    Year2025Onwards = Table.SelectRows(NotMarkToDelete, each Date.Year([dogma_date]) >= 2025),
 
     // Step 3 — surface TWR from the (doubled-prefix) lookup column, plus
     //          friendly names for date / duration / project.
-    Renamed = Table.RenameColumns(Year2026Only, {
+    Renamed = Table.RenameColumns(Year2025Onwards, {
         {"crbb5_crbb5_timeworkreferencename", "TimeWorkReference"},
         {"dogma_project",                     "Project Code"},
         {"dogma_date",                        "Date"},
