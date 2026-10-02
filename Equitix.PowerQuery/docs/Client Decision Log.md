@@ -668,3 +668,7 @@ Source: Chris Rolls email, 02 Oct 2026, replying to the target profitability dep
   round 2025 day rates to whole pounds. It is now `type number`, the same as `2026`.
 - Expect 2025 Profit and Margin % to fall once staff cost is included, and a longer refresh from the
   second year of timesheets.
+- **Refresh fix:** the first refresh after these changes failed because `dim_StaffCosts_Live[StaffKey]`
+  held blanks, which a one-side relationship key cannot. Rows in the Staff Costs Summary file with
+  no Time@work Reference now drop out before the unpivot. Timesheets join on that reference, so
+  those rows carried no cost.

@@ -25,6 +25,10 @@
 //   When the same TimeWorkReference appears with both EMPEMCON* (contractor)
 //   and EMPEM* (permanent) EmployeeIDs, keep the EMPEM* row.
 //
+// Rows with no Time@work Reference are dropped before the unpivot.
+// Timesheets join on that reference, so these rows carry no cost, and
+// their blank StaffKey would fail the model load.
+//
 // Forecast-cost inputs (CONFIRMED by Chris's 02 Jun 2026 email + workbook):
 //   ContractHours      = crbb5_bamboohr.crbb5_contracthours (weekly, e.g. 37.5 FT / 20 PT)
 //   FullTimeHours      = 37.5 for UK + Ireland, 40 for Italy
@@ -58,10 +62,15 @@ let
         {"Last Name, First Name",   "EmployeeName"}
     }),
 
+    // Step 1b — drop rows with no Time@work Reference. They cannot match a
+    //           timesheet line and would give a blank StaffKey, which fails
+    //           the model load (02 Oct 2026 refresh).
+    HasReference = Table.SelectRows(Renamed, each Text.Trim(Text.From([TimeWorkReference] ?? "")) <> ""),
+
     // Step 2 — unpivot the per-year columns so each row is (TWR, Year, DayRate)
     //          The year column value is the DAY RATE (£/day) directly.
     Unpivoted = Table.UnpivotOtherColumns(
-        Renamed,
+        HasReference,
         {"EmployeeID", "TimeWorkReference", "EmployeeName"},
         "Year",
         "DayRate"
