@@ -2,7 +2,7 @@
 // dim_TargetProfitability_Live
 // ---------------------------------------------------------------------
 // Purpose:      Target gross margin per financial year, shown as text
-//               below the YTD profitability table: Breakeven, Approved
+//               under the YTD profitability filters: Breakeven, Approved
 //               budget and 20% EBITDA.
 // Grain:        One row per (Year, Target).
 // Dependencies: stg_TargetProfitability  (SharePoint Data folder,

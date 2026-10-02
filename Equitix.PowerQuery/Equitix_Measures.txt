@@ -176,6 +176,17 @@ IF(
     BLANK(),
     "Period to " & FORMAT(PeriodEnd, "mmm yyyy"))
 
+Year Has Actuals =
+VAR LatestActualYear =
+    YEAR(
+        CALCULATE(
+            MAX(fact_Revenue_Live[Date]),
+            REMOVEFILTERS(fact_Revenue_Live),
+            fact_Revenue_Live[Type] = "Actual"))
+VAR CurrentYear = SELECTEDVALUE(dim_Date_Live[Year])
+RETURN
+IF(CurrentYear >= 2024 && CurrentYear <= LatestActualYear, 1)
+
 Total Staff Cost =
 [Staff Cost Actual] + [Staff Cost Forecast]
 
@@ -248,3 +259,26 @@ IF(
         || ISINSCOPE(dim_Project_Live[Project Display]),
     BLANK(),
     [AS Revenue] - [AS Target])
+
+AS Variance Colour =
+VAR Variance = [AS Variance to Target]
+RETURN
+IF(
+    ISBLANK(Variance),
+    BLANK(),
+    IF(Variance < 0, "#C00000", "#00B050"))
+
+AS Reporting Period =
+VAR LatestActual =
+    CALCULATE(
+        MAX(fact_Revenue_Live[Date]),
+        REMOVEFILTERS(fact_Revenue_Live),
+        fact_Revenue_Live[Type] = "Actual")
+VAR SelectedYear =
+    COALESCE(SELECTEDVALUE(dim_Date_Live[Year]), YEAR(LatestActual))
+VAR PeriodEnd = MIN(LatestActual, DATE(SelectedYear, 12, 31))
+RETURN
+IF(
+    ISBLANK(LatestActual) || SelectedYear > YEAR(LatestActual),
+    BLANK(),
+    "Period to " & FORMAT(PeriodEnd, "mmm yyyy"))

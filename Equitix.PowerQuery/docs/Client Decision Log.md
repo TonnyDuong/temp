@@ -533,7 +533,113 @@ to the profitability report, not the Additional Services pages.
   20% EBITDA). `stg_TargetProfitability` reads the file's first sheet, and
   `dim_TargetProfitability_Live` finds the header row by its label and unpivots every year column,
   so a new year added to the right needs no change. Measures `Target Margin` (the selected year's
-  value per target) and `Target Profitability Title`. Visual below the main table:
+  value per target) and `Target Profitability Title`. Visual under the main filters (see the catch-up entry below):
   - Title: text box or card bound to `Target Profitability Title`
   - Table: Rows `dim_TargetProfitability_Live[Target]`, sorted by `[Target Order]`; Values
     `Target Margin`, format `0.##%` so 46% and 37.07% both display as entered
+
+## 25 Sep 2026 - Catch-up Call: Launch Changes Accepted
+
+Client decisions from the Equitix catch-up, 25 Sep 2026 13:30. Present: Chris Rolls, Eve Dillon,
+Stavros Tsagkarakis, Tonny Duong.
+
+### Launch
+
+- The YTD profitability report is to be launched, or ready to launch, by Friday 2 Oct 2026. It
+  replaces an existing set of profitability reports, which will be switched off.
+- Accepted as shown: logo, Period label, Sector Head and Subsector filters, renamed headings,
+  values rounded to £1, and the Mapping filter on Additional Services Forecast vs YTD.
+
+### `AAA` projects are never selectable
+
+- `AAA` codes are system errors and must not appear in the Project filter at all, including the
+  few that currently have time booked. They remain in the report totals because their costs are
+  real.
+- This tightens the earlier decision in this log, which only hid projects with no figures. The
+  Project slicer carries both visual-level filters: `Project Has Activity` is 1, and Project does
+  not start with `AAA`.
+
+### No blanks in any filter
+
+- Confirmed: no filter offers a blank option.
+
+### Presentation
+
+- **Period label:** white text on the header's blue background.
+- **Margin %:** one decimal place, so small differences between contracts remain visible. Currency
+  values stay at whole pounds.
+- **Headings:** every value column heading except Sector is right-aligned with its numbers.
+- **Target profitability text:** at the top of the page under the main filters, not below the
+  table, so it stays in view when rows are expanded. The client will say if they want it moved.
+
+### iXBRL reclassification
+
+- The client asked whether the memo match looks anywhere in the memo or only at its start, so that
+  memos can be written to be caught. The rule matches `ixbrl` anywhere in the lower-cased `Memo` on
+  account `40013` (`Text.Contains`), in both `_Revenue_Adjustment_iXBRL` and
+  `fact_iXBRL_Lines_Live`. Matching anywhere is acceptable to the client. The rule is to be sent
+  to them in writing.
+- The `[TEMP] Additional Services - iXBRL Reclassification` page is hidden before go-live.
+
+## 30 Sep 2026 - Launch Feedback On All Three Reports
+
+Source: Chris Rolls email, 30 Sep 2026 17:34, thread "Equitix profitability reporting: follow-up on
+files and clarifications". Written before the 25 Sep launch changes were deployed, so several YTD
+items below are already in the model and only need the Desktop deploy.
+
+### iXBRL reclassification signed off
+
+- Chris: "Can confirm the iXBRL reallocation is working as expected within the additional services
+  pages ... happy to remove the temporary page."
+- The `[TEMP] Additional Services - iXBRL Reclassification` page is removed. `fact_iXBRL_Lines_Live`
+  stays in the model.
+
+### YTD profitability
+
+All of these were agreed on 25 Sep (see above) and are restated as outstanding:
+
+- Project filter: no `AAA` codes, no blanks. Visual-level filters on the Project slicer:
+  `Project Has Activity` is 1, `dim_Project_Live[Project Display]` does not start with `AAA`,
+  `Project Display` is not blank.
+- Column headings right-aligned with their values, except Sector.
+- Period label: header blue background, white text, bound to `Reporting Period`.
+- Year filter: `'Reporting Year'[Year]`, which only holds years with actuals loaded.
+- Target profitability text above the main table, below the filter area.
+- Canvas and text sized to fit the screen space available in a Power BI app.
+
+### Additional Services Monthly Actuals
+
+- **Blank reporting-line row hidden.** Chris: "Filter out the blank Sector row (this will be fixed in
+  September figures) and 2.71 Scotland Development". This supersedes the 18 Sep 2026 decision to keep
+  the `ZZZ-01` row visible. The headline total for 2026 drops by the blank row, 10,357.60 at the
+  July close (995,256.87 to 984,899.27).
+- `2.71 Scotland Development` hidden.
+- Matrix visual-level filter: `dim_Project_Live[Sector Reporting - Mapping]` is not blank and is not
+  `2.71 Scotland Development`.
+- Project slicer: blanks and `Project Display` starting with `AAA` excluded.
+- Year slicer: `dim_Date_Live[Year]`, visual-level filter `Year Has Actuals` is 1. The Additional
+  Services measures filter through `dim_Date_Live`, not the disconnected `Reporting Year` table, so
+  the slicer keeps its field and the new measure applies the same 2024-to-latest-actual-year bounds.
+- **Sector filter added.** Chris: "Add a "Sector" filter which allows filtering by the main EMS
+  sectors (Data Infra, Environmental Services etc)". Slicer on `dim_Project_Live[Sector]` (the
+  supersector, as on the profitability pages), dropdown, multi-select, select all, blanks excluded,
+  synced with Forecast vs YTD.
+- Period label: `AS Reporting Period`, same style as the profitability page. It reads the selected
+  `dim_Date_Live[Year]`; `Reporting Period` reads `Reporting Year` and would ignore this page's slicer.
+
+### Additional Services Forecast vs YTD
+
+- Variance to Target: positive green, negative red. Font colour by field value on
+  `AS Variance Colour` (`#00B050` at or above zero, `#C00000` below, blank where the variance is
+  blank). Same sign convention as decided on 18 Sep.
+- Period label: `AS Reporting Period`, same style.
+- Table visual-level filter: `dim_Project_Live[Sector Reporting - Mapping]` is not blank and is not
+  `2.71 Scotland Development`.
+- Sector filter: the synced slicer above. Each line's target sits on one placeholder project (see the
+  18 Sep mapping check), so check the placeholder projects' `Sector` before shipping. If a
+  placeholder's Sector differs from its line's projects, a Sector selection blanks or misstates that
+  line's target.
+
+### Both Additional Services pages
+
+- Sized to fit the screen space available in a Power BI app.
