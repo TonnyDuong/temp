@@ -1,7 +1,7 @@
 let
     Source = SharePoint.Files("https://eqmanserv.sharepoint.com/sites/EMS_FPA", [ApiVersion = 15]),
-    #"EMS Fixed Fee Forecast xlsx_https://eqmanserv sharepoint com/sites/EMS_FPA/Shared Documents/Profitability/Data/" = Source{[Name="EMS Fixed Fee Forecast.xlsx",#"Folder Path"="https://eqmanserv.sharepoint.com/sites/EMS_FPA/Shared Documents/Profitability/Data/"]}[Content],
-    #"Imported Excel Workbook" = Excel.Workbook(#"EMS Fixed Fee Forecast xlsx_https://eqmanserv sharepoint com/sites/EMS_FPA/Shared Documents/Profitability/Data/"),
+    #"EMS Fixed Fee Forecast xlsx_https://eqmanserv sharepoint com/sites/EMS_FPA/Shared Documents/EMS FI/Data/" = Source{[Name="EMS Fixed Fee Forecast.xlsx",#"Folder Path"="https://eqmanserv.sharepoint.com/sites/EMS_FPA/Shared Documents/EMS FI/Data/"]}[Content],
+    #"Imported Excel Workbook" = Excel.Workbook(#"EMS Fixed Fee Forecast xlsx_https://eqmanserv sharepoint com/sites/EMS_FPA/Shared Documents/EMS FI/Data/"),
     ProjectHARP_Sheet = #"Imported Excel Workbook"{[Item="ProjectHARP",Kind="Sheet"]}[Data],
     #"Removed Top Rows" = Table.Skip(ProjectHARP_Sheet,2),
     #"Promoted Headers" = Table.PromoteHeaders(#"Removed Top Rows", [PromoteAllScalars=true]),

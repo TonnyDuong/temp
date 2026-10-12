@@ -672,3 +672,23 @@ Source: Chris Rolls email, 02 Oct 2026, replying to the target profitability dep
   held blanks, which a one-side relationship key cannot. Rows in the Staff Costs Summary file with
   no Time@work Reference now drop out before the unpivot. Timesheets join on that reference, so
   those rows carried no cost.
+
+## 02 Oct 2026 - Launch Feedback: Page Width And Additional Services Filters
+
+Source: client review call, 02 Oct 2026.
+
+### Pages slightly too wide for the app
+
+- In the workspace app, the YTD profitability page was slightly too wide and showed a horizontal
+  scroll bar. It fit at 95% zoom.
+- **Changed in Desktop:** all three visible tabs reduced by about 5%, from 1600 x 900 to 1520 x 855,
+  with visuals scaled to match.
+
+### Additional Services filters
+
+- **Additional Services Monthly Actuals:** the Mapping slicer is replaced with Subsector
+  (`dim_Project_Live[Subsector]`), so the filters match the YTD profitability tab.
+- **Additional Services Forecast vs YTD:** the Mapping slicer is removed and no Subsector slicer is
+  added. Each line's target sits on one placeholder project, which has a single subsector, so a
+  Subsector selection would blank or misstate the target.
+- No model change: `Subsector` is already on `dim_Project_Live`.
