@@ -56,17 +56,22 @@ let
         each Text.From([#"Transaction: Transaction ID"]) & "-" & Text.From([#"Transaction Line ID"]),
         type text),
 
-    Lines = Table.AddColumn(AddTLK, "CostKey",
+    // Buffered so the four checks below share one read of the source
+    // instead of each re-running the staging query.
+    Lines = Table.Buffer(Table.AddColumn(AddTLK, "CostKey",
         each [#"Account No."] & "|" & Text.From([#"Class: Class External ID"] ?? "")
              & "|" & Text.From([Sum of Amount]),
-        type text),
+        type text)),
 
     // Runs the check for one helper. HelperRows must carry
     // [Account Code], [Date] and [MatchKey]. LineKeyColumn names the
     // column on Lines that MatchKey corresponds to.
-    Check = (HelperName as text, HelperRows as table, LineKeyColumn as text) as table =>
+    Check = (HelperName as text, HelperRowsIn as table, LineKeyColumn as text) as table =>
         let
-            HelperAccounts = List.Distinct(HelperRows[Account Code]),
+            // Buffered because the helper is read twice below; unbuffered,
+            // each read re-runs the whole helper query.
+            HelperRows = Table.Buffer(HelperRowsIn),
+            HelperAccounts = List.Buffer(List.Distinct(HelperRows[Account Code])),
             Candidates = Table.SelectRows(Lines, each
                 List.Contains(HelperAccounts, [#"Account No."])),
             DatesByKey = Table.Group(HelperRows, {"MatchKey"}, {
