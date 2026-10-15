@@ -93,6 +93,14 @@ The `.pq` files under `sources/` are the Power Query source/staging queries that
 | `stg_TargetProfitability` | `Target Profitability.xlsx`, first sheet |
 | `Equitix_Measures` | Empty placeholder query for the measure container |
 
+### SharePoint folder
+
+Every `stg_*` query reads its workbook from `Shared Documents/EMS FI/Data/` on the `EMS_FPA` site. The workbooks moved there from `Shared Documents/Profitability/Data/` in October 2026.
+
+If the folder moves again, update the `Folder Path` in all ten `stg_*` queries, then republish. Until the model is republished, the service refresh keeps failing with `The key didn't match any rows in the table`, and the error names the old folder path.
+
+`SharePoint.Files` lists every file on the whole site before filtering to one workbook, and each `stg_*` query does this separately. A full load in Desktop can therefore sit at "Detecting relationships..." for several minutes. That label is shown while the queries are still fetching data, so it does not mean the load has stalled.
+
 ## Build order
 
 Queries depend on each other. If you're pasting them in for the first time, create them in this order:
@@ -141,6 +149,8 @@ Queries depend on each other. If you're pasting them in for the first time, crea
 > Every other helper is load-disabled. Before disabling load on a helper, check
 > `Equitix_Measures.txt` for a direct table reference to it.
 - For dimensions and facts, leave **load** enabled (default).
+- For everything else, load is disabled: all `sources/` queries, all debug queries, `_CutoverDate` and `FetchAllColumns`. `_NormalizeAccountCode` is a function and cannot load. A load-disabled query still runs during refresh when a loaded query depends on it, so **Include in report refresh** only matters for loaded queries.
+- No other query references `crbb5_billingschedule`, `dogma_timesheetheader`, `dogma_timesheetperiod`, `stg_EMS Fixed Fee Forecast_31Dec2025` or `stg_EMS Fixed Fee Forecast_Actuals`. With load disabled they do not run during refresh. `_Revenue_Forecast_31Dec2025` reads `stg_EMS Fixed Fee Forecast_Contracts1`, not the `_31Dec2025` source. `FetchAllColumns` exists in the report but has no `.pq` file here.
 
 ## Missing Data Troubleshooting
 
