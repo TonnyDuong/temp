@@ -692,3 +692,17 @@ Source: client review call, 02 Oct 2026.
   added. Each line's target sits on one placeholder project, which has a single subsector, so a
   Subsector selection would blank or misstate the target.
 - No model change: `Subsector` is already on `dim_Project_Live`.
+
+## 16 Oct 2026 - YTD Profitability: Additional Services Difference To The Additional Services Report
+
+Source: SUP-187, 16 Oct 2026.
+
+- The YTD Profitability Additional Services column (`Revenue Act Oo-Contract`) showed
+  £1,445,818.02 for 2026, against £1,405,109.19 on the Additional Services report.
+- **Cause:** both use Period End Date. The difference is the Internal projects (EMS and EMI codes),
+  whose 2026 postings to `40013` net to -£40,708.83. The YTD Profitability page excludes the
+  Internal sector. The Additional Services report includes it.
+- **Decision:** keep the Internal projects out of the YTD Profitability report and add a note to the
+  page explaining the difference.
+- **Changed:** new measure `Internal Projects Note` in `Equitix_Measures.txt`, shown as a one-line
+  card above the main matrix. No change to the Internal sector filter or any existing measure.

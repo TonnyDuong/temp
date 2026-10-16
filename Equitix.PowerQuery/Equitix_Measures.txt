@@ -221,6 +221,17 @@ CALCULATE(
 Target Profitability Title =
 "Target profitability FY" & [_Selected Reporting Year]
 
+Internal Projects Note =
+VAR InternalOoContract =
+    CALCULATE(
+        [Revenue Act Oo-Contract],
+        REMOVEFILTERS(dim_Project_Live),
+        dim_Project_Live[Sector] = "Internal")
+RETURN
+"Additional Services excludes Internal projects (EMS and EMI), which the Additional Services report includes. Internal projects FY"
+    & [_Selected Reporting Year] & ": "
+    & FORMAT(COALESCE(InternalOoContract, 0), "£#,##0;-£#,##0")
+
 AS Revenue =
 CALCULATE(
     -SUM(fact_Revenue_Live[Amount]),
