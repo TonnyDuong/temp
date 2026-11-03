@@ -51,6 +51,13 @@
 // reallocation land on the same project code), so they correctly stay
 // where they are and are not double counted.
 // ---------------------------------------------------------------------
+// 30 Oct 2026: the Additional Services pages no longer use these rows.
+// Eve Dillon asked for the Internal projects to be excluded so the
+// Additional Services report reconciles to the profitability report.
+// EMS-04 is Internal, so `AS Revenue` now counts Actual rows only, and
+// these Adjustment rows feed only `AS iXBRL Reclassification` and
+// `AS Adjustment Row Count`. The query is kept for reconciliation.
+// ---------------------------------------------------------------------
 // The Step 1 match rule is duplicated in facts/fact_iXBRL_Lines_Live.pq,
 // the evidence table for this reclassification. Change both together.
 // ---------------------------------------------------------------------

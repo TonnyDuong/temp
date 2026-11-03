@@ -706,3 +706,33 @@ Source: SUP-187, 16 Oct 2026.
   page explaining the difference.
 - **Changed:** new measure `Internal Projects Note` in `Equitix_Measures.txt`, shown as a one-line
   card above the main matrix. No change to the Internal sector filter or any existing measure.
+- **Superseded 30 Oct 2026:** see the entry below. The note is removed.
+
+## 30 Oct 2026 - Additional Services: Internal Projects Excluded
+
+Source: Eve Dillon, email 30 Oct 2026 13:23, on the SUP-187 thread, confirmed at 15:39. Story 5050.
+
+- **Request:** *"could we also exclude internal codes from the additional services report, so it
+  reconciles to the profitability report?"*, as a priority ahead of the summary page.
+- **Confirmed scope:** Internal projects (EMS and EMI) excluded from the Additional Services Monthly
+  Actuals and Additional Services Forecast vs YTD pages, including their totals. Internal removed
+  from the Sector filter on both pages. For any year, the Additional Services totals on both pages
+  match the YTD Profitability page. The Internal projects note removed.
+- **Effect on the iXBRL reclassification:** it moved iXBRL recharges onto `EMS-04`, which is
+  Internal. Filtering out the Internal sector alone would drop the reallocation but keep the
+  reversal on the originating projects, leaving the Additional Services total below YTD
+  Profitability by the recharges billed to non-Internal projects: £66,260 for 2026, £63,520 for
+  2025 and £41,200 for 2024 (`debug-ixbrl-source-sectors.pq`).
+- **Decision:** `AS Revenue` counts out-of-contract `Actual` rows on non-Internal projects only. The
+  iXBRL `Adjustment` rows are no longer applied on the Additional Services pages. These are the same
+  rows as `Revenue Act Oo-Contract` on the YTD Profitability page, so the figures match by sector,
+  contract and project as well as in total. The `1.07 Corporate Finance` line no longer appears.
+  This supersedes the 10 Sep 2026 reclassification on those pages and the earlier note that the
+  Internal sector must not be filtered out of the Additional Services report.
+- **Changed:** `AS Revenue` in `Equitix_Measures.txt`. `Internal Projects Note` removed. Sector
+  slicers on both Additional Services pages filtered to exclude `Internal`. The iXBRL helper,
+  `fact_iXBRL_Lines_Live`, `AS Revenue Before Adjustment`, `AS iXBRL Reclassification` and
+  `AS Adjustment Row Count` are unchanged and stay for reconciliation.
+- **Still differs between the pages:** the Additional Services matrices hide rows with a blank
+  reporting line and the `2.71 Scotland Development` line (30 Sep 2026). The YTD Profitability page
+  shows both, so any revenue on them would make the totals differ.
