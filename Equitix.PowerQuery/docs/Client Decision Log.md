@@ -758,5 +758,8 @@ Source: Eve Dillon, email 5 Nov 2026 15:55, on the priority list thread. Stories
 - **Changed:** new table `dim_AdditionalServicesBridge_Live`. New measures `AS Bridge Internal
   Projects` and `AS Bridge Amount` in `Equitix_Measures.txt`. New table visual on the Additional
   Services Monthly Actuals page.
-- **Scope of the bridge:** it follows the Year slicer and ignores the Sector, Subsector and Project
-  slicers, because the management accounts figure is for the whole business.
+- **Scope of the bridge:** it follows the Year slicer and ignores the Contract, Project, Sector and
+  Subsector slicers, because the management accounts figure is for the whole business.
+- **Known gap for 2025:** the bridge's first line is £2,290,617, against £2,270,240 on the matrix and
+  the YTD Profitability page, a gap of about £20,377. The cause is not confirmed. 2026 agrees. The
+  bridge is left as it is.
