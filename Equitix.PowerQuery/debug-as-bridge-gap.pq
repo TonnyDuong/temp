@@ -30,7 +30,8 @@
 // buckets. Look for a page or report-level filter on dim_Project_Live,
 // which the matrix respects and the bridge measures remove.
 //
-// The join ignores case, as the model relationship does.
+// The join uses an upper-case key, so it ignores case as the model
+// relationship does.
 // =====================================================================
 let
     Ooc = Table.SelectRows(#"fact_Revenue_Live", each
@@ -40,12 +41,17 @@ let
 
     Narrowed = Table.SelectColumns(Ooc, {"Date", "Project Code", "Amount"}),
 
-    Projects = Table.Buffer(Table.SelectColumns(#"dim_Project_Live",
-        {"Project Code", "Sector", "Sector Reporting - Mapping"})),
+    NarrowedKeyed = Table.AddColumn(Narrowed, "Join Key",
+        each Text.Upper(Text.From([Project Code])), type nullable text),
 
-    Joined = Table.NestedJoin(Narrowed, {"Project Code"},
-        Projects, {"Project Code"}, "Project", JoinKind.LeftOuter,
-        {Comparer.OrdinalIgnoreCase}),
+    Projects = Table.SelectColumns(#"dim_Project_Live",
+        {"Project Code", "Sector", "Sector Reporting - Mapping"}),
+
+    ProjectsKeyed = Table.Buffer(Table.AddColumn(Projects, "Join Key",
+        each Text.Upper(Text.From([Project Code])), type nullable text)),
+
+    Joined = Table.NestedJoin(NarrowedKeyed, {"Join Key"},
+        ProjectsKeyed, {"Join Key"}, "Project", JoinKind.LeftOuter),
 
     // dim_Project_Live drops rows with a null Sector, so a null Sector
     // here means the row found no project.
