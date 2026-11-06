@@ -283,3 +283,21 @@ IF(
     ISBLANK(LatestActual) || SelectedYear > YEAR(LatestActual),
     BLANK(),
     "Period to " & FORMAT(PeriodEnd, "mmm yyyy"))
+
+AS Bridge Internal Projects =
+CALCULATE(
+    -SUM(fact_Revenue_Live[Amount]),
+    fact_Revenue_Live[Contract Type] = "Out of Contract",
+    fact_Revenue_Live[Type] = "Actual",
+    REMOVEFILTERS(dim_Project_Live),
+    dim_Project_Live[Sector] = "Internal")
+
+AS Bridge Amount =
+VAR Reported = CALCULATE([AS Revenue], REMOVEFILTERS(dim_Project_Live))
+VAR Internal = [AS Bridge Internal Projects]
+RETURN
+SWITCH(
+    SELECTEDVALUE(dim_AdditionalServicesBridge_Live[Line Order]),
+    1, Reported,
+    2, Internal,
+    3, Reported + Internal)

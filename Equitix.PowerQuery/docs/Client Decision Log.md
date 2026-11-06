@@ -733,6 +733,30 @@ Source: Eve Dillon, email 30 Oct 2026 13:23, on the SUP-187 thread, confirmed at
   slicers on both Additional Services pages filtered to exclude `Internal`. The iXBRL helper,
   `fact_iXBRL_Lines_Live`, `AS Revenue Before Adjustment`, `AS iXBRL Reclassification` and
   `AS Adjustment Row Count` are unchanged and stay for reconciliation.
+- **`2.71 Scotland Development` shown again (3 Nov 2026):** after the change the 2026 totals were
+  still £200 apart. The whole difference was the `2.71 Scotland Development` line, hidden on the
+  Additional Services matrices at the client's request on 30 Sep 2026 but included on the YTD
+  Profitability page. The "is not `2.71 Scotland Development`" condition is removed from both
+  matrices, so the line shows and the totals match (£1,445,818.02 for 2026). The client is to be
+  told, and the line can be hidden again if they prefer, at the cost of the gap.
 - **Still differs between the pages:** the Additional Services matrices hide rows with a blank
-  reporting line and the `2.71 Scotland Development` line (30 Sep 2026). The YTD Profitability page
-  shows both, so any revenue on them would make the totals differ.
+  reporting line. The YTD Profitability page shows them. They are £0.00 for 2026, but any revenue on
+  them would make the totals differ.
+
+## 5 Nov 2026 - Additional Services: 2.71 Row Format and YTD Bridge
+
+Source: Eve Dillon, email 5 Nov 2026 15:55, on the priority list thread. Stories 5052 and 5053.
+
+- **Row format (5052):** `2.71 Scotland Development` stays shown, in the same format as the other
+  rows. `dim_Project_Live` gains the short label `Development`, so the row reads
+  `Development - 2.71 Scotland Development` on both Additional Services pages. The label comes from
+  the client's request, not the `Mapping` table in their workbook.
+- **Bridge (5053):** the reconciliation *"just requires total additional services revenue (incl.
+  internal) less internal only additional revenue YTD"*. That answers the open question on the
+  story: the management accounts figure is the total including the internal contracts, and needs no
+  further lines.
+- **Changed:** new table `dim_AdditionalServicesBridge_Live`. New measures `AS Bridge Internal
+  Projects` and `AS Bridge Amount` in `Equitix_Measures.txt`. New table visual on the Additional
+  Services Monthly Actuals page.
+- **Scope of the bridge:** it follows the Year slicer and ignores the Sector, Subsector and Project
+  slicers, because the management accounts figure is for the whole business.

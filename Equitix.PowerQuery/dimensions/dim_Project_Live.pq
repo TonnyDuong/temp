@@ -94,11 +94,12 @@
 //     Scotland, 1.07 Corporate Finance -> iXBRL, ...). Requested by Chris
 //     Rolls on 18 Sep 2026 ("I think we want both"): the Additional
 //     Services tables show the raw line and the short label side by side.
-//     The workbook is not ingested, so the eleven rows are held in Step 7.
+//     The workbook is not ingested, so its eleven rows are held in Step 7,
+//     with a twelfth for 2.71 Scotland Development -> Development, which
+//     the workbook does not carry, so that row matches the others.
 //     Matched on the line's numeric prefix ("2.01") so a renamed line
-//     keeps its label. Lines not in the mapping (1.01 London Finance,
-//     2.71 Scotland Development) show their raw name, as agreed; a null
-//     Upstream Report A stays null.
+//     keeps its label. Lines not in the mapping (1.01 London Finance)
+//     show their raw name, as agreed; a null Upstream Report A stays null.
 //   Sector Reporting - Mapping = both labels in one column
 //     ("SI Scotland - 2.01 Social Infra Scotland"), the row field on both
 //     Additional Services pages. Agreed 25 Sep 2026 in place of two
@@ -202,6 +203,7 @@ let
         #"2.40" = "Streetlighting",
         #"2.50" = "Renewables",
         #"2.60" = "Environmental",
+        #"2.71" = "Development",
         #"1.07" = "iXBRL"
     ],
     AddSectorReporting = Table.AddColumn(AddProjectDisplay, "Sector Reporting",
