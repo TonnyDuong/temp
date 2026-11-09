@@ -13,6 +13,8 @@
 // Line Order  = the line's position, and the key `AS Bridge Amount`
 //               switches on. Set it as the sort-by column of Bridge Line.
 // Bridge Line = the row label shown on the page.
+// Line 2 is hidden when it is nil: `AS Bridge Amount` returns blank for
+// it, and the visual drops a line with no value.
 // =====================================================================
 let
     Source = #table(
@@ -22,8 +24,9 @@ let
         ],
         {
             {1, "Additional Services, as reported"},
-            {2, "Internal projects (EMS and EMI)"},
-            {3, "Total including internal contracts"}
+            {2, "Revenue with no project code"},
+            {3, "Internal projects (EMS and EMI)"},
+            {4, "Total including internal contracts"}
         }
     )
 in

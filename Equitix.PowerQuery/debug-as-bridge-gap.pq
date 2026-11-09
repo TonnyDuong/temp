@@ -23,7 +23,7 @@
 // Reading the summary, using `Revenue` (presentation sign):
 //   Matrix total        = "On the matrix"
 //   Bridge first line   = "On the matrix" + "Blank mapping"
-//                         + "No project row"
+//   Bridge no project   = "No project row"
 //   Bridge Internal     = "Internal"
 //   Bridge closing      = all four buckets
 // If "On the matrix" is above the matrix total, the gap is not in these

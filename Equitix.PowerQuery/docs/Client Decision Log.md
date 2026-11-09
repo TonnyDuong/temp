@@ -761,5 +761,25 @@ Source: Eve Dillon, email 5 Nov 2026 15:55, on the priority list thread. Stories
 - **Scope of the bridge:** it follows the Year slicer and ignores the Contract, Project, Sector and
   Subsector slicers, because the management accounts figure is for the whole business.
 - **Known gap for 2025:** the bridge's first line is £2,290,617, against £2,270,240 on the matrix and
-  the YTD Profitability page, a gap of about £20,377. The cause is not confirmed. 2026 agrees. The
-  bridge is left as it is.
+  the YTD Profitability page, a gap of £20,377.06. The whole gap is `40013` revenue posted with a
+  blank Project Code, which has no `dim_Project_Live` row, so both pages leave it out and the bridge
+  includes it. December 2025 is £20,703.80 on 5 lines, and the other months net to -£326.74.
+  `MLE-02` nets to nil in every month. 2026 agrees, because `ZZZ-01` nets to nil across the year. The
+  data also holds 2024, with £45,502.63 in the same position. The bridge is left as it is.
+  Superseded by the 9 Nov 2026 entry.
+
+## 9 Nov 2026 - YTD Bridge: Line for Revenue with No Project Code
+
+Source: Eve Dillon, email 9 Nov 2026 10:25, on the priority list thread, replying "Yes please" to the
+offer of 6 Nov 2026 to show the revenue with no project code as a separate line in the bridge.
+Story 5067.
+
+- **Decision:** the bridge gains a `Revenue with no project code` line between the first line and the
+  internal projects. The first line becomes revenue on projects only, so it equals the matrix total
+  in every year. The closing total is unchanged.
+- **Shown only when not nil:** revenue with no project code is not the norm, so the line is hidden
+  for a year where it nets to nil, and its appearance flags postings to look at. For 2025 it is
+  £20,377. For 2026 it is hidden.
+- **Changed:** `dim_AdditionalServicesBridge_Live` has four lines. New measure
+  `AS Bridge No Project Code`. `AS Bridge Amount` switches on four lines and returns blank for the
+  new line when it is under half a penny.

@@ -292,12 +292,21 @@ CALCULATE(
     REMOVEFILTERS(dim_Project_Live),
     dim_Project_Live[Sector] = "Internal")
 
+AS Bridge No Project Code =
+CALCULATE(
+    [AS Revenue],
+    REMOVEFILTERS(dim_Project_Live),
+    ISBLANK(dim_Project_Live[Project Code]))
+
 AS Bridge Amount =
 VAR Reported = CALCULATE([AS Revenue], REMOVEFILTERS(dim_Project_Live))
+VAR NoProject = [AS Bridge No Project Code]
+VAR NoProjectShown = IF(ABS(NoProject) < 0.005, BLANK(), NoProject)
 VAR Internal = [AS Bridge Internal Projects]
 RETURN
 SWITCH(
     SELECTEDVALUE(dim_AdditionalServicesBridge_Live[Line Order]),
-    1, Reported,
-    2, Internal,
-    3, Reported + Internal)
+    1, Reported - NoProject,
+    2, NoProjectShown,
+    3, Internal,
+    4, Reported + Internal)
