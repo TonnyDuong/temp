@@ -783,3 +783,28 @@ Story 5067.
 - **Changed:** `dim_AdditionalServicesBridge_Live` has four lines. New measure
   `AS Bridge No Project Code`. `AS Bridge Amount` switches on four lines and returns blank for the
   new line when it is under half a penny.
+
+## 29 Oct 2026 - Contract Profitability Summary: Top and Bottom 20, and Materiality
+
+Source: Equitix decision of 28 Oct 2026 on the materiality threshold, and Eve Dillon, email 29 Oct 2026,
+with the written scope of the summary page, confirming the same day that the ranking is by Margin %.
+Feature 5009, stories 5010, 5011 and 5013. Built 12 Nov 2026.
+
+- **Materiality (5010):** a revenue threshold of £10,000 a month, cumulative from January, so £30,000
+  by March. It is compared with each contract's actual revenue for the year to date. Forecast revenue
+  plays no part. Internal (EMS and EMI) projects are never material.
+- **Ranking (5011):** the 20 most and the 20 least profitable material contracts for the selected
+  year, ranked by Margin %, across every sector. Not split by sector or subsector. Each table shows
+  Total Revenue, Total Costs, Profit and Margin %, matching the YTD Profitability page.
+- **Sector and drill-down (5013):** each contract row shows its sector and subsector, and expands to
+  the projects beneath it. The ranking stays at contract level.
+- **Not required:** a separate analysis of material variances (story 5012, removed).
+- **Changed:** new measures `Materiality Threshold`, `_Contract Revenue YTD`, `Contract Is Material`,
+  `Margin Rank Most Profitable`, `Margin Rank Least Profitable`, `Summary Sector` and
+  `Summary Subsector` in `Equitix_Measures.txt`. New tab, specified in
+  `Equitix.PowerBI/docs/05 - Contract Profitability Summary.md`. New diagnostic query
+  `debug-contract-sector-split.pq`. No existing measure or query is changed.
+- **Interpretation, to confirm with the client:** "months of actuals loaded" is the latest month of
+  actual revenue in the model, the same month as the `Reporting Period` card, and a past year counts
+  12 months. "Revenue" is `Total Revenue YTD`, in-contract plus additional services. The rankings
+  ignore the Sector Head, Subsector, Contract and Project filters, so the page has a Year slicer only.

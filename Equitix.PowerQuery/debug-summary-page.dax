@@ -1,0 +1,281 @@
+// =====================================================================
+// Summary Page Investigation Queries  (temporary diagnostic queries)
+// ---------------------------------------------------------------------
+// Purpose:      Feature 5009, stories 5010, 5011 and 5013. Shows what the
+//               contract profitability summary page will rank, before the
+//               page is built, so any unknowns can be put to the client
+//               with real contracts and figures.
+// Dependencies: the summary page measures in Equitix_Measures.txt
+//               (Materiality Threshold, _Contract Revenue YTD, Contract
+//               Is Material, Margin Rank Most Profitable, Margin Rank
+//               Least Profitable, Summary Sector, Summary Subsector),
+//               added to the model first, plus the existing YTD
+//               profitability measures.
+// Load:         nothing is loaded. Run in Desktop's DAX query view or in
+//               DAX Studio, one query at a time (select it, then Run).
+//               Delete this file once the page is signed off.
+// ---------------------------------------------------------------------
+// Every query covers each year in 'Reporting Year' and leaves out
+// Internal projects and blank contracts, as the page does.
+//
+//   Q1  Per year: threshold, contracts with activity, material contracts,
+//       and the share of revenue the material contracts carry
+//   Q2  Every contract with activity: revenue split, cost split, margin,
+//       material flag, both ranks, sector, subsector, sector head and
+//       contract status
+//   Q3  The two ranked lists as the page will show them
+//   Q4  The projects under the ranked contracts, with flags for rows
+//       that would look odd when a contract is expanded
+//   Q5  Revenue and cost with no project row, which no contract carries
+//   Q6  How many contracts would be material at other monthly amounts
+//
+// What to look for:
+//   Q1  Fewer than 40 material contracts means some appear in both
+//       lists. Fewer than 20 means a list is not full
+//   Q2  The sign of Subcontractor Actual. Total Costs YTD adds it as it
+//       is, so if it is negative, Total Costs is lower than Staff Costs
+//       and the margins being ranked are overstated. The sign is an open
+//       Confirm item on the YTD Profitability spec
+//   Q2  Contract Status other than Live or Mobilised among the material
+//       contracts, Sector, Subsector or Sector Head holding two values,
+//       Register Rows above 1
+//   Q3  Ties at rank 20, contracts in both lists, extreme margins
+//   Q4  AAA projects, negative revenue, cost with no revenue
+//   Q5  Any amount here is outside the ranking
+// =====================================================================
+
+
+// ---- Q1  Per year summary -------------------------------------------
+EVALUATE
+ADDCOLUMNS(
+    VALUES('Reporting Year'[Year]),
+    "Months Loaded", DIVIDE([Materiality Threshold], 10000),
+    "Threshold", [Materiality Threshold],
+    "Contracts With Activity",
+        CALCULATE(
+            COUNTROWS(
+                FILTER(
+                    VALUES(dim_Project_Live[Contract]),
+                    [Project Has Activity] = 1)),
+            dim_Project_Live[Sector] <> "Internal",
+            dim_Project_Live[Contract] <> ""),
+    "Material Contracts",
+        CALCULATE(
+            COUNTROWS(
+                FILTER(
+                    VALUES(dim_Project_Live[Contract]),
+                    [Contract Is Material] = 1)),
+            dim_Project_Live[Sector] <> "Internal",
+            dim_Project_Live[Contract] <> ""),
+    "Total Revenue",
+        CALCULATE(
+            [Total Revenue YTD],
+            dim_Project_Live[Sector] <> "Internal",
+            dim_Project_Live[Contract] <> ""),
+    "Material Revenue",
+        CALCULATE(
+            SUMX(
+                FILTER(
+                    VALUES(dim_Project_Live[Contract]),
+                    [Contract Is Material] = 1),
+                [Total Revenue YTD]),
+            dim_Project_Live[Sector] <> "Internal",
+            dim_Project_Live[Contract] <> ""),
+    "Material Revenue Share",
+        DIVIDE(
+            CALCULATE(
+                SUMX(
+                    FILTER(
+                        VALUES(dim_Project_Live[Contract]),
+                        [Contract Is Material] = 1),
+                    [Total Revenue YTD]),
+                dim_Project_Live[Sector] <> "Internal",
+                dim_Project_Live[Contract] <> ""),
+            CALCULATE(
+                [Total Revenue YTD],
+                dim_Project_Live[Sector] <> "Internal",
+                dim_Project_Live[Contract] <> "")))
+ORDER BY 'Reporting Year'[Year] DESC
+
+
+// ---- Q2  Every contract with activity -------------------------------
+EVALUATE
+GENERATE(
+    VALUES('Reporting Year'[Year]),
+    CALCULATETABLE(
+        ADDCOLUMNS(
+            FILTER(
+                VALUES(dim_Project_Live[Contract]),
+                [Project Has Activity] = 1),
+            "Contract Fees", [Revenue Act In-Contract],
+            "Additional Services", [Revenue Act Oo-Contract],
+            "Total Revenue", [Total Revenue YTD],
+            "Staff Costs", [Staff Cost Actual],
+            "Subcontractor Actual", [Subcontractor Actual],
+            "Total Costs", [Total Costs YTD],
+            "Profit", [Profit YTD],
+            "Margin", [Margin YTD %],
+            "Threshold", [Materiality Threshold],
+            "Revenue Over Threshold", [Total Revenue YTD] - [Materiality Threshold],
+            "Material", [Contract Is Material],
+            "Rank Most", [Margin Rank Most Profitable],
+            "Rank Least", [Margin Rank Least Profitable],
+            "Sector", [Summary Sector],
+            "Subsector", [Summary Subsector],
+            "Sector Head",
+                CONCATENATEX(
+                    VALUES(dim_Project_Live[Upstream Report A]),
+                    dim_Project_Live[Upstream Report A], ", ",
+                    dim_Project_Live[Upstream Report A], ASC),
+            "Contract Status",
+                CONCATENATEX(
+                    VALUES(dim_Project_Live[Contract Status]),
+                    dim_Project_Live[Contract Status], ", ",
+                    dim_Project_Live[Contract Status], ASC),
+            "Register Rows", DISTINCTCOUNT(dim_Project_Live[crbb5_contract]),
+            "Projects With Activity",
+                COUNTROWS(
+                    FILTER(
+                        VALUES(dim_Project_Live[Project Display]),
+                        [Project Has Activity] = 1))),
+        dim_Project_Live[Sector] <> "Internal",
+        dim_Project_Live[Contract] <> ""))
+ORDER BY 'Reporting Year'[Year] DESC, [Material] DESC, [Margin] DESC
+
+
+// ---- Q3  The two ranked lists ---------------------------------------
+EVALUATE
+VAR Contracts =
+    GENERATE(
+        VALUES('Reporting Year'[Year]),
+        CALCULATETABLE(
+            ADDCOLUMNS(
+                FILTER(
+                    VALUES(dim_Project_Live[Contract]),
+                    [Contract Is Material] = 1),
+                "Rank Most", [Margin Rank Most Profitable],
+                "Rank Least", [Margin Rank Least Profitable],
+                "Sector", [Summary Sector],
+                "Subsector", [Summary Subsector],
+                "Total Revenue", [Total Revenue YTD],
+                "Total Costs", [Total Costs YTD],
+                "Profit", [Profit YTD],
+                "Margin", [Margin YTD %]),
+            dim_Project_Live[Sector] <> "Internal",
+            dim_Project_Live[Contract] <> ""))
+VAR MostProfitable =
+    ADDCOLUMNS(
+        FILTER(Contracts, [Rank Most] <= 20),
+        "List", "Most profitable",
+        "Rank", [Rank Most],
+        "In Both Lists", IF([Rank Least] <= 20, "Yes", "No"))
+VAR LeastProfitable =
+    ADDCOLUMNS(
+        FILTER(Contracts, [Rank Least] <= 20),
+        "List", "Least profitable",
+        "Rank", [Rank Least],
+        "In Both Lists", IF([Rank Most] <= 20, "Yes", "No"))
+RETURN
+SELECTCOLUMNS(
+    UNION(MostProfitable, LeastProfitable),
+    "Year", 'Reporting Year'[Year],
+    "List", [List],
+    "Rank", [Rank],
+    "Contract", dim_Project_Live[Contract],
+    "Sector", [Sector],
+    "Subsector", [Subsector],
+    "Total Revenue", [Total Revenue],
+    "Total Costs", [Total Costs],
+    "Profit", [Profit],
+    "Margin", [Margin],
+    "In Both Lists", [In Both Lists])
+ORDER BY [Year] DESC, [List] DESC, [Rank] ASC
+
+
+// ---- Q4  Projects under the ranked contracts ------------------------
+EVALUATE
+GENERATE(
+    VALUES('Reporting Year'[Year]),
+    CALCULATETABLE(
+        FILTER(
+            ADDCOLUMNS(
+                SUMMARIZE(
+                    dim_Project_Live,
+                    dim_Project_Live[Contract],
+                    dim_Project_Live[Project Display]),
+                "Rank Most", [Margin Rank Most Profitable],
+                "Rank Least", [Margin Rank Least Profitable],
+                "Has Activity", [Project Has Activity],
+                "Total Revenue", [Total Revenue YTD],
+                "Total Costs", [Total Costs YTD],
+                "Profit", [Profit YTD],
+                "Margin", [Margin YTD %],
+                "AAA Project",
+                    IF(LEFT(dim_Project_Live[Project Display], 3) = "AAA", "Yes", "No"),
+                "Negative Revenue", IF([Total Revenue YTD] < 0, "Yes", "No"),
+                "Cost With No Revenue",
+                    IF([Total Costs YTD] <> 0 && [Total Revenue YTD] = 0, "Yes", "No")),
+            [Has Activity] = 1
+                && ([Rank Most] <= 20 || [Rank Least] <= 20)
+                && NOT ISBLANK([Rank Most])),
+        dim_Project_Live[Sector] <> "Internal",
+        dim_Project_Live[Contract] <> ""))
+ORDER BY 'Reporting Year'[Year] DESC, dim_Project_Live[Contract] ASC, [Total Revenue] DESC
+
+
+// ---- Q5  Revenue and cost with no project row -----------------------
+EVALUATE
+ADDCOLUMNS(
+    VALUES('Reporting Year'[Year]),
+    "Contract Fees",
+        CALCULATE(
+            [Revenue Act In-Contract],
+            REMOVEFILTERS(dim_Project_Live),
+            ISBLANK(dim_Project_Live[Project Code])),
+    "Additional Services",
+        CALCULATE(
+            [Revenue Act Oo-Contract],
+            REMOVEFILTERS(dim_Project_Live),
+            ISBLANK(dim_Project_Live[Project Code])),
+    "Staff Costs",
+        CALCULATE(
+            [Staff Cost Actual],
+            REMOVEFILTERS(dim_Project_Live),
+            ISBLANK(dim_Project_Live[Project Code])),
+    "Subcontractor Actual",
+        CALCULATE(
+            [Subcontractor Actual],
+            REMOVEFILTERS(dim_Project_Live),
+            ISBLANK(dim_Project_Live[Project Code])),
+    "Projects With No Contract",
+        CALCULATE(
+            COUNTROWS(
+                FILTER(
+                    VALUES(dim_Project_Live[Project Display]),
+                    [Project Has Activity] = 1)),
+            dim_Project_Live[Sector] <> "Internal",
+            dim_Project_Live[Contract] = ""))
+ORDER BY 'Reporting Year'[Year] DESC
+
+
+// ---- Q6  Material contracts at other monthly amounts ----------------
+EVALUATE
+VAR Amounts =
+    SELECTCOLUMNS({ 5000, 10000, 15000, 20000, 25000 }, "Monthly Amount", [Value])
+RETURN
+GENERATE(
+    CROSSJOIN(VALUES('Reporting Year'[Year]), Amounts),
+    VAR Months = DIVIDE([Materiality Threshold], 10000)
+    VAR Threshold = Months * [Monthly Amount]
+    RETURN
+    ROW(
+        "Threshold", Threshold,
+        "Material Contracts",
+            CALCULATE(
+                COUNTROWS(
+                    FILTER(
+                        VALUES(dim_Project_Live[Contract]),
+                        [_Contract Revenue YTD] >= Threshold)),
+                dim_Project_Live[Sector] <> "Internal",
+                dim_Project_Live[Contract] <> "")))
+ORDER BY 'Reporting Year'[Year] DESC, [Monthly Amount] ASC

@@ -310,3 +310,99 @@ SWITCH(
     2, NoProjectShown,
     3, Internal,
     4, Reported + Internal)
+
+Materiality Threshold =
+VAR SelectedYear = [_Selected Reporting Year]
+VAR LatestActual =
+    CALCULATE(
+        MAX(fact_Revenue_Live[Date]),
+        REMOVEFILTERS(fact_Revenue_Live),
+        fact_Revenue_Live[Type] = "Actual")
+VAR MonthsLoaded =
+    SWITCH(
+        TRUE(),
+        ISBLANK(LatestActual) || SelectedYear > YEAR(LatestActual), 0,
+        SelectedYear < YEAR(LatestActual), 12,
+        MONTH(LatestActual))
+RETURN
+IF(MonthsLoaded > 0, 10000 * MonthsLoaded)
+
+_Contract Revenue YTD =
+CALCULATE(
+    [Total Revenue YTD],
+    REMOVEFILTERS(dim_Project_Live),
+    VALUES(dim_Project_Live[Contract]),
+    dim_Project_Live[Sector] <> "Internal")
+
+Contract Is Material =
+VAR Threshold = [Materiality Threshold]
+VAR ContractRevenue = [_Contract Revenue YTD]
+RETURN
+IF(
+    HASONEVALUE(dim_Project_Live[Contract]),
+    IF(
+        NOT ISBLANK(Threshold)
+            && NOT ISBLANK(ContractRevenue)
+            && ContractRevenue >= Threshold,
+        1,
+        0))
+
+Margin Rank Most Profitable =
+VAR CurrentContract = SELECTEDVALUE(dim_Project_Live[Contract])
+VAR Ranked =
+    CALCULATETABLE(
+        ADDCOLUMNS(
+            FILTER(
+                VALUES(dim_Project_Live[Contract]),
+                [Contract Is Material] = 1),
+            "@Margin", [Margin YTD %]),
+        REMOVEFILTERS(dim_Project_Live),
+        dim_Project_Live[Sector] <> "Internal",
+        dim_Project_Live[Contract] <> "")
+VAR CurrentMargin =
+    MAXX(
+        FILTER(Ranked, dim_Project_Live[Contract] = CurrentContract),
+        [@Margin])
+RETURN
+IF(
+    NOT ISBLANK(CurrentContract) && NOT ISBLANK(CurrentMargin),
+    RANKX(Ranked, [@Margin], CurrentMargin, DESC, SKIP))
+
+Margin Rank Least Profitable =
+VAR CurrentContract = SELECTEDVALUE(dim_Project_Live[Contract])
+VAR Ranked =
+    CALCULATETABLE(
+        ADDCOLUMNS(
+            FILTER(
+                VALUES(dim_Project_Live[Contract]),
+                [Contract Is Material] = 1),
+            "@Margin", [Margin YTD %]),
+        REMOVEFILTERS(dim_Project_Live),
+        dim_Project_Live[Sector] <> "Internal",
+        dim_Project_Live[Contract] <> "")
+VAR CurrentMargin =
+    MAXX(
+        FILTER(Ranked, dim_Project_Live[Contract] = CurrentContract),
+        [@Margin])
+RETURN
+IF(
+    NOT ISBLANK(CurrentContract) && NOT ISBLANK(CurrentMargin),
+    RANKX(Ranked, [@Margin], CurrentMargin, ASC, SKIP))
+
+Summary Sector =
+IF(
+    [Project Has Activity] = 1,
+    CONCATENATEX(
+        VALUES(dim_Project_Live[Sector]),
+        dim_Project_Live[Sector],
+        ", ",
+        dim_Project_Live[Sector], ASC))
+
+Summary Subsector =
+IF(
+    [Project Has Activity] = 1,
+    CONCATENATEX(
+        VALUES(dim_Project_Live[Subsector]),
+        dim_Project_Live[Subsector],
+        ", ",
+        dim_Project_Live[Subsector], ASC))
