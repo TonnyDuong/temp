@@ -27,7 +27,8 @@ let
         and [Contract] <> ""),
 
     Narrowed = Table.SelectColumns(Projects,
-        {"Contract", "crbb5_contract", "Sector", "Subsector", "Project Code"}),
+        {"Contract", "crbb5_contract", "MSA Reference", "Contract Status",
+         "Sector", "Subsector", "Project Code"}),
 
     Distinct = (values as list) as list =>
         List.Sort(List.Distinct(List.Transform(values, each
@@ -35,6 +36,9 @@ let
 
     Grouped = Table.Group(Narrowed, {"Contract"}, {
         {"Register Rows", each List.Count(Distinct([crbb5_contract])), Int64.Type},
+        {"MSA References", each Text.Combine(Distinct([MSA Reference]), ", "), type text},
+        {"Contract Statuses", each Text.Combine(Distinct([Contract Status]), ", "), type text},
+        {"Project Codes", each Text.Combine(Distinct([Project Code]), ", "), type text},
         {"Sectors", each Text.Combine(Distinct([Sector]), ", "), type text},
         {"Sector Count", each List.Count(Distinct([Sector])), Int64.Type},
         {"Subsectors", each Text.Combine(Distinct([Subsector]), ", "), type text},

@@ -122,17 +122,21 @@ GENERATE(
             "Rank Least", [Margin Rank Least Profitable],
             "Sector", [Summary Sector],
             "Subsector", [Summary Subsector],
+            // CALCULATE turns the contract row into a filter. Without it
+            // these three columns read every contract.
             "Sector Head",
-                CONCATENATEX(
-                    VALUES(dim_Project_Live[Upstream Report A]),
-                    dim_Project_Live[Upstream Report A], ", ",
-                    dim_Project_Live[Upstream Report A], ASC),
+                CALCULATE(
+                    CONCATENATEX(
+                        VALUES(dim_Project_Live[Upstream Report A]),
+                        dim_Project_Live[Upstream Report A], ", ",
+                        dim_Project_Live[Upstream Report A], ASC)),
             "Contract Status",
-                CONCATENATEX(
-                    VALUES(dim_Project_Live[Contract Status]),
-                    dim_Project_Live[Contract Status], ", ",
-                    dim_Project_Live[Contract Status], ASC),
-            "Register Rows", DISTINCTCOUNT(dim_Project_Live[crbb5_contract]),
+                CALCULATE(
+                    CONCATENATEX(
+                        VALUES(dim_Project_Live[Contract Status]),
+                        dim_Project_Live[Contract Status], ", ",
+                        dim_Project_Live[Contract Status], ASC)),
+            "Register Rows", CALCULATE(DISTINCTCOUNT(dim_Project_Live[crbb5_contract])),
             "Projects With Activity",
                 COUNTROWS(
                     FILTER(
